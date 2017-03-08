@@ -6,7 +6,14 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Provides functions for parsing books from text files
+ */
 public class Parser {
+    /**
+     * TODO write some basic tests, use args instead of hard-coded filename
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             ArrayList<Book> books = (ArrayList<Book>)readBooksFromFile(new File("./data/books.txt"));
@@ -19,6 +26,12 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses String in date format as Date object
+     *
+     * @param dateString date to parse
+     * @return parsed date
+     */
     private static Date parseDate(String dateString) {
         String[] formats = {"y", "M-d-y"};
         for (String format : formats) {
@@ -31,6 +44,12 @@ public class Parser {
         return null;
     }
 
+    /**
+     * Reads book data from file into a Collection of Book(s)
+     * @param file file to read from
+     * @return collection of books
+     * @throws IOException if the specified file is not found
+     */
     private static Collection<Book> readBooksFromFile(File file) throws IOException {
         ArrayList<Book> books = new ArrayList<>();
         Scanner scanner = new Scanner(file);
