@@ -54,7 +54,7 @@ public class Parser {
         ArrayList<Book> books = new ArrayList<>();
         Scanner scanner = new Scanner(file);
 
-        Pattern pattern = Pattern.compile("(\\d+),\"([^\"]+)\",\\{([^}]+)\\},(.+?(?=,\\d)),([\\d-]+),(\\d+),(.+)");
+        Pattern pattern = Pattern.compile("(\\d+),\"([^\"]+)\",\\{([^}]+)\\},\"(.+?(?=,\\d))\",([\\d-]+),(\\d+),(.+)");
 
         while(scanner.hasNext()) {
             String line = scanner.nextLine();
