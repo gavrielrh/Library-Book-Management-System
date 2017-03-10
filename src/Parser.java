@@ -54,7 +54,7 @@ public class Parser {
         ArrayList<Book> books = new ArrayList<>();
         Scanner scanner = new Scanner(file);
 
-        Pattern pattern = Pattern.compile("(\\d+),\"([^\"]+)\",\\{([^}]+)\\},\"(.+?(?=,\\d))\",([\\d-]+),(\\d+),(.+)");
+        Pattern pattern = Pattern.compile("(\\d+),\"([^\"]+)\",\\{([^}]+)\\},\"(.+?(?=,\\d))\",([\\d-]+),(\\d+)");
 
         while(scanner.hasNext()) {
             String line = scanner.nextLine();
@@ -67,7 +67,6 @@ public class Parser {
                 String publisher = matcher.group(4);
                 Date publishedDate = parseDate(matcher.group(5));
                 int pageCount = Integer.parseInt(matcher.group(6));
-                // System.out.println(matcher.group(7));   // book-status: ignored
                 books.add(new Book(isbn, title, authors, publisher, publishedDate, pageCount));
             }
         }
