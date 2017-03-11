@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class LBMS {
    private Date time;
    private HashMap<Integer, Book> books;
    //private ArrayList<Visit> visits;
-   //private ArrayList<Visitor> visitors;
+   private HashSet<Visitor> visitors;
 
    //GETTERS AND SETTERS
    public Date getTime() {
@@ -50,11 +51,26 @@ public class LBMS {
 
    }
 
+   public ArrayList<String> getVisitorIds(){
+      ArrayList<String> visitorIds = new ArrayList<String>();
+      for(Visitor v : visitors){
+         visitorIds.add(v.getUniqueId());
+      }
+      return visitorIds;
+   }
+
+   public HashSet<Visitor> getVisitors(){
+      return this.visitors;
+   }
    public String generateVisitorReport(){
       return null;
    }
 
    public String gernerateBookReport(){
       return null;
+   }
+
+   public void addVisitor(Visitor visitor){
+      this.visitors.add(visitor);
    }
 }
