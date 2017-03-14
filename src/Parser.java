@@ -11,22 +11,6 @@ import java.util.regex.Pattern;
  */
 public class Parser {
     /**
-     * TODO write some basic tests, use args instead of hard-coded filename
-     * @param args
-     */
-    public static void main(String[] args) {
-        try {
-            ArrayList<Book> books = (ArrayList<Book>)readBooksFromFile(new File("./data/books.txt"));
-            Collections.sort(books, QueryStrategy.INSTANCE.queryByTitleFunc);
-            for(Book b : books) {
-                System.out.println(b.getTitle());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Parses String in date format as Date object
      *
      * @param dateString date to parse
@@ -46,15 +30,17 @@ public class Parser {
 
     /**
      * Reads book data from file into a Collection of Book(s)
-     * @param file file to read from
+     * @param filepath file to read from
      * @return collection of books
      * @throws IOException if the specified file is not found
      */
-    private static Collection<Book> readBooksFromFile(File file) throws IOException {
+    public static Collection<Book> readBooksFromFile(String filepath) throws IOException {
+        File file = new File(filepath);
+        assert file.isFile() : filepath;
         ArrayList<Book> books = new ArrayList<>();
         Scanner scanner = new Scanner(file);
 
-        Pattern pattern = Pattern.compile("(\\d+),\"([^\"]+)\",\\{([^}]+)\\},\"(.+?(?=,\\d))\",([\\d-]+),(\\d+)");
+        Pattern pattern = Pattern.compile("(\\d+),\"([^\"]+)\",\\{([^}]+)\\},\"(.+?(?=\",))\",([\\d-]+),(\\d+)");
 
         while(scanner.hasNext()) {
             String line = scanner.nextLine();
@@ -72,5 +58,23 @@ public class Parser {
         }
 
         return books;
+    }
+
+    /**
+     * TODO write some basic tests, use args instead of hard-coded filename
+     * @param args
+     */
+    public static void main(String[] args) {
+        Parser parser = new Parser();
+
+        try {
+            ArrayList<Book> books = (ArrayList<Book>)readBooksFromFile("./data/books.txt");
+            Collections.sort(books, QueryStrategy.INSTANCE.queryByTitleFunc);
+            for(Book b : books) {
+                System.out.println(b.getTitle());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,4 +1,3 @@
-import java.time.LocalDate;
 import java.util.Date;
 
 public class Book {
@@ -64,6 +63,6 @@ public class Book {
     }
 
     public boolean isAvailable() {
-        return totalCopies - numCheckedOut > 0;
+        return totalCopies > numCheckedOut;
     }
 }
