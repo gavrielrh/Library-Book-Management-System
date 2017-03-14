@@ -1,13 +1,11 @@
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class LBMS {
    private Date time;
    private HashMap<Integer, Book> books;
+   private Set<Visit> visits;
    //private ArrayList<Visit> visits;
-   private HashSet<Visitor> visitors;
+   private HashMap<String, Visitor> visitors;
 
    //GETTERS AND SETTERS
    public Date getTime() {
@@ -53,13 +51,14 @@ public class LBMS {
 
    public ArrayList<String> getVisitorIds(){
       ArrayList<String> visitorIds = new ArrayList<String>();
-      for(Visitor v : visitors){
-         visitorIds.add(v.getUniqueId());
+      Set<String> visitorNumIds = this.visitors.keySet();
+      for(String v : visitorNumIds){
+         visitorIds.add(v);
       }
       return visitorIds;
    }
 
-   public HashSet<Visitor> getVisitors(){
+   public HashMap<String, Visitor> getVisitors(){
       return this.visitors;
    }
    public String generateVisitorReport(){
@@ -70,7 +69,34 @@ public class LBMS {
       return null;
    }
 
-   public void addVisitor(Visitor visitor){
-      this.visitors.add(visitor);
+   public boolean hasVisitor(String visitorId){
+      return this.visitors.containsKey(visitorId);
+   }
+
+   /**
+    *
+    * @param visitorId - the String id of the visitor that is requested
+    * @return the visitor object itself matching the visitorId
+    * @throws AssertionError if the lbms does not have the visitor in it's registered visitors
+     */
+   public Visitor getVisitor(String visitorId){
+      assert this.hasVisitor(visitorId);
+      return this.visitors.get(visitorId);
+   }
+
+    /**
+     * registerVisitor adds the visitor object to the LBMS HashMap of visitors
+     * @param visitor - the visitor object to register to the LBMS
+     */
+   public void registerVisitor(Visitor visitor){
+      this.visitors.put(visitor.getUniqueId(), visitor);
+   }
+
+    /**
+     * beginVisit adds the visit to the LBMS set of visits
+     * @param visit - the visit to begin
+     */
+   public void beginVisit(Visit visit){
+      this.visits.add(visit);
    }
 }

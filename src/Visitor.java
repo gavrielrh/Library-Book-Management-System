@@ -5,12 +5,13 @@ import java.util.ArrayList;
  */
 public class Visitor {
 
-    /* Fields for visitors */
+    /* Fields for a Visitor */
     private String firstName;
     private String lastName;
     private String address;
     private String phoneNum;
     private String uniqueId;
+    private boolean isVisiting;
 
     /* ArrayList of Books that the Visitor has on loan */
     private ArrayList<Book> booksLoaned;
@@ -30,6 +31,7 @@ public class Visitor {
         this.phoneNum = phoneNum;
         this.uniqueId = uniqueId;
         this.booksLoaned = new ArrayList<Book>();
+        this.isVisiting = false;
     }
 
     @Override
@@ -51,5 +53,21 @@ public class Visitor {
      */
     public String getUniqueId(){
         return this.uniqueId;
+    }
+
+    /**
+     * Method for knowing if the visitor is in the Library or not.
+     * @return boolean value of if the visitor is visiting the library.
+     */
+    public boolean isVisiting(){
+        return this.isVisiting;
+    }
+
+    /**
+     * startVisit sets the visitors isVisiting to be true.
+     * This is used in BeginVisit and helps check for errors
+     */
+    public void startVisit(){
+        this.isVisiting = true;
     }
 }

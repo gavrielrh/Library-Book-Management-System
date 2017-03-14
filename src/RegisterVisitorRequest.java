@@ -55,11 +55,11 @@ public class RegisterVisitorRequest implements Request {
                 this.visitorPhoneNum, this.uniqueId);
 
         //Set registration status so response() can accurately respond to what was executed.
-        if(this.lbms.getVisitors().contains(visitorToRegister)){
+        if(this.lbms.getVisitors().values().contains(visitorToRegister)){
             this.duplicateRegistration = true;
         }
         else{
-            this.lbms.addVisitor(visitorToRegister);
+            this.lbms.registerVisitor(visitorToRegister);
             this.registeredSuccessfully = true;
         }
     }
