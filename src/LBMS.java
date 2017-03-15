@@ -1,11 +1,12 @@
 import java.util.*;
 
 public class LBMS {
+   private Date startupDate;
    private Date time;
    private HashMap<Integer, Book> books;
    private Set<Visit> visits;
-   //private ArrayList<Visit> visits;
    private HashMap<String, Visitor> visitors;
+
 
    //GETTERS AND SETTERS
    public Date getTime() {
@@ -23,8 +24,8 @@ public class LBMS {
    public void addBooks(Book book) {
       this.books.put(Integer.parseInt(book.getIsbn()), book);
    }
-   /*
-   public ArrayList<Visit> getVisits() {
+
+   public Set<Visit> getVisits() {
       return visits;
    }
 
@@ -32,14 +33,9 @@ public class LBMS {
       this.visits.add(visit);
    }
 
-   public ArrayList<Visitor> getVisitors() {
+   public HashMap<String, Visitor> getVisitors() {
       return visitors;
    }
-
-   public void addVisitors(Visitor visitor) {
-      this.visitors.add(visitor);
-   }
-   */
 
    public void startup(){
 
@@ -49,6 +45,16 @@ public class LBMS {
 
    }
 
+   /**
+    * NEEDS REVISING
+    * @param elapsedTime time to move forward
+    * @return return string of time elapsed
+    */
+   public String advanceTime(Date elapsedTime){
+      this.time.after(elapsedTime);
+
+      return elapsedTime.toString();
+   }
    public ArrayList<String> getVisitorIds(){
       ArrayList<String> visitorIds = new ArrayList<String>();
       Set<String> visitorNumIds = this.visitors.keySet();
@@ -58,16 +64,22 @@ public class LBMS {
       return visitorIds;
    }
 
-   public HashMap<String, Visitor> getVisitors(){
-      return this.visitors;
-   }
+
    public String generateVisitorReport(){
       return null;
    }
 
    public String gernerateBookReport(){
-      return null;
+      String report = "";
+      report += String.format("Number of books currently owned by LBMS: %d\n", this.books.size());
+      report += String.format("Number of unique visitors: %d/\n", this.visitors.size());
+      report += String.format("Average time per library visit: %f\n", null);
+      report += String.format("Books purchased: %d\n", null);
+      report += String.format("Fines collected: %f\n", null);
+
+      return report;
    }
+
 
    public boolean hasVisitor(String visitorId){
       return this.visitors.containsKey(visitorId);
