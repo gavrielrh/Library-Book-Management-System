@@ -1,9 +1,10 @@
+import java.io.IOException;
 import java.util.*;
 
 public class LBMS {
    private Date startupDate;
    private Date time;
-   private HashMap<Integer, Book> books;
+   private HashMap<String, Book> books;
    private Set<Visit> visits;
    private HashMap<String, Visitor> visitors;
 
@@ -17,12 +18,12 @@ public class LBMS {
       this.time = time;
    }
 
-   public HashMap<Integer, Book> getBooks() {
+   public HashMap<String, Book> getBooks() {
       return books;
    }
 
    public void addBooks(Book book) {
-      this.books.put(Integer.parseInt(book.getIsbn()), book);
+      this.books.put(book.getIsbn(), book);
    }
 
    public Set<Visit> getVisits() {
@@ -46,6 +47,18 @@ public class LBMS {
    }
 
    /**
+    * Creates initial library of books from txt file
+    * TODO decide whether initialization of books belongs in this function
+    * @param filename file to load books from
+    * @throws IOException if file is not found / not readable
+    */
+   public void seedInitialLibrary(String filename) throws IOException {
+      List<Book> booksList = (List<Book>)Parser.readBooksFromFile(filename);
+      books = new HashMap<>();
+      booksList.forEach(b -> books.put(b.getIsbn(), b));
+   }
+
+   /**
     * NEEDS REVISING
     * @param elapsedTime time to move forward
     * @return return string of time elapsed
@@ -55,6 +68,7 @@ public class LBMS {
 
       return elapsedTime.toString();
    }
+
    public ArrayList<String> getVisitorIds(){
       ArrayList<String> visitorIds = new ArrayList<String>();
       Set<String> visitorNumIds = this.visitors.keySet();
@@ -69,7 +83,7 @@ public class LBMS {
       return null;
    }
 
-   public String gernerateBookReport(){
+   public String generateBookReport(){
       String report = "";
       report += String.format("Number of books currently owned by LBMS: %d\n", this.books.size());
       report += String.format("Number of unique visitors: %d/\n", this.visitors.size());
