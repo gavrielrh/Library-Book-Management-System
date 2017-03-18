@@ -2,7 +2,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * BeginVisitReuqest represents a ConcreteCommand within the Command Design pattern.
+ * BeginVisitRequest represents a ConcreteCommand within the Command Design pattern.
  * Executing the command begins the visit of the given visitor within the LBMS.
  */
 public class BeginVisitRequest implements Request {
@@ -49,7 +49,9 @@ public class BeginVisitRequest implements Request {
                 this.visitDate = lbms.getTime();
                 //Set the visitors isVisiting to be true
                 this.visitor.startVisit();
-                this.lbms.beginVisit(new Visit(this.visitor, this.visitDate));
+                Visit startingVisit = new Visit(this.visitor, this.visitDate);
+                this.visitor.setCurrentVisit(startingVisit);
+                this.lbms.beginVisit(startingVisit);
             }
         }else{
             //If lbms doesn't have the visitor, it is an inValidId error
@@ -73,8 +75,10 @@ public class BeginVisitRequest implements Request {
     /**
      * getVisitTime is a helper method to get the string of the visit Time
      * @return - String representation of the visit Time
+     * @throws AssertionError if the visit wasn't valid, meaning it didn't have a date
      */
     public String getVisitTime(){
+        assert this.visitDate != null;
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss a");
         return formatter.format(this.visitDate);
     }
@@ -82,8 +86,10 @@ public class BeginVisitRequest implements Request {
     /**
      * getVisitDate is a helper method to get the string of the visit Date
      * @return - String representaton of the visit Date
+     * @throws AssertionError if the visit wasn't valid, meaning it didn't have a date
      */
     public String getVisitDate(){
+        assert this.visitDate != null;
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         return formatter.format(this.visitDate);
     }

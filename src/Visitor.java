@@ -16,6 +16,9 @@ public class Visitor {
     /* ArrayList of Books that the Visitor has on loan */
     private ArrayList<Book> booksLoaned;
 
+    /* If the visitor is visiting, keep that Visit object as the current visit */
+    private Visit currentVisit;
+
     /**
      * Constructor for Visitor
      * @param firstName - The firstName of visitor
@@ -32,6 +35,7 @@ public class Visitor {
         this.uniqueId = uniqueId;
         this.booksLoaned = new ArrayList<Book>();
         this.isVisiting = false;
+        this.currentVisit = null;
     }
 
     @Override
@@ -70,4 +74,33 @@ public class Visitor {
     public void startVisit(){
         this.isVisiting = true;
     }
+
+    /**
+     * endVisit sets the visitors isVisiting to be false.
+     * This is used in EndVisit and helps check errors
+     */
+    public void endVisit() {
+        this.isVisiting = false;
+    }
+
+    /**
+     * Gets the current visit that a visitor is currently doing.
+     * @return The current visit that the visitor currently is doing.
+     * @throws AssertionError if the visitor isn't visiting
+     */
+    public Visit getCurrentVisit(){
+        assert this.isVisiting;
+        return this.currentVisit;
+    }
+
+    /**
+     * Sets the current visit to the visitor.
+     * @param visit - the visit object itself to attach to visitor
+     * @throws AssertionError if th visitor isn't visiting
+     */
+    public void setCurrentVisit(Visit visit){
+        assert this.isVisiting;
+        this.currentVisit = visit;
+    }
+
 }

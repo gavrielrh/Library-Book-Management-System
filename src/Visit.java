@@ -9,18 +9,41 @@ public class Visit {
 
     /* Fields for a Visit */
     private Visitor visitor;
-    private Date visitDate;
+    private Date visitStartDate;
+    private Date visitEndDate;
     private boolean isComplete;
 
     /**
      * Constructor for Visitor
-     * @param visitor
-     * @param visitDate
+     * @param visitor - the visitor that is visiting
+     * @param visitStartDate - the starting date of the visit
      */
-    public Visit(Visitor visitor, Date visitDate){
+    public Visit(Visitor visitor, Date visitStartDate){
         this.visitor = visitor;
-        this.visitDate = visitDate;
+        this.visitStartDate = visitStartDate;
+        // initially the visit isn't complete
+        this.visitEndDate = null;
         this.isComplete = false;
+    }
+
+    /**
+     *
+     * @param visitEndDate
+     */
+    public void endVisit(Date visitEndDate){
+        this.visitEndDate = visitEndDate;
+        this.isComplete = true;
+    }
+
+    /**
+     * getVisitDuration calculates the difference of start and end date's and returns a string version
+     * of the duration
+     * @return String representation of the duration of the visit
+     */
+    public String getVisitDuration(){
+        assert this.isComplete;
+        //TODO: Replace with the visit's duration
+        return "HH-MM-SS";
     }
 
 }
