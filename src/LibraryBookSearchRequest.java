@@ -35,7 +35,8 @@ public class LibraryBookSearchRequest implements Request {
      *                  alphanumerical from 0..1-A-Z, publish date will be newest first,
      *                  and book status will only show books with at least one copy available for check out.
      */
-    public LibraryBookSearchRequest(LBMS lbms, String title, String authors, String isbn, String publisher, String sortOrder) {
+    public LibraryBookSearchRequest(LBMS lbms, String title, String authors,
+                                    String isbn, String publisher, String sortOrder) {
         this.lbms = lbms;
         this.title = title;
         this.isbn = isbn;
@@ -122,7 +123,7 @@ public class LibraryBookSearchRequest implements Request {
                 Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByAvailabilityFunc);
                 break;
             default:
-                return "info,invalid-sort-order;";
+                return "info,invalid-sort-order";
         }
 
         message += searchResults.size();
@@ -150,7 +151,7 @@ public class LibraryBookSearchRequest implements Request {
      * @return - String representaton of the visit Date
      * @throws AssertionError if the visit wasn't valid, meaning it didn't have a date
      */
-    public String getPublishedDate(Book book) {
+    private String getPublishedDate(Book book) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         return formatter.format(book.getPublishedDate());
     }
