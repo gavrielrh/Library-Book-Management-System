@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class LBMS {
+   public static int MAX_BOOKS = 5;
    private Date startupDate;
    private Date time;
    private HashMap<String, Book> books;
@@ -124,5 +125,68 @@ public class LBMS {
      */
    public void beginVisit(Visit visit){
       this.visits.add(visit);
+   }
+
+    /**
+     * hasBook is used to see if the book, based on Id, is in the LBMS
+     * @param bookId - the String Id value of the book to look up
+     * @return - boolean value if the book is in the LBMS
+     */
+   public boolean hasBook(String bookId){
+      return (this.books.keySet().contains(bookId));
+   }
+
+    /**
+     *
+     * @param bookId - String value of the bookId to look up.
+     * @return - the Book object from LBMS
+     * @throws AssertionError - if the LBMS doesn't have the book.
+     */
+   public Book getBook(String bookId){
+      assert this.hasBook(bookId);
+      return this.books.get(bookId);
+   }
+
+    /**
+     *
+     * @param bookId -
+     * @return
+     */
+   public boolean hasCopy(String bookId){
+      if(this.hasBook(bookId)){
+         Book book = this.getBook(bookId);
+         return book.isAvailable();
+      }else{
+         return false;
+      }
+   }
+
+   /**
+    * The main method in LBMS acts as the invoker in the Command Design Pattern.
+    * @param args - not used
+     */
+   public static void main(String[] args) {
+      Scanner inputRequest = new Scanner(System.in);
+      String requestLine = inputRequest.nextLine();
+      String[] request = requestLine.split(",");
+      /*
+      * requests can start with:
+      *
+      *
+      *
+      *
+      *
+      *
+      *
+      *
+      *
+      *
+       */
+      switch (request[0]){
+         case "hi":
+
+      }
+
+
    }
 }

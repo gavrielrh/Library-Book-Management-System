@@ -81,6 +81,7 @@ public class Visitor {
      */
     public void endVisit() {
         this.isVisiting = false;
+        this.currentVisit = null;
     }
 
     /**
@@ -103,4 +104,21 @@ public class Visitor {
         this.currentVisit = visit;
     }
 
+    /**
+     * Returns the number of books the visitor has out on loan.
+     * This is used to ensure the visitor doesn't exceed the max number of books allowed.
+     * @return int value of the number of books ths visitor has.
+     */
+    public int getNumBooksCheckedOut(){
+        return this.booksLoaned.size();
+    }
+
+    public boolean hasFines(){
+        //TODO
+        return false;
+    }
+
+    public ArrayList<Book> getBooksLoaned(){
+        return this.booksLoaned;
+    }
 }

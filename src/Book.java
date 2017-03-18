@@ -65,4 +65,9 @@ public class Book {
     public boolean isAvailable() {
         return totalCopies > numCheckedOut;
     }
+
+    @Override
+    public String toString(){
+        return null;
+    }
 }
