@@ -170,20 +170,100 @@ public class LBMS {
       String requestLine = inputRequest.nextLine();
       String[] request = requestLine.split(",");
       /*
-      * requests can start with:
+      * requests can be:
       *
-      *
-      *
-      *
-      *
-      *
-      *
-      *
+      * <num> Name of Request - format,of,request;
+      * <1> Register Visitor - register,first name,last name,address, phone-number;
+      * <2> Begin Visit - arrive,visitor ID;
+      * <3> End Visit - depart,visitor ID;
+      * <4> Library Book Search - info,title,{authors},[isbn, [publisher,[sort order]]];
+      * <5> Borrow Book - borrow,visitor ID,{id};
+      * <6> Find Borrowed Books - borrowed,visitor ID;
+      * <7> Return Book - return,visitor ID,id[,ids];
+      * <8> Pay Fine - pay,visitor ID,amount;
+      * <9> Book Store Search - search,title,[{authors},isbn[,publisher[,sort order]]];
+      * <10> Book Purchase - buy,quantity,id[,ids];
+      * <11> Advance Time - advance,number-of-days[,number-of-hours];
+      * <12> Current Date & Time - datetime;
+      * <13> Library Statistics Report - report[,days];
       *
       *
        */
       switch (request[0]){
-         case "hi":
+         //<1> Register Visitor - register,first name,last name,address, phone-number;
+         case "register":
+            if (request.length < 5){
+               //TODO: Partial Request
+            }
+            break;
+         //<2> Begin Visit - arrive,visitor ID;
+         case "arrive":
+            if (request.length < 2){
+               //TODO: Partial Request
+            }
+            break;
+         //<3> End Visit - depart,visitor ID;
+         case "depart":
+            if (request.length < 2){
+               //TODO: Partial Request
+            }
+            break;
+         //<4> Library Book Search - info,title,{authors},[isbn, [publisher,[sort order]]];
+         case "info":
+            if (request.length < 3){
+               //TODO: Partial Request
+            }
+            break;
+         //<5> Borrow Book - borrow,visitor ID,{id};
+         case "borrow":
+            if (request.length < 3){
+               //TODO: Partial Request
+            }
+            break;
+         //<6> Find Borrowed Books - borrowed,visitor ID;
+         case "borrowed":
+            if (request.length < 2){
+               //TODO: Partial Request
+            }
+            break;
+         //<7> Return Book - return,visitor ID,id[,ids];
+         case "return":
+            if (request.length < 3){
+               //TODO: Partial Request
+            }
+            break;
+         //<8> Pay Fine - pay,visitor ID,amount;
+         case "pay":
+            if (request.length < 3){
+               //TODO: Partial Request
+            }
+            break;
+         //<9> Book Store Search - search,title,[{authors},isbn[,publisher[,sort order]]];
+         case "search":
+            if (request.length < 2){
+               //TODO: Partial Request
+            }
+            break;
+         //<10> Book Purchase - buy,quantity,id[,ids];
+         case "buy":
+            if (request.length < 3){
+               //TODO: Partial Request
+            }
+            break;
+         //<11> Advance Time - advance,number-of-days[,number-of-hours];
+         case "advance":
+            if (request.length < 2){
+               //TODO: Partial Request
+            }
+            break;
+         //<12> Current Date & Time - datetime;
+         case "datetime":
+            // No possible potential requests.
+            break;
+         //<13> Library Statistics Report - report[,days];
+         case "report":
+            // No possible potential requests.
+            break;
 
       }
 
