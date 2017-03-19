@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class LBMS {
@@ -175,6 +177,11 @@ public class LBMS {
      */
    public static void main(String[] args) {
       LBMS self = new LBMS();
+      try {
+         self.seedInitialLibrary("./data/books.txt");
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
       Scanner inputRequest = new Scanner(System.in);
       while(true) {
          String requestLine = inputRequest.nextLine();
@@ -289,36 +296,23 @@ public class LBMS {
                      String isbn = null;
                      String sortOrder = null;
                      String publisher = null;
-                     String title = request[1];
-                     boolean authorReading = true;
-                     boolean gotPublisher = false;
-                     String authors = "";
-                     for(int i=2; i < request.length; i++){
-                        if(authorReading) {
-                           String potentialAuthor = request[i];
-                           //check if it's an isbn
-                           if (potentialAuthor.matches("[-+]?\\d*\\.?\\d+")) {
-                              authorReading = false;
-                              isbn = potentialAuthor;
-                              //remove the comma on the last added author
-                              authors = authors.substring(0,authors.length()-1);
-                              if(authors.endsWith(";")){
-                                 authors = authors.substring(0,authors.length()-1);
-                              }
-                           }else{
-                              authors += potentialAuthor + ",";
-                           }
-                        }else if(!gotPublisher){
-                           publisher = request[i];
-                           if(publisher.endsWith(";")){
-                              publisher = publisher.substring(0,publisher.length()-1);
-                           }
-                           gotPublisher = true;
-                        }else{
-                           sortOrder = request[i];
-                           sortOrder = sortOrder.substring(0,sortOrder.length()-1);
-                        }
+                     String title = requestLine.split("info,")[1].split(",\\{}")[0];
+
+                     String authors = requestLine.split(",\\{")[1].split("\\}")[0];
+
+                     if (request.length > 3) {
+                        String optionalPartsStr = requestLine.split("}")[1];
+                        optionalPartsStr = optionalPartsStr.substring(1, optionalPartsStr.length() - 1);
+
+                        String[] optionalParts = optionalPartsStr.split(",");
+
+                        isbn = optionalParts[0].substring(1, optionalParts[0].length());
+                        publisher = optionalParts.length > 1 ?
+                                optionalParts[1].substring(2, optionalParts[1].length()) : null;
+                        sortOrder = optionalParts.length > 2 ?
+                                optionalParts[2].substring(1, optionalParts[2].length() - 3) : null;
                      }
+
                      Request libraryBookSearchRequest = new LibraryBookSearchRequest(self, title, authors, isbn, publisher, sortOrder);
                      libraryBookSearchRequest.execute();
                      System.out.println(libraryBookSearchRequest.response());
