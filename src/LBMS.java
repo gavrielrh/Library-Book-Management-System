@@ -175,196 +175,210 @@ public class LBMS {
       while(true) {
          String requestLine = inputRequest.nextLine();
          String[] request = requestLine.split(",");
-         /*
-         * requests can be:
-         *
-         * <num> Name of Request - format,of,request;
-         * <1> Register Visitor - register,first name,last name,address, phone-number;
-         * <2> Begin Visit - arrive,visitor ID;
-         * <3> End Visit - depart,visitor ID;
-         * <4> Library Book Search - info,title,{authors},[isbn, [publisher,[sort order]]];
-         * <5> Borrow Book - borrow,visitor ID,{id};
-         * <6> Find Borrowed Books - borrowed,visitor ID;
-         * <7> Return Book - return,visitor ID,id[,ids];
-         * <8> Pay Fine - pay,visitor ID,amount;
-         * <9> Book Store Search - search,title,[{authors},isbn[,publisher[,sort order]]];
-         * <10> Book Purchase - buy,quantity,id[,ids];
-         * <11> Advance Time - advance,number-of-days[,number-of-hours];
-         * <12> Current Date & Time - datetime;
-         * <13> Library Statistics Report - report[,days];
-         *
-         *
-          */
-         switch (request[0]) {
-            //<1> Register Visitor - register,first name,last name,address, phone-number;
-            case "register":
-               if (request.length < 5) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  for (int i  = request.length; i < 5; i++) {
-                     if (i == 1) {
-                        missingParameters.add(missingParameters.size(), "first name");
-                     } else if (i == 2) {
-                        missingParameters.add(missingParameters.size(), "last name");
-                     } else if (i == 3) {
-                        missingParameters.add(missingParameters.size(), "address");
-                     } else if (i == 4) {
-                        missingParameters.add(missingParameters.size(), "phone-number");
+         if (!(request[request.length - 1].endsWith(";"))) {
+            Request partialRequest = new PartialRequest();
+            partialRequest.execute();
+            System.out.println(partialRequest.response());
+         } else {
+            /*
+            * requests can be:
+            *
+            * <num> Name of Request - format,of,request;
+            * <1> Register Visitor - register,first name,last name,address, phone-number;
+            * <2> Begin Visit - arrive,visitor ID;
+            * <3> End Visit - depart,visitor ID;
+            * <4> Library Book Search - info,title,{authors},[isbn, [publisher,[sort order]]];
+            * <5> Borrow Book - borrow,visitor ID,{id};
+            * <6> Find Borrowed Books - borrowed,visitor ID;
+            * <7> Return Book - return,visitor ID,id[,ids];
+            * <8> Pay Fine - pay,visitor ID,amount;
+            * <9> Book Store Search - search,title,[{authors},isbn[,publisher[,sort order]]];
+            * <10> Book Purchase - buy,quantity,id[,ids];
+            * <11> Advance Time - advance,number-of-days[,number-of-hours];
+            * <12> Current Date & Time - datetime;
+            * <13> Library Statistics Report - report[,days];
+            *
+            *
+             */
+            String firstWord = request[0];
+            if(firstWord.endsWith(";")){
+               firstWord = firstWord.substring(0,firstWord.length()-1);
+            }
+            switch (firstWord) {
+               //<1> Register Visitor - register,first name,last name,address, phone-number;
+               case "register": {
+                  if (request.length < 5) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     for (int i = request.length; i < 5; i++) {
+                        if (i == 1) {
+                           missingParameters.add(missingParameters.size(), "first name");
+                        } else if (i == 2) {
+                           missingParameters.add(missingParameters.size(), "last name");
+                        } else if (i == 3) {
+                           missingParameters.add(missingParameters.size(), "address");
+                        } else if (i == 4) {
+                           missingParameters.add(missingParameters.size(), "phone-number");
+                        }
                      }
-                  }
-                  Request missingParam = new MissingParamsRequest("Register Visitor", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }else{
-                  String firstName = request[1];
-                  String lastName = request[2];
-                  String address = request[3];
-                  String phoneNum = request[4];
-                  Request register = new RegisterVisitorRequest(self, firstName, lastName, address, phoneNum);
-                  register.execute();
-                  System.out.println(register.response());
-               }
-               break;
-            //<2> Begin Visit - arrive,visitor ID;
-            case "arrive":
-               if (request.length < 2) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  missingParameters.add(0, "visitor ID");
-                  Request missingParam = new MissingParamsRequest("Begin Visit", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-               break;
-            //<3> End Visit - depart,visitor ID;
-            case "depart":
-               if (request.length < 2) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  missingParameters.add(0, "visitor ID");
-                  Request missingParam = new MissingParamsRequest("End Visit", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-               break;
-            //<4> Library Book Search - info,title,{authors},[isbn, [publisher,[sort order]]];
-            case "info":
-               if (request.length < 3) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  for (int i  = request.length; i < 3; i++) {
-                     if (i == 1) {
-                        missingParameters.add(missingParameters.size(), "title");
-                     } else if (i == 2) {
-                        missingParameters.add(missingParameters.size(), "{authors}");
-                     }
-                  }
-                  Request missingParam = new MissingParamsRequest("Library Book Search", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-               break;
-            //<5> Borrow Book - borrow,visitor ID,{id};
-            case "borrow":
-               if (request.length < 3) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  for (int i  = request.length; i < 3; i++) {
-                     if (i == 1) {
-                        missingParameters.add(missingParameters.size(), "visitor ID");
-                     } else if (i == 2) {
-                        missingParameters.add(missingParameters.size(), "{id}");
-                     }
-                  }
-                  Request missingParam = new MissingParamsRequest("Borrow Book", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-               break;
-            //<6> Find Borrowed Books - borrowed,visitor ID;
-            case "borrowed":
-               if (request.length < 2) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  missingParameters.add(0, "visitor ID");
-                  Request missingParam = new MissingParamsRequest("Find Borrowed Books", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-               break;
-            //<7> Return Book - return,visitor ID,id[,ids];
-            case "return":
-               if (request.length < 3) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  for (int i  = request.length; i < 3; i++) {
-                     if (i == 1) {
-                        missingParameters.add(missingParameters.size(), "visitor ID");
-                     } else if (i == 2) {
-                        missingParameters.add(missingParameters.size(), "id");
-                     }
-                  }
-                  Request missingParam = new MissingParamsRequest("Return Book", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-            //<8> Pay Fine - pay,visitor ID,amount;
-            case "pay":
-               if (request.length < 3) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  for (int i  = request.length; i < 3; i++) {
-                     if (i == 1) {
-                        missingParameters.add(missingParameters.size(), "visitor ID");
-                     } else if (i == 2) {
-                        missingParameters.add(missingParameters.size(), "amount");
-                     }
-                  }
-                  Request missingParam = new MissingParamsRequest("Pay Fine", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-               break;
-            //<9> Book Store Search - search,title,[{authors},isbn[,publisher[,sort order]]];
-            case "search":
-               if (request.length < 2) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  missingParameters.add(0, "title");
-                  Request missingParam = new MissingParamsRequest("Book Store Search", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-               break;
-            //<10> Book Purchase - buy,quantity,id[,ids];
-            case "buy":
-               if (request.length < 3) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  for (int i  = request.length; i < 3; i++) {
-                     if (i == 1) {
-                        missingParameters.add(missingParameters.size(), "quantity");
-                     } else if (i == 2) {
-                        missingParameters.add(missingParameters.size(), "id");
-                     }
-                  }
-                  Request missingParam = new MissingParamsRequest("Book Purchase", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-               break;
-            //<11> Advance Time - advance,number-of-days[,number-of-hours];
-            case "advance":
-               if (request.length < 2) {
-                  ArrayList<String> missingParameters = new ArrayList<String>();
-                  missingParameters.add(0, "number-of-days");
-                  Request missingParam = new MissingParamsRequest("Advance Time", missingParameters);
-                  missingParam.execute();
-                  System.out.println(missingParam.response());
-               }
-               break;
-            //<12> Current Date & Time - datetime;
-            case "datetime":
-               // No possible potential missing parameter requests.
-               break;
-            //<13> Library Statistics Report - report[,days];
-            case "report":
-               // No possible potential missing parameter requests.
-               break;
+                     Request missingParam = new MissingParamsRequest("Register Visitor", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  } else {
+                     if (request[request.length - 1].endsWith(";")) {
+                        String firstName = request[1];
+                        String lastName = request[2];
+                        String address = request[3];
+                        String phoneNum = request[4];
+                        Request register = new RegisterVisitorRequest(self, firstName, lastName, address, phoneNum);
+                        register.execute();
+                        System.out.println(register.response());
+                     } else {
+                        Request partialRequest = new PartialRequest();
 
+                     }
+                  }
+                  break;
+               }
+               //<2> Begin Visit - arrive,visitor ID;
+               case "arrive":
+                  if (request.length < 2) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     missingParameters.add(0, "visitor ID");
+                     Request missingParam = new MissingParamsRequest("Begin Visit", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  break;
+               //<3> End Visit - depart,visitor ID;
+               case "depart":
+                  if (request.length < 2) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     missingParameters.add(0, "visitor ID");
+                     Request missingParam = new MissingParamsRequest("End Visit", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  break;
+               //<4> Library Book Search - info,title,{authors},[isbn, [publisher,[sort order]]];
+               case "info":
+                  if (request.length < 3) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     for (int i = request.length; i < 3; i++) {
+                        if (i == 1) {
+                           missingParameters.add(missingParameters.size(), "title");
+                        } else if (i == 2) {
+                           missingParameters.add(missingParameters.size(), "{authors}");
+                        }
+                     }
+                     Request missingParam = new MissingParamsRequest("Library Book Search", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  break;
+               //<5> Borrow Book - borrow,visitor ID,{id};
+               case "borrow":
+                  if (request.length < 3) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     for (int i = request.length; i < 3; i++) {
+                        if (i == 1) {
+                           missingParameters.add(missingParameters.size(), "visitor ID");
+                        } else if (i == 2) {
+                           missingParameters.add(missingParameters.size(), "{id}");
+                        }
+                     }
+                     Request missingParam = new MissingParamsRequest("Borrow Book", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  break;
+               //<6> Find Borrowed Books - borrowed,visitor ID;
+               case "borrowed":
+                  if (request.length < 2) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     missingParameters.add(0, "visitor ID");
+                     Request missingParam = new MissingParamsRequest("Find Borrowed Books", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  break;
+               //<7> Return Book - return,visitor ID,id[,ids];
+               case "return":
+                  if (request.length < 3) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     for (int i = request.length; i < 3; i++) {
+                        if (i == 1) {
+                           missingParameters.add(missingParameters.size(), "visitor ID");
+                        } else if (i == 2) {
+                           missingParameters.add(missingParameters.size(), "id");
+                        }
+                     }
+                     Request missingParam = new MissingParamsRequest("Return Book", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  //<8> Pay Fine - pay,visitor ID,amount;
+               case "pay":
+                  if (request.length < 3) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     for (int i = request.length; i < 3; i++) {
+                        if (i == 1) {
+                           missingParameters.add(missingParameters.size(), "visitor ID");
+                        } else if (i == 2) {
+                           missingParameters.add(missingParameters.size(), "amount");
+                        }
+                     }
+                     Request missingParam = new MissingParamsRequest("Pay Fine", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  break;
+               //<9> Book Store Search - search,title,[{authors},isbn[,publisher[,sort order]]];
+               case "search":
+                  if (request.length < 2) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     missingParameters.add(0, "title");
+                     Request missingParam = new MissingParamsRequest("Book Store Search", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  break;
+               //<10> Book Purchase - buy,quantity,id[,ids];
+               case "buy":
+                  if (request.length < 3) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     for (int i = request.length; i < 3; i++) {
+                        if (i == 1) {
+                           missingParameters.add(missingParameters.size(), "quantity");
+                        } else if (i == 2) {
+                           missingParameters.add(missingParameters.size(), "id");
+                        }
+                     }
+                     Request missingParam = new MissingParamsRequest("Book Purchase", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  break;
+               //<11> Advance Time - advance,number-of-days[,number-of-hours];
+               case "advance":
+                  if (request.length < 2) {
+                     ArrayList<String> missingParameters = new ArrayList<String>();
+                     missingParameters.add(0, "number-of-days");
+                     Request missingParam = new MissingParamsRequest("Advance Time", missingParameters);
+                     missingParam.execute();
+                     System.out.println(missingParam.response());
+                  }
+                  break;
+               //<12> Current Date & Time - datetime;
+               case "datetime":
+                  // No possible potential missing parameter requests.
+                  break;
+               //<13> Library Statistics Report - report[,days];
+               case "report":
+                  // No possible potential missing parameter requests.
+                  break;
+
+            }
          }
       }
-
-
    }
 }
