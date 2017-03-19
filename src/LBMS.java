@@ -1,17 +1,21 @@
 import java.io.IOException;
 import java.util.*;
 
+
 public class LBMS {
    public static int MAX_BOOKS = 5;
    private Date startupDate;
    private Date time;
    private HashMap<String, Book> books;
-   private Set<Visit> visits;
+   private ArrayList<Visit> visits;
    private HashMap<String, Visitor> visitors;
 
    public LBMS(){
       this.books = new HashMap<String, Book>();
       this.visitors = new HashMap<String, Visitor>();
+      this.visits = new ArrayList<Visit>();
+      //TODO: REPLACE! JUST HERE TO HELP!
+      this.time = new Date();
 
    }
    //GETTERS AND SETTERS
@@ -31,7 +35,7 @@ public class LBMS {
       this.books.put(book.getIsbn(), book);
    }
 
-   public Set<Visit> getVisits() {
+   public ArrayList<Visit> getVisits() {
       return visits;
    }
 
@@ -224,21 +228,17 @@ public class LBMS {
                      missingParam.execute();
                      System.out.println(missingParam.response());
                   } else {
-                     if (request[request.length - 1].endsWith(";")) {
                         String firstName = request[1];
                         String lastName = request[2];
                         String address = request[3];
                         String phoneNum = request[4];
+                        phoneNum = phoneNum.substring(0,phoneNum.length()-1);
                         Request register = new RegisterVisitorRequest(self, firstName, lastName, address, phoneNum);
                         register.execute();
                         System.out.println(register.response());
-                     } else {
-                        Request partialRequest = new PartialRequest();
-
                      }
                   }
                   break;
-               }
                //<2> Begin Visit - arrive,visitor ID;
                case "arrive":
                   if (request.length < 2) {
@@ -247,6 +247,12 @@ public class LBMS {
                      Request missingParam = new MissingParamsRequest("Begin Visit", missingParameters);
                      missingParam.execute();
                      System.out.println(missingParam.response());
+                  }else{
+                     String visitorId = request[1];
+                     visitorId= visitorId.substring(0,visitorId.length()-1);
+                     Request beginVisitRequest = new BeginVisitRequest(self, visitorId);
+                     beginVisitRequest.execute();
+                     System.out.println(beginVisitRequest.response());
                   }
                   break;
                //<3> End Visit - depart,visitor ID;
@@ -257,6 +263,12 @@ public class LBMS {
                      Request missingParam = new MissingParamsRequest("End Visit", missingParameters);
                      missingParam.execute();
                      System.out.println(missingParam.response());
+                  }else{
+                     String visitorId = request[1];
+                     visitorId= visitorId.substring(0,visitorId.length()-1);
+                     Request endVisitRequest = new EndVisitRequest(self, visitorId);
+                     endVisitRequest.execute();
+                     System.out.println(endVisitRequest.response());
                   }
                   break;
                //<4> Library Book Search - info,title,{authors},[isbn, [publisher,[sort order]]];
@@ -273,6 +285,43 @@ public class LBMS {
                      Request missingParam = new MissingParamsRequest("Library Book Search", missingParameters);
                      missingParam.execute();
                      System.out.println(missingParam.response());
+                  }else{
+                     String isbn = null;
+                     String sortOrder = null;
+                     String publisher = null;
+                     String title = request[1];
+                     boolean authorReading = true;
+                     boolean gotPublisher = false;
+                     String authors = "";
+                     for(int i=2; i < request.length; i++){
+                        if(authorReading) {
+                           String potentialAuthor = request[i];
+                           //check if it's an isbn
+                           if (potentialAuthor.matches("[-+]?\\d*\\.?\\d+")) {
+                              authorReading = false;
+                              isbn = potentialAuthor;
+                              //remove the comma on the last added author
+                              authors = authors.substring(0,authors.length()-1);
+                              if(authors.endsWith(";")){
+                                 authors = authors.substring(0,authors.length()-1);
+                              }
+                           }else{
+                              authors += potentialAuthor + ",";
+                           }
+                        }else if(!gotPublisher){
+                           publisher = request[i];
+                           if(publisher.endsWith(";")){
+                              publisher = publisher.substring(0,publisher.length()-1);
+                           }
+                           gotPublisher = true;
+                        }else{
+                           sortOrder = request[i];
+                           sortOrder = sortOrder.substring(0,sortOrder.length()-1);
+                        }
+                     }
+                     Request libraryBookSearchRequest = new LibraryBookSearchRequest(self, title, authors, isbn, publisher, sortOrder);
+                     libraryBookSearchRequest.execute();
+                     System.out.println(libraryBookSearchRequest.response());
                   }
                   break;
                //<5> Borrow Book - borrow,visitor ID,{id};

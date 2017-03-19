@@ -43,9 +43,9 @@ public class EndVisitRequest implements Request {
             if ((this.visitor.isVisiting())) {
                 //If the visitor visiting, and in the LBMS, it is valid
                 this.visitDate = lbms.getTime();
-                this.visitor.endVisit();
                 this.visit = this.visitor.getCurrentVisit();
                 this.visit.endVisit(this.visitDate);
+                this.visitor.endVisit();
             } else {
                 this.isInvalidId = true;
             }

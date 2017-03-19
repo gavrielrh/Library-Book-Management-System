@@ -100,7 +100,6 @@ public class Visitor {
      * @throws AssertionError if th visitor isn't visiting
      */
     public void setCurrentVisit(Visit visit){
-        assert this.isVisiting;
         this.currentVisit = visit;
     }
 

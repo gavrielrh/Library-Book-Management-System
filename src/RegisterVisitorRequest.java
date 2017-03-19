@@ -69,7 +69,7 @@ public class RegisterVisitorRequest implements Request {
         if (this.duplicateRegistration){
             return "register,duplicate;";
         }else if(this.registeredSuccessfully){
-            return "register," + this.uniqueId + lbms.getTime();
+            return "register," + this.uniqueId + "," + lbms.getTime();
         }else{
             return "Should never happen";
         }
