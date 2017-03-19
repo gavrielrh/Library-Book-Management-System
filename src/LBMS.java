@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 
@@ -73,9 +74,8 @@ public class LBMS {
     * @return return string of time elapsed
     */
    public String advanceTime(Date elapsedTime){
-      this.time.after(elapsedTime);
-
-      return elapsedTime.toString();
+      //todo
+      return null;
    }
 
    public ArrayList<String> getVisitorIds(){
@@ -96,14 +96,20 @@ public class LBMS {
       String report = "";
       report += String.format("Number of books currently owned by LBMS: %d\n", this.books.size());
       report += String.format("Number of unique visitors: %d/\n", this.visitors.size());
-      report += String.format("Average time per library visit: %f\n", null);
+      report += String.format("Average time per library visit: %f\n", Integer.toString(averageVisitDuration()));
       report += String.format("Books purchased: %d\n", null);
       report += String.format("Fines collected: %f\n", null);
 
       return report;
    }
 
-
+   public int averageVisitDuration(){
+      int sum = 0;
+      for (Visit v: visits){
+         sum += v.getVisitDuration();
+      }
+      return sum/visits.size();
+   }
    public boolean hasVisitor(String visitorId){
       return this.visitors.containsKey(visitorId);
    }
