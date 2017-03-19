@@ -62,7 +62,7 @@ public class EndVisitRequest implements Request {
         }else{
             return "depart," + this.visitorId + "," +
                     this.getVisitTime() + "," +
-                    this.visit.getVisitDuration() + ";";
+                    this.visit.getVisitDuration() + "minutes;";
         }
     }
 

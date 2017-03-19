@@ -1,4 +1,7 @@
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -9,10 +12,10 @@ public class Visit {
 
     /* Fields for a Visit */
     private Visitor visitor;
-    private Date visitStartDate;
-    private Date visitEndDate;
+    private String visitStartDate;
+    private String visitEndDate;
     private boolean isComplete;
-
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     /**
      * Constructor for Visitor
      * @param visitor - the visitor that is visiting
@@ -20,7 +23,8 @@ public class Visit {
      */
     public Visit(Visitor visitor, Date visitStartDate){
         this.visitor = visitor;
-        this.visitStartDate = visitStartDate;
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        this.visitStartDate = dateFormat.format(visitStartDate);
         // initially the visit isn't complete
         this.visitEndDate = null;
         this.isComplete = false;
@@ -31,7 +35,8 @@ public class Visit {
      * @param visitEndDate
      */
     public void endVisit(Date visitEndDate){
-        this.visitEndDate = visitEndDate;
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        this.visitEndDate = dateFormat.format(visitEndDate);
         this.isComplete = true;
     }
 
@@ -40,10 +45,19 @@ public class Visit {
      * of the duration
      * @return String representation of the duration of the visit
      */
-    public String getVisitDuration(){
+    public int getVisitDuration() {
         assert this.isComplete;
-        //TODO: Replace with the visit's duration
-        return "HH-MM-SS";
+        //Duration in minutes
+        Date start = null;
+        Date end = null;
+        try {
+            start = format.parse(this.visitStartDate);
+            end = format.parse(this.visitEndDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        int duration = (int)((end.getTime()-start.getTime())/1000*60);
+        return duration;
     }
 
 }
