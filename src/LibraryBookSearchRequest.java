@@ -55,22 +55,22 @@ public class LibraryBookSearchRequest implements Request {
         HashSet<Book> byAuthors = new HashSet<>();
         HashSet<Book> unfilteredResults = new HashSet<>();
 
-        if (!this.isbn.equals("*")) {
+        if (this.isbn != null) {
             byIsbn.add(this.lbms.getBooks().get(this.isbn));
         }
-        if (!this.title.equals("*")) {
+        if (this.title != null) {
             byTitle.addAll(
                     this.lbms.getBooks().entrySet().stream()
                             .filter(entry -> this.title.equals(entry.getValue().getTitle()))
                             .map(Map.Entry::getValue).collect(Collectors.toList()));
         }
-        if (!this.publisher.equals("*")) {
+        if (this.publisher != null) {
             byPublisher.addAll(
                     this.lbms.getBooks().entrySet().stream()
                             .filter(entry -> this.publisher.equals(entry.getValue().getPublisher()))
                             .map(Map.Entry::getValue).collect(Collectors.toList()));
         }
-        if (!this.authors.contains("*")) {
+        if (this.authors != null) {
             byAuthors.addAll(
                     this.lbms.getBooks().entrySet().stream()
                             .filter(entry -> Arrays.asList(entry.getValue().getAuthors()).containsAll(this.authors))
