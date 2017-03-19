@@ -9,7 +9,11 @@ public class LBMS {
    private Set<Visit> visits;
    private HashMap<String, Visitor> visitors;
 
+   public LBMS(){
+      this.books = new HashMap<String, Book>();
+      this.visitors = new HashMap<String, Visitor>();
 
+   }
    //GETTERS AND SETTERS
    public Date getTime() {
       return time;
@@ -166,6 +170,7 @@ public class LBMS {
     * @param args - not used
      */
    public static void main(String[] args) {
+      LBMS self = new LBMS();
       Scanner inputRequest = new Scanner(System.in);
       while(true) {
          String requestLine = inputRequest.nextLine();
@@ -209,6 +214,14 @@ public class LBMS {
                   Request missingParam = new MissingParamsRequest("Register Visitor", missingParameters);
                   missingParam.execute();
                   System.out.println(missingParam.response());
+               }else{
+                  String firstName = request[1];
+                  String lastName = request[2];
+                  String address = request[3];
+                  String phoneNum = request[4];
+                  Request register = new RegisterVisitorRequest(self, firstName, lastName, address, phoneNum);
+                  register.execute();
+                  System.out.println(register.response());
                }
                break;
             //<2> Begin Visit - arrive,visitor ID;

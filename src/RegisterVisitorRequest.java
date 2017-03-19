@@ -80,7 +80,7 @@ public class RegisterVisitorRequest implements Request {
      *
      * @return String representation of the 10 digit Id.
      */
-    public String generateId(){
+     private String generateId(){
         ArrayList<String> visitorIds = this.lbms.getVisitorIds();
         Random rnd = new Random();
         int n = 100000000 + rnd.nextInt(900000000);
@@ -93,6 +93,9 @@ public class RegisterVisitorRequest implements Request {
             n = 100000000 + rnd.nextInt(900000000);
             stringId = Integer.toString(n);
         }
-        return stringId;
+
+         String lastDigit = Integer.toString(((int) Math.floor(Math.random() * (10))));
+         stringId += lastDigit;
+         return stringId;
     }
 }
