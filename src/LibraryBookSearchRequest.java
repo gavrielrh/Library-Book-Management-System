@@ -1,3 +1,10 @@
+/*
+ * File: LibraryBookSearchRequest.java
+ * Author: Gavriel Rachael-Homann (gxr2329@rit.edu)
+ *
+ * ConcreteCommand for searching for books matching given parameters.
+ */
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,6 +54,9 @@ public class LibraryBookSearchRequest implements Request {
         this.searchResults = new HashSet<>();
     }
 
+    /**
+     * Sets internal searchResults based on query results.
+     */
     @Override
     public void execute() {
         HashSet<Book> byIsbn = new HashSet<>();
@@ -107,6 +117,16 @@ public class LibraryBookSearchRequest implements Request {
         }
     }
 
+    /**
+     * n is the number of books that will follow
+     * id is the identifier for the book
+     * If no books were found, n will be 0 and no books will follow in the string
+     * <p>
+     * If the specified sort order doesn't match one of the expected values
+     * return info,invalid-sort-order;
+     *
+     * @return info, n, [<nl>,number of copies available,id, book]{0..n};
+     */
     @Override
     public String response() {
         String message = "info,";
