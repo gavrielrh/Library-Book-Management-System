@@ -81,10 +81,9 @@ public class LibraryBookSearchRequest implements Request {
                             .map(Map.Entry::getValue).collect(Collectors.toList()));
         }
         if (this.authors != null) {
-            byAuthors.addAll(
-                    this.lbms.getBooks().entrySet().stream()
-                            .filter(entry -> Arrays.asList(entry.getValue().getAuthors()).containsAll(this.authors))
-                            .map(Map.Entry::getValue).collect(Collectors.toList()));
+            byAuthors.addAll(this.lbms.getBooks().entrySet().stream()
+                    .filter(entry -> !Collections.disjoint(new ArrayList<>(Arrays.asList(entry.getValue().getAuthors())), this.authors))
+                    .map(Map.Entry::getValue).collect(Collectors.toList()));
         }
 
         unfilteredResults.addAll(byIsbn);
@@ -132,24 +131,28 @@ public class LibraryBookSearchRequest implements Request {
         String message = "info,";
 
         List<Book> sortedBooks = new ArrayList<>(searchResults);
-        switch (this.sortOrder) {
-            case "title":
-                Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByTitleFunc);
-                break;
-            case "publish-date":
-                Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByPublicationDateFunc);
-                break;
-            case "book-status":
-                Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByAvailabilityFunc);
-                break;
-            default:
-                return "info,invalid-sort-order";
+
+        if (this.sortOrder != null) {
+            switch (this.sortOrder) {
+                case "title":
+                    Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByTitleFunc);
+                    break;
+                case "publish-date":
+                    Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByPublicationDateFunc);
+                    break;
+                case "book-status":
+                    Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByAvailabilityFunc);
+                    break;
+                default:
+                    return "info,invalid-sort-order";
+            }
         }
 
         message += searchResults.size();
 
         for (Book book : sortedBooks) {
-            message += "<nl>" + book.getIsbn() + ",";
+            message += ",<nl>," + book.getCopiesAvailable() + ",";
+            message += book.getIsbn() + ",";
             message += "\"" + book.getTitle() + "\",";
             message += "{";
             for (String author : book.getAuthors()) {
@@ -162,7 +165,7 @@ public class LibraryBookSearchRequest implements Request {
             message += book.getPageCount();
         }
 
-        return message;
+        return message + ";";
     }
 
     /**
