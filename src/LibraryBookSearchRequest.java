@@ -50,7 +50,9 @@ public class LibraryBookSearchRequest implements Request {
         this.publisher = publisher;
         this.sortOrder = sortOrder;
         this.authors = new HashSet<>();
-        Collections.addAll(this.authors, authors.split(","));
+        if (authors != null) {
+            Collections.addAll(this.authors, authors.split(","));
+        }
         this.searchResults = new HashSet<>();
     }
 

@@ -296,21 +296,42 @@ public class LBMS {
                      String isbn = null;
                      String sortOrder = null;
                      String publisher = null;
-                     String title = requestLine.split("info,")[1].split(",\\{}")[0];
+                      String authors = null;
+                      int removeIdx = 0;
+                      String title = requestLine.split("info,")[1].split(",[{\\*].+")[0];
+                      removeIdx += "info".length() + title.length() + 2;
 
-                     String authors = requestLine.split(",\\{")[1].split("\\}")[0];
+                      if (requestLine.charAt(removeIdx) == '*') {
+                          removeIdx += 2;
+                      } else {
+                          String authorPart = requestLine.substring(removeIdx).split("}")[0];
+                          authors = authorPart.substring(1);
+                          removeIdx += authors.length() + 3;
+                      }
 
-                     if (request.length > 3) {
-                        String optionalPartsStr = requestLine.split("}")[1];
-                        optionalPartsStr = optionalPartsStr.substring(1, optionalPartsStr.length() - 1);
+                      String optionalPartsStr = requestLine.substring(removeIdx);
+                      if (!optionalPartsStr.isEmpty()) {
+                          optionalPartsStr = optionalPartsStr.substring(0, optionalPartsStr.length() - 1);
+                          System.out.println("optional parts: " + optionalPartsStr);
 
-                        String[] optionalParts = optionalPartsStr.split(",");
+                          String[] optionalParts = optionalPartsStr.split(",");
 
-                        isbn = optionalParts[0].substring(1, optionalParts[0].length());
-                        publisher = optionalParts.length > 1 ?
-                                optionalParts[1].substring(2, optionalParts[1].length()) : null;
-                        sortOrder = optionalParts.length > 2 ?
-                                optionalParts[2].substring(1, optionalParts[2].length() - 3) : null;
+
+                          if (optionalParts.length > 0) {
+                              isbn = optionalParts[0].equals("*") ? null : optionalParts[0];
+                              publisher = optionalParts.length > 1 ? optionalParts[1].substring(1, optionalParts[1].length()) : null;
+                              sortOrder = optionalParts.length > 2 ? optionalParts[2] : null;
+                          }
+                      }
+
+                      if (isbn != null) {
+                          System.out.println("isbn: " + isbn);
+                      }
+                      if (publisher != null) {
+                          System.out.println("pub: " + publisher);
+                      }
+                      if (sortOrder != null) {
+                          System.out.println("sort: " + sortOrder);
                      }
 
                      Request libraryBookSearchRequest = new LibraryBookSearchRequest(self, title, authors, isbn, publisher, sortOrder);
