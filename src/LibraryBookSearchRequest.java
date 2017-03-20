@@ -133,7 +133,7 @@ public class LibraryBookSearchRequest implements Request {
         String message = "info,";
 
         List<Book> sortedBooks = new ArrayList<>(searchResults);
-        if (sortedBooks.get(0) == null) {
+        if (sortedBooks.isEmpty() || sortedBooks.get(0) == null) {
             return "info,0;";
         }
 

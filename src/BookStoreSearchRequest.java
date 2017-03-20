@@ -164,6 +164,7 @@ public class BookStoreSearchRequest implements Request {
             message = message.substring(0, message.length() - 1);
             message += "},";
             message += getPublishedDate(book) + ",\n";
+            id++;
         }
 
         return message + ";";
