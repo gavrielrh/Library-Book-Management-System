@@ -39,15 +39,10 @@ public class LBMS {
     /**
      * LBMS Constructor
      *
-     * @param timeToSet - the number of milliseconds that have elapsed since January 1, 1970.
-     *                  - this is used to set the time to the previous LBMS time on start up.
-     *                  - if it is "0", this is LBMS first time starting up.
+     *
      * @precondition -  timeToSet is stored in "data/SystemDate.txt"
      */
-    public LBMS(long timeToSet) {
-
-        // LBMS first time starting up if it's time to set is 0. Used as help in constructor
-        boolean firstTime = (timeToSet == 0);
+    public LBMS() {
 
 
         // LBMS stores its' books in a HashMap<String bookId (isbn), Book bookObjectItself>
@@ -62,11 +57,7 @@ public class LBMS {
         this.visits = new ArrayList<Visit>();
 
         //Set LBMS to current Date if it's the first time running LBMS
-        if (firstTime) {
-            this.time = new Date();
-        } else {
-            this.time = new Date(timeToSet);
-        }
+        this.time = new Date();
     }
 
     /**
@@ -135,9 +126,95 @@ public class LBMS {
     }
 
 
-    //TODO: I'm considering removing this and just having the constructor/main method handle all the starting up stuff.
+
     public void startup() {
-        //TODO: or constructor?
+       /* get all the LBMS book data */
+
+       File bookFile = new File("data/SystemBooks.txt");
+       //(String isbn, String title, String[] authors, String publisher, Date publishedDate, int pageCount, int total copies, int numCheckedOut);
+       try {
+          Scanner fileReaderBook = new Scanner(bookFile);
+          while(fileReaderBook.hasNext()) {
+             String line = fileReaderBook.nextLine();
+             String[] lineVals = line.split(",");
+             int numAuthors = lineVals.length - 5;
+             String[] authors = new String[numAuthors];
+             String isbn = lineVals[0];
+             String title = lineVals[1];
+             String publisher = lineVals[2];
+             long publishTime = Long.parseLong(lineVals[3]);
+             int pageCount = Integer.parseInt(lineVals[4]);
+             int totalCopies = Integer.parseInt(lineVals[5]);
+             int numCheckedOut = Integer.parseInt(lineVals[6]);
+             for(int i = 0; i < numAuthors; i++){
+                authors[i] = lineVals[i+7];
+             }
+             Date publishedDate = new Date(publishTime);
+             Book book = new Book(isbn, title, authors, publisher, publishedDate, pageCount, totalCopies, numCheckedOut);
+             this.addBook(book);
+          }
+
+       } catch (IOException e) {
+          e.printStackTrace();
+       }
+       //isbn,title,publisher,longDatePublished, intPageCount, author1, author2, ..authorn
+        /* get the LBMS date from the stored file */
+       File dateFile = new File("data/SystemDate.txt");
+
+       // initialize to 0, if no date is saved, it stays as 0.
+       long timeToSet = 0;
+       try {
+          Scanner fileReaderDate = new Scanner(dateFile);
+          if (fileReaderDate.hasNext()) {
+             timeToSet = fileReaderDate.nextLong();
+          } else {
+             timeToSet = 0;
+          }
+       } catch (IOException e) {
+          e.printStackTrace();
+       }
+
+       boolean firstTime = (timeToSet == 0);
+
+       if(!firstTime) {
+          this.time = new Date(timeToSet);
+       }
+        /* get the LBMS visitors from the stored file */
+       File visitorFile = new File("data/SystemVisitors.txt");
+       try {
+          Scanner fileReaderVisitor = new Scanner(visitorFile);
+          while(fileReaderVisitor.hasNext()) {
+             String line = fileReaderVisitor.nextLine();
+             String[] lineVals = line.split(",");
+             ArrayList<Transaction> booksOnLoan = new ArrayList<Transaction>();
+             //Brendan,Jones,4 Chapman Way, 978-325-0430, 220939402903,5,isbn,long,long,copyNum,
+
+
+             String firstName = lineVals[0];
+             String lastName = lineVals[1];
+             String address = lineVals[2];
+             String phoneNum = lineVals[3];
+             String uniqueId = lineVals[4];
+             int numBooks = Integer.parseInt(lineVals[5]);
+             for(int i = 0; i <= numBooks; i++){
+                String bookId = lineVals[6 + (4*i)];
+                long timeForBorrowed = Long.parseLong(lineVals[7 + (4*i)]);
+                long timeForDue = Long.parseLong(lineVals[8 + (4*i)]);
+                int copyNum = Integer.parseInt(lineVals[9 + (4*i)]);
+                Book bookToAdd = this.getBook(bookId);
+                Date dateBorrowed = new Date(timeForBorrowed);
+                Date dateDue = new Date(timeForDue);
+                Transaction transaction = new Transaction(this, bookToAdd, dateBorrowed, dateDue, copyNum);
+                this.addTransaction(transaction);
+                booksOnLoan.add(transaction);
+             }
+                Visitor visitor = new Visitor(firstName, lastName, address, phoneNum, uniqueId, booksOnLoan);
+               this.registerVisitor(visitor);
+          }
+       } catch (IOException e) {
+          e.printStackTrace();
+       }
+       HashMap<String, Visitor> visitorsToSet = new HashMap<String, Visitor>();
     }
 
     /**
@@ -146,7 +223,7 @@ public class LBMS {
     public void shutdown() {
 
 
-      /* Save the Date*/
+      /* Save the Date */
         try {
             PrintWriter dateWriter = new PrintWriter("data/SystemDate.txt", "UTF-8");
             dateWriter.println(this.time.getTime());
@@ -154,6 +231,42 @@ public class LBMS {
         } catch (IOException e) {
             System.out.println(e);
         }
+
+       /* save the Books */
+       try {
+          PrintWriter bookWriter = new PrintWriter("data/SystemBooks.txt", "UTF-8");
+          for(Book b : this.getBooks().values()) {
+             bookWriter.print(b.getIsbn());
+             bookWriter.print(",");
+             bookWriter.print(b.getTitle());
+             bookWriter.print(",");
+             bookWriter.print(b.getPublisher());
+             bookWriter.print(",");
+             bookWriter.print(b.getPublishedDate().getTime());
+             bookWriter.print(",");
+             bookWriter.print(b.getPageCount());
+             bookWriter.print(",");
+             bookWriter.print(b.getTotalCopies());
+             bookWriter.print(",");
+             bookWriter.print(b.getNumCheckedOut());
+             bookWriter.print(",");
+            for(int i = 0; i < b.getAuthors().length; i++){
+               if(i == b.getAuthors().length - 1){
+                  bookWriter.print(b.getAuthors()[i]);
+               }else{
+                  bookWriter.print(b.getAuthors()[i]);
+                  bookWriter.print(",");
+               }
+            }
+             bookWriter.println();
+             bookWriter.close();
+          }
+       } catch (IOException e) {
+          System.out.println(e);
+       }
+
+
+
         //TODO: More saving
     }
 
@@ -314,61 +427,17 @@ public class LBMS {
      */
     public static void main(String[] args) {
 
-      /* get the LBMS date from the stored file */
-        File dateFile = new File("data/SystemDate.txt");
 
-        // initialize to 0, if no date is saved, it stays as 0.
-        long timeToSet = 0;
-        try {
-            Scanner fileReaderDate = new Scanner(dateFile);
-            if (fileReaderDate.hasNext()) {
-                timeToSet = fileReaderDate.nextLong();
-            } else {
-                timeToSet = 0;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        /* get the LBMS visitors from the stored file */
-       File visitorFile = new File("data/SystemVisitors.txt");
-       try {
-          Scanner fileReaderVisitor = new Scanner(visitorFile);
-          if (fileReaderVisitor.hasNext()) {
-             String line = fileReaderVisitor.nextLine();
-             String[] lineVals = line.split(",");
-             ArrayList<Book> booksOnLoan = new ArrayList<Book>();
-             //Brendan,Jones,4 Chapman Way, 978-325-0430, 220939402903,5,
-             //(LBMS lbms, Book bookType, Visitor visitor, Date dateBorrowed, Date dueDate, int copyNum) {
-
-             String firstName = lineVals[0];
-             String lastName = lineVals[1];
-             String address = lineVals[2];
-             String phoneNum = lineVals[3];
-             String uniqueId = lineVals[4];
-             int numBooks = Integer.parseInt(lineVals[5]);
-             for(int i = 0; i <= numBooks; i++){
-                //TODO: FIND OUT BOOKS
-             }
-             Visitor visitor = new Visitor();
-
-          } else {
-             timeToSet = 0;
-          }
-       } catch (IOException e) {
-          e.printStackTrace();
-       }
-       HashMap<String, Visitor> visitorsToSet = new HashMap<String, Visitor>();
 
         //"start up" the system by creating the LBMS with the previous data.
-        LBMS self = new LBMS(timeToSet);
-
+        LBMS self = new LBMS();
         //get all of the books in LBMS
         try {
             self.seedInitialLibrary("./data/books.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
+       self.startup();
 
         //requests are from System.in
         Scanner inputRequest = new Scanner(System.in);

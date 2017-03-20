@@ -112,7 +112,7 @@ public class BorrowBookRequest implements Request {
             Book book = lbms.getBook(bookId);
             book.checkOutBook();
             int copyNum = book.getTotalCopies() - book.getNumCheckedOut();
-            Transaction transaction = new Transaction(this.lbms, book, this.visitor, this.dateBorrowed, this.dueDate, copyNum);
+            Transaction transaction = new Transaction(this.lbms, book, this.dateBorrowed, this.dueDate, copyNum);
             this.visitor.checkOutBook(transaction);
             this.lbms.addTransaction(transaction);
         }

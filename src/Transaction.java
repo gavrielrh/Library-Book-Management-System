@@ -24,10 +24,9 @@ public class Transaction {
      * @param dateBorrowed  -  date the book was taken out from the library, LMBS
      * @param dueDate  -  date the book is due back the the LMBS, at most 7 days after the dateBorrowed
      */
-    public Transaction(LBMS lbms, Book bookType, Visitor visitor, Date dateBorrowed, Date dueDate, int copyNum) {
+    public Transaction(LBMS lbms, Book bookType, Date dateBorrowed, Date dueDate, int copyNum) {
         this.lbms = lbms;
         this.bookType = bookType;
-        this.visitor = visitor;
         this.dateBorrowed = dateBorrowed;
         this.dueDate = dueDate;
         this.copyNum = copyNum;

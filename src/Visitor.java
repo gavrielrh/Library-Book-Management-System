@@ -38,10 +38,13 @@ public class Visitor {
         this.currentVisit = null;
     }
 
-    public Visitor(String firstName, String lastName, String address, String phoneNum, String uniqueId, ArrayList<Book> booksOnLoan){
+    public Visitor(String firstName, String lastName, String address, String phoneNum, String uniqueId, ArrayList<Transaction> booksOnLoan){
         this.firstName = firstName;
         this.lastName = lastName;
-        this.
+        this.address = address;
+        this.phoneNum = phoneNum;
+        this.uniqueId = uniqueId;
+        this.booksLoaned = booksOnLoan;
     }
 
     @Override

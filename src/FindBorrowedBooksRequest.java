@@ -13,7 +13,7 @@ public class FindBorrowedBooksRequest implements Request {
     private String visitorId;
     private Visitor visitor;
     private int numBorrowed;
-    private ArrayList<Book> booksCheckedOut;
+    private ArrayList<Transaction> booksCheckedOut;
 
     /* boolean information associated with the ConcreteCommand to help response */
     private boolean invalidId;
@@ -47,8 +47,8 @@ public class FindBorrowedBooksRequest implements Request {
         String response = "borrowed,";
         response += Integer.toString(this.numBorrowed);
         response += ",";
-        for(Book book : this.booksCheckedOut){
-
+        for(Transaction transaction : this.booksCheckedOut){
+            //TODO
         }
         return null;
     }
