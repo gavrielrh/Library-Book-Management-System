@@ -12,8 +12,8 @@ public class Visit {
 
     /* Fields for a Visit */
     private Visitor visitor;
-    private String visitStartDate;
-    private String visitEndDate;
+    private Date visitStartDate;
+    private Date visitEndDate;
     private boolean isComplete;
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     /**
@@ -23,11 +23,16 @@ public class Visit {
      */
     public Visit(Visitor visitor, Date visitStartDate){
         this.visitor = visitor;
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        this.visitStartDate = dateFormat.format(visitStartDate);
+        this.visitStartDate = visitStartDate;
         // initially the visit isn't complete
         this.visitEndDate = null;
         this.isComplete = false;
+    }
+
+    public Visit(Visitor visitor, Date visitStartDate, Date VisitEndDate){
+        this.visitor = visitor;
+        this.visitStartDate = visitStartDate;
+        this.visitEndDate = visitEndDate;
     }
 
     /**
@@ -36,7 +41,7 @@ public class Visit {
      */
     public void endVisit(Date visitEndDate){
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        this.visitEndDate = dateFormat.format(visitEndDate);
+        this.visitEndDate = visitEndDate;
         this.isComplete = true;
     }
 
@@ -47,17 +52,23 @@ public class Visit {
      */
     public long getVisitDuration() {
         assert this.isComplete;
-        //Duration in minutes
-            Date start = new Date();
-            Date end = new Date();
-            try {
-                start = format.parse(this.visitStartDate);
-                end = format.parse(this.visitEndDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            return (end.getTime()-start.getTime());
+        return this.visitEndDate.getTime() - this.visitStartDate.getTime();
     }
 
+    public boolean isComplete(){
+        return this.isComplete;
+    }
 
+    public Visitor getVisitor(){
+        return this.visitor;
+    }
+
+    public long getVisitStartTime(){
+        return this.visitStartDate.getTime();
+    }
+
+    public long getVisitEndTime(){
+        assert this.isComplete();
+        return this.visitEndDate.getTime();
+    }
 }

@@ -223,6 +223,22 @@ public class LBMS {
           e.printStackTrace();
        }
        HashMap<String, Visitor> visitorsToSet = new HashMap<String, Visitor>();
+
+       File visitFile = new File("data/SystemVisits.txt");
+       try {
+          Scanner fileReaderVisit = new Scanner(visitFile);
+          while(fileReaderVisit.hasNext()){
+             String[] values = fileReaderVisit.nextLine().split(",");
+             Visitor visitor = this.getVisitor(values[0]);
+             Date startDate = new Date(Long.parseLong(values[1]));
+             Date endDate = new Date(Long.parseLong(values[2]));
+             this.visits.add(new Visit(visitor, startDate, endDate));
+          }
+       }catch (IOException e){
+          e.printStackTrace();
+       }
+
+
     }
 
     /**
@@ -317,9 +333,26 @@ public class LBMS {
           System.out.println(e);
        }
 
+      /* Save the visitors */
+       try{
+          PrintWriter visitWriter = new PrintWriter("data/SystemVisits.txt", "UTF-8");
+          for(Visit v: this.visits){
+             visitWriter.write(v.getVisitor().getUniqueId());
+             visitWriter.write(",");
+             visitWriter.write(Long.toString(v.getVisitStartTime()));
+             if(v.isComplete()){
+                visitWriter.write(",");
+                visitWriter.write(Long.toString(v.getVisitEndTime()));
+                visitWriter.write("\n");
+             }else{
+                visitWriter.write("\n");
+             }
+          }
+          visitWriter.close();
+       }catch (IOException e){
+          System.out.println((e));
+       }
 
-
-        //TODO: More saving
     }
 
     /**
