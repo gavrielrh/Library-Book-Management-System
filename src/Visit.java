@@ -43,21 +43,21 @@ public class Visit {
     /**
      * getVisitDuration calculates the difference of start and end date's and returns an int version
      * of the duration
-     * @return int representation of the duration of the visit
+     * @return long representation of the duration of the visit
      */
-    public int getVisitDuration() {
+    public long getVisitDuration() {
         assert this.isComplete;
         //Duration in minutes
-        Date start = null;
-        Date end = null;
-        try {
-            start = format.parse(this.visitStartDate);
-            end = format.parse(this.visitEndDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        int duration = (int)((end.getTime()-start.getTime())/1000*60);
-        return duration;
+            Date start = new Date();
+            Date end = new Date();
+            try {
+                start = format.parse(this.visitStartDate);
+                end = format.parse(this.visitEndDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return (end.getTime()-start.getTime());
     }
+
 
 }

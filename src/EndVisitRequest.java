@@ -1,5 +1,6 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * EndVisitRequest represents a ConcreteCommand within the Command Design pattern.
@@ -62,7 +63,7 @@ public class EndVisitRequest implements Request {
         }else{
             return "depart," + this.visitorId + "," +
                     this.getVisitTime() + "," +
-                    this.visit.getVisitDuration() + "minutes;";
+                    this.getVisitDuration(this.visit.getVisitDuration()) + ";";
         }
     }
 
@@ -73,8 +74,17 @@ public class EndVisitRequest implements Request {
      */
     public String getVisitTime(){
         assert this.visitDate != null;
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss a");
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         return formatter.format(this.visitDate);
+    }
+
+    private String getVisitDuration(long millis){
+        return String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(millis),
+                TimeUnit.MILLISECONDS.toMinutes(millis) -
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
     }
 
 }
