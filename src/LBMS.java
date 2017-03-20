@@ -1,3 +1,17 @@
+/**
+ * Filename: LBMS.java
+ * @authors - Gavriel Rachel-Homann, gxr2329@rit.edu
+ *          - Brendan Jones, bpj1651@rit.edu
+ *          - Lucas Campbell, lxc7058@rit.edu
+ *          - Junwen Mai, jxm7861@rit.edu
+ *
+ * LBMS is a Library Book Management System consisting of only one library.
+ * LBMS has many visitors, that can loan/return books.
+ * Visitors may be fined if they have a late book.
+ *
+ */
+
+/* imports */
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -6,61 +20,120 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * LBMS is the system itself. Only one system is meant to be made, following the "Singleton" Deisgn Pattern
+ * The main method creates that Singleton LBMS and calls it "self"
+ */
 public class LBMS {
 
    /* The maximum amount of books LBMS allows visitors to take out */
    public static int MAX_BOOKS = 5;
+
+   /* LBMS Data */
    private Date time;
    private HashMap<String, Book> books;
    private ArrayList<Visit> visits;
    private HashMap<String, Visitor> visitors;
 
+   /**
+    * LBMS Constructor
+    * @param timeToSet - the number of milliseconds that have elapsed since January 1, 1970.
+    *                  - this is used to set the time to the previous LBMS time on start up.
+    *                  - if it is "0", this is LBMS first time starting up.
+    * @precondition -  timeToSet is stored in "data/SystemDate.txt"
+    */
    public LBMS(long timeToSet){
+
+      // LBMS first time starting up if it's time to set is 0. Used as help in constructor
       boolean firstTime = (timeToSet == 0);
+
+
+      //TODO: Is this all books or all books purchased?
+      // LBMS stores its' books in a HashMap<String bookId (isbn), Book bookObjectItself>
       this.books = new HashMap<String, Book>();
+
+      // LBMS stores its' visitors in a HashMap<String visitorId, Visitor visitorObjectItself>
       this.visitors = new HashMap<String, Visitor>();
+
       this.visits = new ArrayList<Visit>();
+
+      //Set LBMS to current Date if it's the first time running LBMS
       if(firstTime) {
          this.time = new Date();
       }else{
          this.time = new Date(timeToSet);
       }
    }
-   //GETTERS AND SETTERS
+
+    /**
+     * getTime returns the LBMS time. Used throughout other classes to help create Visits, loans, etc.
+     * @return - the Date object of the simiulated LBMS time.
+     */
    public Date getTime() {
       return time;
    }
 
+    /**
+     * setTime sets LBMS time to the Date object
+     * @param time - the Date object to set LBMS to.
+     */
    public void setTime(Date time) {
       this.time = time;
    }
 
+    /**
+     * getBooks returns the actual HashMap<String bookId (isbn), Book bookObjectItself> of LBMS books.
+     * @return - return the HashMap of the LBMS books.
+     */
    public HashMap<String, Book> getBooks() {
       return books;
    }
 
-   public void addBooks(Book book) {
+   /**
+    * addBook adds a Book to the LBMS itself
+    * @param book - the Book object itself to add
+     */
+   public void addBook(Book book) {
       this.books.put(book.getIsbn(), book);
    }
 
+   /**
+    * getVisits returns all of the Visit objects in LBMS.
+    * @return - ArrayList<Visit> of all the visits in LBMS.
+     */
    public ArrayList<Visit> getVisits() {
       return visits;
    }
 
+    /**
+     * addVisit adds a visit to LBMS. This is used in generating reports.
+     * @param visit - the Visit object itself to add
+     */
    public void addVisits(Visit visit) {
       this.visits.add(visit);
    }
 
+   /**
+    * getVisitors returns all of the registered visitors in LBMS.
+    * @return - HashMap<String visitorId, Visitor visitorObjectItself> for all the visitors registered in the LBMS.
+     */
    public HashMap<String, Visitor> getVisitors() {
       return visitors;
    }
 
-   public void startup(){
 
+   //TODO: I'm considering removing this and just having the constructor/main method handle all the starting up stuff.
+   public void startup(){
+      //TODO: or constructor?
    }
 
+   /**
+    * shutdown() saves all of the LBMS data to the appropriate .txt files
+    */
    public void shutdown(){
+
+
+      /* Save the Date*/
       try{
          PrintWriter dateWriter = new PrintWriter("data/SystemDate.txt", "UTF-8");
          dateWriter.println(this.time.getTime());
@@ -68,7 +141,7 @@ public class LBMS {
       } catch (IOException e) {
          System.out.println(e);
       }
-
+      //TODO: More saving
    }
 
    /**
@@ -89,10 +162,14 @@ public class LBMS {
     * @return return string of time elapsed
     */
    public String advanceTime(Date elapsedTime){
-      //todo
+      //TODO: logic for advancing time. I don't think this shoiuld take in a Date object, but rather a "long".
       return null;
    }
 
+   /**
+    * getVisitorIds gets all of the Ids of visitors registered in LBMS. This is used for making sure an ID is unique.
+    * @return - an ArrayList<String> of the visitorIds.
+     */
    public ArrayList<String> getVisitorIds(){
       ArrayList<String> visitorIds = new ArrayList<String>();
       Set<String> visitorNumIds = this.visitors.keySet();
@@ -102,11 +179,19 @@ public class LBMS {
       return visitorIds;
    }
 
-
+   /**
+    * generateVisitorReport creates and returns a report of all of the visitor data
+    * @return - String representation of Visitor Report
+     */
    public String generateVisitorReport(){
+      //TODO: get the actual report itself.
       return null;
    }
 
+   /**
+    * generateBookReport creates and returns a report of all of the Book data.
+    * @return - String representation of Book Report
+     */
    public String generateBookReport(){
       String report = "";
       report += String.format("Number of books currently owned by LBMS: %d\n", this.books.size());
@@ -118,6 +203,11 @@ public class LBMS {
       return report;
    }
 
+   /**
+    * averageVisitDuration gets the integer value of the average visit duration for all visits in LBMS.
+    * @return - the int value of the average visit duration in LBMS.
+    * //TODO: what does the int represent? miliseconds? minutes?
+     */
    public int averageVisitDuration(){
       int sum = 0;
       for (Visit v: visits){
@@ -125,6 +215,12 @@ public class LBMS {
       }
       return sum/visits.size();
    }
+
+    /**
+     * hasVisitor checks if a given visitorId is registered in the LBMS. This is useful for checking duplicates.
+     * @param visitorId - the String of the visitorId to check.
+     * @return - boolean value if the LBMS has the visitorId registered in the system.
+     */
    public boolean hasVisitor(String visitorId){
       return this.visitors.containsKey(visitorId);
    }
@@ -177,11 +273,11 @@ public class LBMS {
    }
 
     /**
-     *
-     * @param bookId -
-     * @return
+     * hasCopy checks if the LBMS has an available copy of the book requested by the String bookId (isbn)
+     * @param bookId - String value of the book's id (isbn).
+     * @return - boolean value if there is an avaiable copy of the book being requested.
      */
-   public boolean hasCopy(String bookId){
+   public boolean hasCopy(String bookId ){
       if(this.hasBook(bookId)){
          Book book = this.getBook(bookId);
          return book.isAvailable();
@@ -192,10 +288,15 @@ public class LBMS {
 
    /**
     * The main method in LBMS acts as the invoker in the Command Design Pattern.
+    * Running the main method "starts" the system.
     * @param args - not used
      */
    public static void main(String[] args) {
+
+      /* get the LBMS date from the stored file */
       File dateFile = new File("data/SystemDate.txt");
+
+      // initialize to 0, if no date is saved, it stays as 0.
       long timeToSet = 0;
       try {
          Scanner fileReader = new Scanner(dateFile);
@@ -207,17 +308,27 @@ public class LBMS {
       } catch (IOException e){
          e.printStackTrace();
       }
+
+      //"start up" the system by creating the LBMS with the previous data.
       LBMS self = new LBMS(timeToSet);
 
+      //get all of the books in LBMS
       try {
          self.seedInitialLibrary("./data/books.txt");
       } catch (IOException e) {
          e.printStackTrace();
       }
+
+      //requests are from System.in
       Scanner inputRequest = new Scanner(System.in);
+
       while(true) {
+
+         //get the request and split it by comma
          String requestLine = inputRequest.nextLine();
          String[] request = requestLine.split(",");
+
+         // All requests must end with ";". Otherwise it's a PartialRequest.
          if (!(request[request.length - 1].endsWith(";"))) {
             Request partialRequest = new PartialRequest();
             partialRequest.execute();
@@ -243,13 +354,19 @@ public class LBMS {
             *
             *
              */
+
+            //Slice off the ; in the first word for easier cases in switch statement.
             String firstWord = request[0];
             if(firstWord.endsWith(";")){
                firstWord = firstWord.substring(0,firstWord.length()-1);
             }
+
             switch (firstWord) {
+
                //<1> Register Visitor - register,first name,last name,address, phone-number;
                case "register": {
+
+                  //Find all missing parameters.
                   if (request.length < 5) {
                      ArrayList<String> missingParameters = new ArrayList<String>();
                      for (int i = request.length; i < 5; i++) {
@@ -266,11 +383,15 @@ public class LBMS {
                      Request missingParam = new MissingParamsRequest("Register Visitor", missingParameters);
                      missingParam.execute();
                      System.out.println(missingParam.response());
+
+                     // Begin visit is valid, get all necessary data.
                   } else {
                         String firstName = request[1];
                         String lastName = request[2];
                         String address = request[3];
                         String phoneNum = request[4];
+                        //slice off the ; ending the request.
+
                         phoneNum = phoneNum.substring(0,phoneNum.length()-1);
                         Request register = new RegisterVisitorRequest(self, firstName, lastName, address, phoneNum);
                         register.execute();
@@ -278,6 +399,8 @@ public class LBMS {
                      }
                   }
                   break;
+
+
                //<2> Begin Visit - arrive,visitor ID;
                case "arrive":
                   if (request.length < 2) {

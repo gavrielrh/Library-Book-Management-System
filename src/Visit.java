@@ -41,9 +41,9 @@ public class Visit {
     }
 
     /**
-     * getVisitDuration calculates the difference of start and end date's and returns a string version
+     * getVisitDuration calculates the difference of start and end date's and returns an int version
      * of the duration
-     * @return String representation of the duration of the visit
+     * @return int representation of the duration of the visit
      */
     public int getVisitDuration() {
         assert this.isComplete;
