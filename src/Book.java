@@ -43,6 +43,19 @@ public class Book {
         this.numCheckedOut = 0;
     }
 
+
+    public Book(Book book){
+        this.isbn = book.isbn;
+        this.title = book.title;
+        this.authors = book.authors;
+        this.publisher = book.publisher;
+        this.publishedDate = book.publishedDate;
+        this.pageCount = book.pageCount;
+        this.totalCopies = 0;
+        this.numCheckedOut = 0;
+    }
+
+
     /**
      * Constructor for Book
      *
@@ -53,6 +66,7 @@ public class Book {
      * @param publishedDate published date (month/day/year)
      * @param pageCount     page count
      */
+
     public Book(String isbn, String title, String[] authors, String publisher, Date publishedDate, int pageCount, int totalCopies, int numCheckedOut) {
         this.isbn = isbn;
         this.title = title;
@@ -64,6 +78,7 @@ public class Book {
         this.totalCopies = totalCopies;
         this.numCheckedOut = numCheckedOut;
     }
+
 
     /**
      * Gets the Book's isbn

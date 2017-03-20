@@ -125,6 +125,9 @@ public class LBMS {
         return visitors;
     }
 
+   public Book getBookFromStore(String isbn){
+      return this.bookStore.get(isbn);
+   }
 
 
     public void startup() {
@@ -323,7 +326,7 @@ public class LBMS {
      */
     public void seedInitialLibrary(String filename) throws IOException {
         List<Book> booksList = (List<Book>) Parser.readBooksFromFile(filename);
-        booksList.forEach(b -> bookStore.put(b.getIsbn(), b));
+        booksList.forEach(b -> this.bookStore.put(b.getIsbn(), b));
     }
 
     /**
@@ -484,6 +487,7 @@ public class LBMS {
         }
        self.startup();
 
+
         //requests are from System.in
         Scanner inputRequest = new Scanner(System.in);
 
@@ -525,6 +529,10 @@ public class LBMS {
                 if (firstWord.endsWith(";")) {
                     firstWord = firstWord.substring(0, firstWord.length() - 1);
                 }
+               String lastWord = request[request.length-1];
+               if (lastWord.endsWith(";")) {
+                  request[request.length-1] = lastWord.substring(0, lastWord.length() - 1);
+               }
 
                 switch (firstWord) {
 
@@ -780,6 +788,16 @@ public class LBMS {
                             Request missingParam = new MissingParamsRequest("Book Purchase", missingParameters);
                             missingParam.execute();
                             System.out.println(missingParam.response());
+                        }else{
+                           String quantityVal = request[1];
+                           int quantity = Integer.parseInt(quantityVal);
+                           ArrayList<String> isbns = new ArrayList<String>();
+                           for(int i = 2; i < request.length; i++){
+                              isbns.add(request[i]);
+                           }
+                           Request bookPurchaseRequest = new BookPurchaseRequest(self, quantity, isbns);
+                           bookPurchaseRequest.execute();
+                           System.out.println(bookPurchaseRequest.response());
                         }
                         break;
                     //<11> Advance Time - advance,number-of-days[,number-of-hours];
