@@ -163,4 +163,8 @@ public class Visitor {
         }
         return totalFines;
     }
+
+    public void payFine(double amount){
+
+    }
 }
