@@ -133,7 +133,7 @@ public class BookStoreSearchRequest implements Request {
         String message = "search,";
 
         List<Book> sortedBooks = new ArrayList<>(searchResults);
-        if (sortedBooks.get(0) == null) {
+        if (sortedBooks.isEmpty() || sortedBooks.get(0) == null) {
             return "search,0;";
         }
 
@@ -143,7 +143,7 @@ public class BookStoreSearchRequest implements Request {
                     Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByTitleFunc);
                     break;
                 case "publish-date":
-                    Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByPublicationDateFunc);
+                    Collections.sort(sortedBooks, Collections.reverseOrder(QueryStrategy.INSTANCE.queryByPublicationDateFunc));
                     break;
                 default:
                     return "info,invalid-sort-order";
@@ -164,9 +164,10 @@ public class BookStoreSearchRequest implements Request {
             message = message.substring(0, message.length() - 1);
             message += "},";
             message += getPublishedDate(book) + ",\n";
+            id++;
         }
 
-        return message + ";";
+        return message + ";"; // 	info,title,{authors},[isbn, [publisher,[sort order]]];
     }
 
     /**

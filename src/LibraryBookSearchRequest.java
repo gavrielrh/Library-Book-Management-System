@@ -133,7 +133,7 @@ public class LibraryBookSearchRequest implements Request {
         String message = "info,";
 
         List<Book> sortedBooks = new ArrayList<>(searchResults);
-        if (sortedBooks.get(0) == null) {
+        if (sortedBooks.isEmpty() || sortedBooks.get(0) == null) {
             return "info,0;";
         }
 
@@ -143,7 +143,7 @@ public class LibraryBookSearchRequest implements Request {
                     Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByTitleFunc);
                     break;
                 case "publish-date":
-                    Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByPublicationDateFunc);
+                    Collections.sort(sortedBooks, Collections.reverseOrder(QueryStrategy.INSTANCE.queryByPublicationDateFunc));
                     break;
                 case "book-status":
                     Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByAvailabilityFunc);

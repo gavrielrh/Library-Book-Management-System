@@ -656,10 +656,12 @@ public class LBMS {
                             if (!requestLine.isEmpty()) {
                                 String[] optionalParts = requestLine.split(",");
                                 isbn = optionalParts[1].equals("*") ? null : optionalParts[1];
-                                publisher = optionalParts.length > 2 ?
-                                        optionalParts[2].substring(1, optionalParts[2].length()) : null;
-                                sortOrder = optionalParts.length > 3 ?
-                                        optionalParts[3] : null;
+                                if (optionalParts.length > 2) {
+                                    publisher = optionalParts[2].equals("*") ? null : optionalParts[2];
+                                }
+                                if (optionalParts.length > 3) {
+                                    sortOrder = optionalParts[3].equals("*") ? null : optionalParts[3];
+                                }
                             }
 
                             Request libraryBookSearchRequest = new LibraryBookSearchRequest(self, title, authors, isbn, publisher, sortOrder);
@@ -774,8 +776,12 @@ public class LBMS {
                                 if (!requestLine.isEmpty()) {
                                     String[] optionalParts = requestLine.split(",");
                                     isbn = optionalParts[1].equals("*") ? null : optionalParts[1];
-                                    publisher = optionalParts.length > 2 ? optionalParts[2].substring(1, optionalParts[2].length()) : null;
-                                    sortOrder = optionalParts.length > 3 ? optionalParts[3] : null;
+                                    if (optionalParts.length > 2) {
+                                        publisher = optionalParts[2].equals("*") ? null : optionalParts[2];
+                                    }
+                                    if (optionalParts.length > 3) {
+                                        sortOrder = optionalParts[3].equals("*") ? null : optionalParts[3];
+                                    }
                                 }
                             }
 
