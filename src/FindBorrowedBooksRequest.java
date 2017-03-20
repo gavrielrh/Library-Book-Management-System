@@ -56,9 +56,10 @@ public class FindBorrowedBooksRequest implements Request {
             response += transaction.getBookType().getIsbn();
             response += ",";
             response += transaction.getBookType().getTitle();
+            response += ",";
             Date borrowDate = transaction.getDateBorrowed();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-            return formatter.format(borrowDate);
+            response +=  formatter.format(borrowDate);
         }
         response += ";";
         return response;

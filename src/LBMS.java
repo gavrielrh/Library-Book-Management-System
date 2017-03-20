@@ -691,7 +691,7 @@ public class LBMS {
                             missingParam.execute();
                             System.out.println(missingParam.response());
                         } else {
-                            String visitorId = request[2];
+                            String visitorId = request[1];
                             Request findBorrowedBooks = new FindBorrowedBooksRequest(self, visitorId);
                             findBorrowedBooks.execute();
                             System.out.println(findBorrowedBooks.response());
