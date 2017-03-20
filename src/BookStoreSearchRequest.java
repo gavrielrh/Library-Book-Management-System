@@ -1,8 +1,8 @@
 /*
- * File: LibraryBookSearchRequest.java
+ * File: BookStoreSearchRequest.java
  * Author: Gavriel Rachael-Homann (gxr2329@rit.edu)
  *
- * ConcreteCommand for searching for books matching given parameters.
+ * ConcreteCommand for searching for purchasable books matching given parameters.
  */
 
 import java.text.SimpleDateFormat;
@@ -10,12 +10,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * LibraryBookSearchRequest represents a ConcreteCommand within the Command Design pattern.
- * Executing the command searches for books owned by and available for borrowing within the LBMS.
+ * BookStoreSearchRequest represents a ConcreteCommand within the Command Design pattern.
+ * Executing the command searches for books available for purchase within the LBMS.
  * A "*" may be specified in place of any search parameter; any such parameter
  * should be ignored for the purpose of query matching.
  */
-public class LibraryBookSearchRequest implements Request {
+public class BookStoreSearchRequest implements Request {
 
     /* The LBMS itself so execute can call commands */
     private LBMS lbms;
@@ -31,7 +31,7 @@ public class LibraryBookSearchRequest implements Request {
     private Set<Book> searchResults;
 
     /**
-     * Constructor for the LibraryBookSearchRequest
+     * Constructor for the BookStoreSearchRequest
      *
      * @param lbms      the system itself. This is so execute can call lbms commands
      * @param title     the title of the book
@@ -42,8 +42,8 @@ public class LibraryBookSearchRequest implements Request {
      *                  alphanumerical from 0..1-A-Z, publish date will be newest first,
      *                  and book status will only show books with at least one copy available for check out.
      */
-    public LibraryBookSearchRequest(LBMS lbms, String title, String authors,
-                                    String isbn, String publisher, String sortOrder) {
+    public BookStoreSearchRequest(LBMS lbms, String title, String authors,
+                                  String isbn, String publisher, String sortOrder) {
         this.lbms = lbms;
         this.title = title;
         this.isbn = isbn;
@@ -68,22 +68,22 @@ public class LibraryBookSearchRequest implements Request {
         HashSet<Book> unfilteredResults = new HashSet<>();
 
         if (this.isbn != null) {
-            byIsbn.add(this.lbms.getBooks().get(this.isbn));
+            byIsbn.add(this.lbms.getBookStore().get(this.isbn));
         }
         if (this.title != null) {
             byTitle.addAll(
-                    this.lbms.getBooks().entrySet().stream()
+                    this.lbms.getBookStore().entrySet().stream()
                             .filter(entry -> this.title.equals(entry.getValue().getTitle()))
                             .map(Map.Entry::getValue).collect(Collectors.toList()));
         }
         if (this.publisher != null) {
             byPublisher.addAll(
-                    this.lbms.getBooks().entrySet().stream()
+                    this.lbms.getBookStore().entrySet().stream()
                             .filter(entry -> this.publisher.equals(entry.getValue().getPublisher()))
                             .map(Map.Entry::getValue).collect(Collectors.toList()));
         }
         if (this.authors != null) {
-            byAuthors.addAll(this.lbms.getBooks().entrySet().stream()
+            byAuthors.addAll(this.lbms.getBookStore().entrySet().stream()
                     .filter(entry -> !Collections.disjoint(new ArrayList<>(Arrays.asList(entry.getValue().getAuthors())), this.authors))
                     .map(Map.Entry::getValue).collect(Collectors.toList()));
         }
@@ -130,7 +130,7 @@ public class LibraryBookSearchRequest implements Request {
      */
     @Override
     public String response() {
-        String message = "info,";
+        String message = "search,";
 
         List<Book> sortedBooks = new ArrayList<>(searchResults);
 
@@ -142,9 +142,6 @@ public class LibraryBookSearchRequest implements Request {
                 case "publish-date":
                     Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByPublicationDateFunc);
                     break;
-                case "book-status":
-                    Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByAvailabilityFunc);
-                    break;
                 default:
                     return "info,invalid-sort-order";
             }
@@ -152,8 +149,9 @@ public class LibraryBookSearchRequest implements Request {
 
         message += searchResults.size();
 
+        int id = 0;
         for (Book book : sortedBooks) {
-            message += ",\n," + book.getCopiesAvailable() + ",";
+            message += id + ",,";
             message += book.getIsbn() + ",";
             message += "\"" + book.getTitle() + "\",";
             message += "{";
@@ -162,9 +160,7 @@ public class LibraryBookSearchRequest implements Request {
             }
             message = message.substring(0, message.length() - 1);
             message += "},";
-            message += book.getPublisher() + ",";
-            message += getPublishedDate(book) + ",";
-            message += book.getPageCount();
+            message += getPublishedDate(book) + ",\n";
         }
 
         return message + ";";
