@@ -58,6 +58,8 @@ public class LBMS {
 
         //Set LBMS to current Date if it's the first time running LBMS
         this.time = new Date();
+
+       this.transactions = new ArrayList<Transaction>();
     }
 
     /**
@@ -140,7 +142,7 @@ public class LBMS {
           while(fileReaderBook.hasNext()) {
              String line = fileReaderBook.nextLine();
              String[] lineVals = line.split(",");
-             int numAuthors = lineVals.length - 5;
+             int numAuthors = lineVals.length - 7;
              String[] authors = new String[numAuthors];
              String isbn = lineVals[0];
              String title = lineVals[1];
@@ -200,7 +202,7 @@ public class LBMS {
              String uniqueId = lineVals[4];
              int numBooks = Integer.parseInt(lineVals[5]);
              if(lineVals.length >=7) {
-                for (int i = 0; i <= numBooks; i++) {
+                for (int i = 0; i < numBooks; i++) {
                    String bookId = lineVals[6 + (4 * i)];
                    long timeForBorrowed = Long.parseLong(lineVals[7 + (4 * i)]);
                    long timeForDue = Long.parseLong(lineVals[8 + (4 * i)]);
@@ -208,7 +210,7 @@ public class LBMS {
                    Book bookToAdd = this.getBook(bookId);
                    Date dateBorrowed = new Date(timeForBorrowed);
                    Date dateDue = new Date(timeForDue);
-                   int amountPaid = Integer.parseInt(lineVals[10 + (4 * i)]);
+                   double amountPaid = Double.parseDouble(lineVals[10 + (4 * i)]);
                    Transaction transaction = new Transaction(this, bookToAdd, dateBorrowed, dateDue, copyNum, amountPaid);
                    this.addTransaction(transaction);
                    booksOnLoan.add(transaction);
@@ -307,6 +309,7 @@ public class LBMS {
                    }
                 }
              }
+             visitorWriter.print("\n");
           }
           visitorWriter.close();
        } catch (IOException e) {
@@ -565,7 +568,6 @@ public class LBMS {
                             String phoneNum = request[4];
                             //slice off the ; ending the request.
 
-                            phoneNum = phoneNum.substring(0, phoneNum.length() - 1);
                             Request register = new RegisterVisitorRequest(self, firstName, lastName, address, phoneNum);
                             register.execute();
                             System.out.println(register.response());
@@ -584,7 +586,6 @@ public class LBMS {
                             System.out.println(missingParam.response());
                         } else {
                             String visitorId = request[1];
-                            visitorId = visitorId.substring(0, visitorId.length() - 1);
                             Request beginVisitRequest = new BeginVisitRequest(self, visitorId);
                             beginVisitRequest.execute();
                             System.out.println(beginVisitRequest.response());
@@ -600,7 +601,6 @@ public class LBMS {
                             System.out.println(missingParam.response());
                         } else {
                             String visitorId = request[1];
-                            visitorId = visitorId.substring(0, visitorId.length() - 1);
                             Request endVisitRequest = new EndVisitRequest(self, visitorId);
                             endVisitRequest.execute();
                             System.out.println(endVisitRequest.response());
@@ -675,7 +675,7 @@ public class LBMS {
                             ArrayList<String> bookIds = new ArrayList<String>();
                             String visitorId = request[1];
                             for (int i = 2; i < request.length; i++) {
-                                bookIds.add(i, request[i]);
+                                bookIds.add(request[i]);
                             }
                             Request borrowBookRequest = new BorrowBookRequest(self, visitorId, bookIds);
                             borrowBookRequest.execute();

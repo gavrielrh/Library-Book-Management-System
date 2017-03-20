@@ -35,7 +35,7 @@ public class Transaction {
         this.amountPaid = 0.0;
     }
 
-    public Transaction(LBMS lbms, Book bookType, Date dateBorrowed, Date dueDate, int copyNum, int amountPaid) {
+    public Transaction(LBMS lbms, Book bookType, Date dateBorrowed, Date dueDate, int copyNum, double amountPaid) {
         this.lbms = lbms;
         this.bookType = bookType;
         this.dateBorrowed = dateBorrowed;

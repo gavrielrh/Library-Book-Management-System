@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -100,7 +101,30 @@ public class BorrowBookRequest implements Request {
 
     @Override
     public String response(){
-        return null;
+        String response = "borrow,";
+        boolean success = (!this.invalidVisitorId && !this.invalidBookId && !this.exceedBookLimit && !this.visitorHasFines);
+        if(success){
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+            response += formatter.format(this.dueDate);
+        }else if(invalidVisitorId){
+            response += "invalid-visitor-id";
+        }else if(invalidBookId){
+            response += "invalid-book-id,{";
+            for(int i = 0; i < this.bookIds.size(); i++){
+                if(i == this.bookIds.size() -1){
+                    response += this.bookIds.get(i) + "}";
+                }else{
+                    response += this.bookIds.get(i) + ",";
+                }
+            }
+        }else if(exceedBookLimit){
+            response += "book-limit-exceeded";
+        }else if(visitorHasFines) {
+            response += "outstanding-fine," + Double.toString(this.visitor.getFine());
+        }
+        response += ";";
+        return response;
+
     }
 
     /**

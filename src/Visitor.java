@@ -155,4 +155,12 @@ public class Visitor {
     public void checkOutBook(Transaction transaction){
         this.booksLoaned.add(transaction);
     }
+
+    public double getFine(){
+        double totalFines = 0.0;
+        for(Transaction t: this.booksLoaned){
+            totalFines += t.calculateFine();
+        }
+        return totalFines;
+    }
 }
