@@ -1,4 +1,6 @@
 /**
+ * File: Request.java
+ * @author: Brendan Jones, bpj1651@rit.edu
  * Interface for all the LBMS Requests
  * - Follows the Command design pattern
  * - Since all LMBS Requests have a response associated with it, the interface requires that

@@ -1,4 +1,6 @@
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -6,20 +8,24 @@ import java.util.regex.Pattern;
 
 
 public class LBMS {
+
+   /* The maximum amount of books LBMS allows visitors to take out */
    public static int MAX_BOOKS = 5;
-   private Date startupDate;
    private Date time;
    private HashMap<String, Book> books;
    private ArrayList<Visit> visits;
    private HashMap<String, Visitor> visitors;
 
-   public LBMS(){
+   public LBMS(long timeToSet){
+      boolean firstTime = (timeToSet == 0);
       this.books = new HashMap<String, Book>();
       this.visitors = new HashMap<String, Visitor>();
       this.visits = new ArrayList<Visit>();
-      //TODO: REPLACE! JUST HERE TO HELP!
-      this.time = new Date();
-
+      if(firstTime) {
+         this.time = new Date();
+      }else{
+         this.time = new Date(timeToSet);
+      }
    }
    //GETTERS AND SETTERS
    public Date getTime() {
@@ -55,6 +61,13 @@ public class LBMS {
    }
 
    public void shutdown(){
+      try{
+         PrintWriter dateWriter = new PrintWriter("data/SystemDate.txt", "UTF-8");
+         dateWriter.println(this.time.getTime());
+         dateWriter.close();
+      } catch (IOException e) {
+         System.out.println(e);
+      }
 
    }
 
@@ -182,7 +195,20 @@ public class LBMS {
     * @param args - not used
      */
    public static void main(String[] args) {
-      LBMS self = new LBMS();
+      File dateFile = new File("data/SystemDate.txt");
+      long timeToSet = 0;
+      try {
+         Scanner fileReader = new Scanner(dateFile);
+         if(fileReader.hasNext()){
+            timeToSet = fileReader.nextLong();
+         }else{
+            timeToSet = 0;
+         }
+      } catch (IOException e){
+         e.printStackTrace();
+      }
+      LBMS self = new LBMS(timeToSet);
+
       try {
          self.seedInitialLibrary("./data/books.txt");
       } catch (IOException e) {
@@ -359,6 +385,15 @@ public class LBMS {
                      Request missingParam = new MissingParamsRequest("Borrow Book", missingParameters);
                      missingParam.execute();
                      System.out.println(missingParam.response());
+                  }else{
+                     ArrayList<String> bookIds = new ArrayList<String>();
+                     String visitorId = request[1];
+                     for(int i = 2; i < request.length; i++){
+                        bookIds.add(i, request[i]);
+                     }
+                     Request borrowBookRequest = new BorrowBookRequest(self, visitorId, bookIds);
+                     borrowBookRequest.execute();
+                     System.out.println(borrowBookRequest.response());
                   }
                   break;
                //<6> Find Borrowed Books - borrowed,visitor ID;
@@ -369,6 +404,11 @@ public class LBMS {
                      Request missingParam = new MissingParamsRequest("Find Borrowed Books", missingParameters);
                      missingParam.execute();
                      System.out.println(missingParam.response());
+                  }else {
+                     String visitorId = request[2];
+                     Request findBorrowedBooks = new FindBorrowedBooksRequest(self, visitorId);
+                     findBorrowedBooks.execute();
+                     System.out.println(findBorrowedBooks.response());
                   }
                   break;
                //<7> Return Book - return,visitor ID,id[,ids];
@@ -447,6 +487,11 @@ public class LBMS {
                   // No possible potential missing parameter requests.
                   break;
 
+
+               //TODO: Replace this with the actual prompt for shutting down the system.
+               case "quit":
+                  self.shutdown();
+                  break;
             }
          }
       }

@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * BorrowBookRequest represents a ConcreteCommand within the Command Design pattern.
@@ -13,7 +13,7 @@ public class BorrowBookRequest implements Request {
 
     /* All of the required information to Borrow Books */
     private String visitorId;
-    private List<String> bookIds;
+    private ArrayList<String> bookIds;
     private Visitor visitor;
     private int numBooksRequested;
 
@@ -30,7 +30,7 @@ public class BorrowBookRequest implements Request {
      * @param visitorId - the Id of the visitor borrowing books.
      * @param bookIds - a List of bookIds that are being checked out.
      */
-    public BorrowBookRequest(LBMS lbms, String visitorId, List<String> bookIds){
+    public BorrowBookRequest(LBMS lbms, String visitorId, ArrayList<String> bookIds){
         this.visitorId = visitorId;
         this.bookIds = bookIds;
         this.lbms = lbms;
