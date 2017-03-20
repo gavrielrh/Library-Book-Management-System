@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -69,7 +70,10 @@ public class RegisterVisitorRequest implements Request {
         if (this.duplicateRegistration){
             return "register,duplicate;";
         }else if(this.registeredSuccessfully){
-            return "register," + this.uniqueId + "," + lbms.getTime();
+            String response = "register," + this.uniqueId + ",";
+            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+            response += formatter.format(this.lbms.getTime());
+            return response + ";";
         }else{
             return "Should never happen";
         }

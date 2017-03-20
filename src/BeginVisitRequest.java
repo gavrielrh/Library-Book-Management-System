@@ -79,7 +79,7 @@ public class BeginVisitRequest implements Request {
      */
     public String getVisitTime(){
         assert this.visitDate != null;
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss a");
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         return formatter.format(this.visitDate);
     }
 
@@ -90,7 +90,7 @@ public class BeginVisitRequest implements Request {
      */
     public String getVisitDate(){
         assert this.visitDate != null;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         return formatter.format(this.visitDate);
     }
 }
