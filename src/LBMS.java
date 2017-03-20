@@ -812,8 +812,9 @@ public class LBMS {
                         break;
                     //<12> Current Date & Time - datetime;
                     case "datetime":
-                        // No possible potential missing parameter requests.
-                        break;
+                       Request currentTime = new CurrentTimeRequest(self);
+                       currentTime.execute();
+                       System.out.println(currentTime.response());
                     //<13> Library Statistics Report - report[,days];
                     case "report":
                         // No possible potential missing parameter requests.
