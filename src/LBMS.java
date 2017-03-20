@@ -16,6 +16,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -33,6 +34,7 @@ public class LBMS {
     private HashMap<String, Book> bookStore;
     private ArrayList<Visit> visits;
     private HashMap<String, Visitor> visitors;
+    private ArrayList<Transaction> transactions;
 
     /**
      * LBMS Constructor
@@ -298,6 +300,14 @@ public class LBMS {
     }
 
     /**
+     * addTransaction adds the transaction object created when checking out a book
+     * @param transaction - the transaction object itself
+     */
+   public void addTransaction(Transaction transaction){
+      this.transactions.add(transaction);
+   }
+
+    /**
      * The main method in LBMS acts as the invoker in the Command Design Pattern.
      * Running the main method "starts" the system.
      * @param args - not used
@@ -310,15 +320,45 @@ public class LBMS {
         // initialize to 0, if no date is saved, it stays as 0.
         long timeToSet = 0;
         try {
-            Scanner fileReader = new Scanner(dateFile);
-            if (fileReader.hasNext()) {
-                timeToSet = fileReader.nextLong();
+            Scanner fileReaderDate = new Scanner(dateFile);
+            if (fileReaderDate.hasNext()) {
+                timeToSet = fileReaderDate.nextLong();
             } else {
                 timeToSet = 0;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        /* get the LBMS visitors from the stored file */
+       File visitorFile = new File("data/SystemVisitors.txt");
+       try {
+          Scanner fileReaderVisitor = new Scanner(visitorFile);
+          if (fileReaderVisitor.hasNext()) {
+             String line = fileReaderVisitor.nextLine();
+             String[] lineVals = line.split(",");
+             ArrayList<Book> booksOnLoan = new ArrayList<Book>();
+             //Brendan,Jones,4 Chapman Way, 978-325-0430, 220939402903,5,
+             //(LBMS lbms, Book bookType, Visitor visitor, Date dateBorrowed, Date dueDate, int copyNum) {
+
+             String firstName = lineVals[0];
+             String lastName = lineVals[1];
+             String address = lineVals[2];
+             String phoneNum = lineVals[3];
+             String uniqueId = lineVals[4];
+             int numBooks = Integer.parseInt(lineVals[5]);
+             for(int i = 0; i <= numBooks; i++){
+                //TODO: FIND OUT BOOKS
+             }
+             Visitor visitor = new Visitor();
+
+          } else {
+             timeToSet = 0;
+          }
+       } catch (IOException e) {
+          e.printStackTrace();
+       }
+       HashMap<String, Visitor> visitorsToSet = new HashMap<String, Visitor>();
 
         //"start up" the system by creating the LBMS with the previous data.
         LBMS self = new LBMS(timeToSet);

@@ -146,4 +146,10 @@ public class Book {
     public String toString(){
         return null;
     }
+
+
+    public void checkOutBook(){
+        this.numCheckedOut -= 1;
+    }
+
 }

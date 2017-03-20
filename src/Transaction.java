@@ -10,34 +10,29 @@ public class Transaction {
     /* The LBMS itself so the current date can be checked */
     private LBMS lbms;
 
-    private String isbn;
-    private String visitorID;
+    private Book bookType;
+    private Visitor visitor;
     private Date dateBorrowed;
     private Date dueDate;
+    private int copyNum;
 
     /**
      * Constructor for Transaction
      * @param lbms  -  The system itself. This is so execute can call lbms commands.
-     * @param isbn - 13 digit isbn (id)
-     * @param visitorID  - the Id of the visitor beginning a request.
+     * @param bookType - the Book object itself that is being loaned out.
+     * @param visitor  - the visitor beginning a request.
      * @param dateBorrowed  -  date the book was taken out from the library, LMBS
      * @param dueDate  -  date the book is due back the the LMBS, at most 7 days after the dateBorrowed
      */
-    public Transaction(LBMS lbms, String isbn, String visitorID, Date dateBorrowed, Date dueDate) {
+    public Transaction(LBMS lbms, Book bookType, Visitor visitor, Date dateBorrowed, Date dueDate, int copyNum) {
         this.lbms = lbms;
-        this.isbn = isbn;
-        this.visitorID = visitorID;
+        this.bookType = bookType;
+        this.visitor = visitor;
         this.dateBorrowed = dateBorrowed;
         this.dueDate = dueDate;
+        this.copyNum = copyNum;
     }
 
-    public String getIsbn(){
-        return isbn;
-    }
-
-    public String getVisitorID(){
-        return visitorID;
-    }
 
     public Date getDateBorrowed(){
         return dateBorrowed;

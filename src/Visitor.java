@@ -14,7 +14,7 @@ public class Visitor {
     private boolean isVisiting;
 
     /* ArrayList of Books that the Visitor has on loan */
-    private ArrayList<Book> booksLoaned;
+    private ArrayList<Transaction> booksLoaned;
 
     /* If the visitor is visiting, keep that Visit object as the current visit */
     private Visit currentVisit;
@@ -33,9 +33,15 @@ public class Visitor {
         this.address = address;
         this.phoneNum = phoneNum;
         this.uniqueId = uniqueId;
-        this.booksLoaned = new ArrayList<Book>();
+        this.booksLoaned = new ArrayList<Transaction>();
         this.isVisiting = false;
         this.currentVisit = null;
+    }
+
+    public Visitor(String firstName, String lastName, String address, String phoneNum, String uniqueId, ArrayList<Book> booksOnLoan){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.
     }
 
     @Override
@@ -112,12 +118,23 @@ public class Visitor {
         return this.booksLoaned.size();
     }
 
+    /**
+     * Returns whether or not the visitor has any fines
+     * @return boolean value for whether or not the visitor has fines
+     */
     public boolean hasFines(){
-        //TODO
-        return false;
+        double totalFines = 0.0;
+        for(Transaction t: this.booksLoaned){
+            totalFines += t.calculateFine();
+        }
+        return (totalFines > 0.0);
     }
 
-    public ArrayList<Book> getBooksLoaned(){
+    public ArrayList<Transaction> getBooksLoaned(){
         return this.booksLoaned;
+    }
+
+    public void checkOutBook(Transaction transaction){
+        this.booksLoaned.add(transaction);
     }
 }

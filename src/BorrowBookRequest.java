@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * BorrowBookRequest represents a ConcreteCommand within the Command Design pattern.
@@ -16,6 +17,9 @@ public class BorrowBookRequest implements Request {
     private ArrayList<String> bookIds;
     private Visitor visitor;
     private int numBooksRequested;
+
+    private Date dateBorrowed;
+    private Date dueDate;
 
     /* boolean information associated with the ConcreteCommand to help response */
     private boolean invalidBookId;
@@ -40,6 +44,8 @@ public class BorrowBookRequest implements Request {
         this.invalidVisitorId = false;
         this.visitorHasFines = false;
         this.visitor = null;
+        this.dateBorrowed = null;
+        this.dueDate = null;
     }
 
     /**
@@ -62,12 +68,13 @@ public class BorrowBookRequest implements Request {
                     if(this.visitor.hasFines()){
                         this.visitorHasFines = true;
                     }else{
+                        this.dateBorrowed = lbms.getTime();
+                        long timeForSevenDays = (long)(6.048e+8);
+                        this.dueDate = new Date(this.dateBorrowed.getTime() + timeForSevenDays);
                         this.checkOutBooks();
                     }
                 }
-
             } else {
-
                 this.invalidVisitorId = true;
             }
         }else{
@@ -102,7 +109,12 @@ public class BorrowBookRequest implements Request {
      */
     private void checkOutBooks(){
         for(String bookId: this.bookIds){
-            //TODO: Checkout each book
+            Book book = lbms.getBook(bookId);
+            book.checkOutBook();
+            int copyNum = book.getTotalCopies() - book.getNumCheckedOut();
+            Transaction transaction = new Transaction(this.lbms, book, this.visitor, this.dateBorrowed, this.dueDate, copyNum);
+            this.visitor.checkOutBook(transaction);
+            this.lbms.addTransaction(transaction);
         }
     }
 }
