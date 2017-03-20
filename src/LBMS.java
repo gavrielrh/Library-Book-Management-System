@@ -267,8 +267,9 @@ public class LBMS {
                }
             }
              bookWriter.println();
-             bookWriter.close();
+
           }
+          bookWriter.close();
        } catch (IOException e) {
           System.out.println(e);
        }

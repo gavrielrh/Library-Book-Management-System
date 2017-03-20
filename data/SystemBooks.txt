@@ -1,1 +1,2 @@
-9780736045100,Fitness Running,Human Kinetics,1041397200000,190,1,-1,Richard L. Brown, Joe Henderson
+9780736045100,Fitness Running,Human Kinetics,1041397200000,190,1,0,Richard L. Brown, Joe Henderson
+9781408855713,Harry Potter and the Deathly Hallows,Bloomsbury Publishing,1388552400000,619,1,0,J. K. Rowling
