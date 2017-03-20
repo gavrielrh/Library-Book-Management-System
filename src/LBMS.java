@@ -405,6 +405,13 @@ public class LBMS {
 
     /**
      *
+     */
+    public void setTime(long time){
+       this.time = new Date(time);
+    }
+
+    /**
+     *
      * @param visitorId - the String id of the visitor that is requested
      * @return the visitor object itself matching the visitorId
      * @throws AssertionError if the lbms does not have the visitor in it's registered visitors
@@ -811,6 +818,20 @@ public class LBMS {
                             Request missingParam = new MissingParamsRequest("Advance Time", missingParameters);
                             missingParam.execute();
                             System.out.println(missingParam.response());
+                        }else{
+                           if(request.length == 2){
+                              //just days
+                              int days = Integer.parseInt(request[1]);
+                              Request advanceTimeRequest = new AdvanceTimeRequest(self, days);
+                              advanceTimeRequest.execute();
+                              System.out.println(advanceTimeRequest.response());
+                           }else if(request.length == 3){
+                              int days = Integer.parseInt((request[1]));
+                              int hours = Integer.parseInt((request[2]));
+                              Request advanceTimeRequest = new AdvanceTimeRequest(self, days, hours);
+                              advanceTimeRequest.execute();
+                              System.out.println(advanceTimeRequest.response());
+                           }
                         }
                         break;
                     //<12> Current Date & Time - datetime;
