@@ -1,6 +1,11 @@
 import java.time.LocalDate;
 import java.util.Date;
 
+/**
+ * Transaction takes in information about the visitor, book and date.
+ * Records this information for later use when the book is returned
+ * At the point of return, calculates and potential fine.
+ */
 public class Transaction {
     /* The LBMS itself so the current date can be checked */
     private LBMS lbms;
@@ -10,6 +15,14 @@ public class Transaction {
     private Date dateBorrowed;
     private Date dueDate;
 
+    /**
+     * Constructor for Transaction
+     * @param lbms  -  The system itself. This is so execute can call lbms commands.
+     * @param isbn - 13 digit isbn (id)
+     * @param visitorID  - the Id of the visitor beginning a request.
+     * @param dateBorrowed  -  date the book was taken out from the library, LMBS
+     * @param dueDate  -  date the book is due back the the LMBS, at most 7 days after the dateBorrowed
+     */
     public Transaction(LBMS lbms, String isbn, String visitorID, Date dateBorrowed, Date dueDate) {
         this.lbms = lbms;
         this.isbn = isbn;

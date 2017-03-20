@@ -19,7 +19,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * LBMS is the system itself. Only one system is meant to be made, following the "Singleton" Deisgn Pattern
+ * LBMS is the system itself. Only one system is meant to be made, following the "Singleton" Design Pattern
  * The main method creates that Singleton LBMS and calls it "self"
  */
 public class LBMS {
