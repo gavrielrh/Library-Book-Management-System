@@ -16,6 +16,8 @@ public class Transaction {
     private Date dueDate;
     private int copyNum;
 
+    private double amountPaid;
+
     /**
      * Constructor for Transaction
      * @param lbms  -  The system itself. This is so execute can call lbms commands.
@@ -30,9 +32,24 @@ public class Transaction {
         this.dateBorrowed = dateBorrowed;
         this.dueDate = dueDate;
         this.copyNum = copyNum;
+        this.amountPaid = 0.0;
     }
 
+    public Transaction(LBMS lbms, Book bookType, Date dateBorrowed, Date dueDate, int copyNum, int amountPaid) {
+        this.lbms = lbms;
+        this.bookType = bookType;
+        this.dateBorrowed = dateBorrowed;
+        this.dueDate = dueDate;
+        this.copyNum = copyNum;
+        this.amountPaid = amountPaid;
+    }
+    public int getCopyNum(){
+        return this.copyNum;
+    }
 
+    public Book getBookType(){
+        return this.bookType;
+    }
     public Date getDateBorrowed(){
         return dateBorrowed;
     }
@@ -65,5 +82,9 @@ public class Transaction {
         }
 
         return fine < 30 ? fine : 30.0;
+    }
+
+    public Double getAmountPaid(){
+        return this.amountPaid;
     }
 }

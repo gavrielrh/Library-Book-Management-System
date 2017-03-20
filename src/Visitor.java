@@ -133,6 +133,21 @@ public class Visitor {
         return (totalFines > 0.0);
     }
 
+    public String getFirstName(){
+        return this.firstName;
+    }
+
+    public String getLastName(){
+        return this.lastName;
+    }
+
+    public String getAddress(){
+        return this.address;
+    }
+
+    public String getPhoneNum(){
+        return this.phoneNum;
+    }
     public ArrayList<Transaction> getBooksLoaned(){
         return this.booksLoaned;
     }

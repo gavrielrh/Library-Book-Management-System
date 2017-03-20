@@ -1,4 +1,6 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * FindBorrowedBooksRequest represents a ConcreteCommand within the Command Design Pattern.
@@ -48,8 +50,17 @@ public class FindBorrowedBooksRequest implements Request {
         response += Integer.toString(this.numBorrowed);
         response += ",";
         for(Transaction transaction : this.booksCheckedOut){
-            //TODO
+            response += "\n";
+            response += Integer.toString(transaction.getCopyNum());
+            response += ",";
+            response += transaction.getBookType().getIsbn();
+            response += ",";
+            response += transaction.getBookType().getTitle();
+            Date borrowDate = transaction.getDateBorrowed();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+            return formatter.format(borrowDate);
         }
-        return null;
+        response += ";";
+        return response;
     }
 }

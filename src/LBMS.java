@@ -187,7 +187,7 @@ public class LBMS {
              String line = fileReaderVisitor.nextLine();
              String[] lineVals = line.split(",");
              ArrayList<Transaction> booksOnLoan = new ArrayList<Transaction>();
-             //Brendan,Jones,4 Chapman Way, 978-325-0430, 220939402903,5,isbn,long,long,copyNum,
+             //Brendan,Jones,4 Chapman Way, 978-325-0430, 220939402903,5,isbn,long,long,copyNum,amountPaid
 
 
              String firstName = lineVals[0];
@@ -196,19 +196,22 @@ public class LBMS {
              String phoneNum = lineVals[3];
              String uniqueId = lineVals[4];
              int numBooks = Integer.parseInt(lineVals[5]);
-             for(int i = 0; i <= numBooks; i++){
-                String bookId = lineVals[6 + (4*i)];
-                long timeForBorrowed = Long.parseLong(lineVals[7 + (4*i)]);
-                long timeForDue = Long.parseLong(lineVals[8 + (4*i)]);
-                int copyNum = Integer.parseInt(lineVals[9 + (4*i)]);
-                Book bookToAdd = this.getBook(bookId);
-                Date dateBorrowed = new Date(timeForBorrowed);
-                Date dateDue = new Date(timeForDue);
-                Transaction transaction = new Transaction(this, bookToAdd, dateBorrowed, dateDue, copyNum);
-                this.addTransaction(transaction);
-                booksOnLoan.add(transaction);
+             if(lineVals.length >=7) {
+                for (int i = 0; i <= numBooks; i++) {
+                   String bookId = lineVals[6 + (4 * i)];
+                   long timeForBorrowed = Long.parseLong(lineVals[7 + (4 * i)]);
+                   long timeForDue = Long.parseLong(lineVals[8 + (4 * i)]);
+                   int copyNum = Integer.parseInt(lineVals[9 + (4 * i)]);
+                   Book bookToAdd = this.getBook(bookId);
+                   Date dateBorrowed = new Date(timeForBorrowed);
+                   Date dateDue = new Date(timeForDue);
+                   int amountPaid = Integer.parseInt(lineVals[10 + (4 * i)]);
+                   Transaction transaction = new Transaction(this, bookToAdd, dateBorrowed, dateDue, copyNum, amountPaid);
+                   this.addTransaction(transaction);
+                   booksOnLoan.add(transaction);
+                }
              }
-                Visitor visitor = new Visitor(firstName, lastName, address, phoneNum, uniqueId, booksOnLoan);
+               Visitor visitor = new Visitor(firstName, lastName, address, phoneNum, uniqueId, booksOnLoan);
                this.registerVisitor(visitor);
           }
        } catch (IOException e) {
@@ -261,6 +264,48 @@ public class LBMS {
              bookWriter.println();
              bookWriter.close();
           }
+       } catch (IOException e) {
+          System.out.println(e);
+       }
+
+       /* Save the visitors */
+       try {
+          PrintWriter visitorWriter = new PrintWriter("data/SystemVisitors.txt", "UTF-8");
+          for(Visitor visitor : this.visitors.values()){
+             //Brendan,Jones,4 Chapman Way, 978-325-0430, 220939402903,5,isbn,long,long,copyNum,amountPaid
+             visitorWriter.print(visitor.getFirstName());
+             visitorWriter.print(",");
+             visitorWriter.print(visitor.getLastName());
+             visitorWriter.print(",");
+             visitorWriter.print(visitor.getAddress());
+             visitorWriter.print(",");
+             visitorWriter.print(visitor.getPhoneNum());
+             visitorWriter.print(",");
+             visitorWriter.print(visitor.getUniqueId());
+             visitorWriter.print(",");
+             visitorWriter.print(visitor.getNumBooksCheckedOut());
+             if(visitor.getNumBooksCheckedOut() > 0){
+                visitorWriter.print(",");
+                ArrayList<Transaction> booksLoaned = visitor.getBooksLoaned();
+                for(int i = 0; i < visitor.getNumBooksCheckedOut(); i++){
+                   visitorWriter.print(booksLoaned.get(i).getBookType().getIsbn());
+                   visitorWriter.print(",");
+                   visitorWriter.print(booksLoaned.get(i).getDateBorrowed().getTime());
+                   visitorWriter.print(",");
+                   visitorWriter.print(booksLoaned.get(i).getDueDate().getTime());
+                   visitorWriter.print(",");
+                   visitorWriter.print(booksLoaned.get(i).getCopyNum());
+                   visitorWriter.print(",");
+                   if(i == visitor.getNumBooksCheckedOut() - 1){
+                      visitorWriter.print(booksLoaned.get(i).getAmountPaid());
+                   }else{
+                      visitorWriter.print(booksLoaned.get(i).getAmountPaid());
+                      visitorWriter.print(",");
+                   }
+                }
+             }
+          }
+          visitorWriter.close();
        } catch (IOException e) {
           System.out.println(e);
        }
