@@ -133,6 +133,9 @@ public class LibraryBookSearchRequest implements Request {
         String message = "info,";
 
         List<Book> sortedBooks = new ArrayList<>(searchResults);
+        if (sortedBooks.get(0) == null) {
+            return "info,0;";
+        }
 
         if (this.sortOrder != null) {
             switch (this.sortOrder) {

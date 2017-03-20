@@ -625,31 +625,33 @@ public class LBMS {
                             String sortOrder = null;
                             String publisher = null;
                             String authors = null;
-                            int removeIdx = 0;
-                            String title = requestLine.split("info,")[1].split(",[{\\*].+")[0];
-                            removeIdx += "info".length() + title.length() + 2;
+                            String title = null;
 
-                            if (requestLine.charAt(removeIdx) == '*') {
-                                removeIdx += 2;
+                            requestLine = requestLine.substring("info,".length(), requestLine.length() - 1);
+
+                            if (requestLine.startsWith("*")) {
+                                requestLine = requestLine.substring(1);
                             } else {
-                                String authorPart = requestLine.substring(removeIdx).split("}")[0];
-                                authors = authorPart.substring(1);
-                                removeIdx += authors.length() + 3;
+                                requestLine = requestLine.substring(1);
+                                title = requestLine.substring(0, requestLine.indexOf("\""));
+                            }
+                            requestLine = requestLine.substring(title != null ? title.length() + 2 : 1, requestLine.length());
+
+
+                            if (requestLine.startsWith("{")) {
+                                authors = requestLine.substring(1, requestLine.indexOf("}"));
+                                requestLine = requestLine.substring(authors.length() + 2);
+                            } else {
+                                requestLine = requestLine.substring(1);
                             }
 
-                            String optionalPartsStr = requestLine.substring(removeIdx);
-                            if (!optionalPartsStr.isEmpty()) {
-                                optionalPartsStr = optionalPartsStr.substring(0, optionalPartsStr.length() - 1);
-                                System.out.println("optional parts: " + optionalPartsStr);
-
-                                String[] optionalParts = optionalPartsStr.split(",");
-
-
-                                if (optionalParts.length > 0) {
-                                    isbn = optionalParts[0].equals("*") ? null : optionalParts[0];
-                                    publisher = optionalParts.length > 1 ? optionalParts[1].substring(1, optionalParts[1].length()) : null;
-                                    sortOrder = optionalParts.length > 2 ? optionalParts[2] : null;
-                                }
+                            if (!requestLine.isEmpty()) {
+                                String[] optionalParts = requestLine.split(",");
+                                isbn = optionalParts[1].equals("*") ? null : optionalParts[1];
+                                publisher = optionalParts.length > 2 ?
+                                        optionalParts[2].substring(1, optionalParts[2].length()) : null;
+                                sortOrder = optionalParts.length > 3 ?
+                                        optionalParts[3] : null;
                             }
 
                             Request libraryBookSearchRequest = new LibraryBookSearchRequest(self, title, authors, isbn, publisher, sortOrder);
