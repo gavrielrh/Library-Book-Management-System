@@ -133,7 +133,7 @@ public class BookStoreSearchRequest implements Request {
         String message = "search,";
 
         List<Book> sortedBooks = new ArrayList<>(searchResults);
-        if (sortedBooks.get(0) == null) {
+        if (sortedBooks.isEmpty() || sortedBooks.get(0) == null) {
             return "search,0;";
         }
 
