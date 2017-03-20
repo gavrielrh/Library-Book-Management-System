@@ -143,7 +143,7 @@ public class LibraryBookSearchRequest implements Request {
                     Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByTitleFunc);
                     break;
                 case "publish-date":
-                    Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByPublicationDateFunc);
+                    Collections.sort(sortedBooks, Collections.reverseOrder(QueryStrategy.INSTANCE.queryByPublicationDateFunc));
                     break;
                 case "book-status":
                     Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByAvailabilityFunc);

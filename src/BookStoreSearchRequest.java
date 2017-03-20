@@ -143,7 +143,7 @@ public class BookStoreSearchRequest implements Request {
                     Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByTitleFunc);
                     break;
                 case "publish-date":
-                    Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByPublicationDateFunc);
+                    Collections.sort(sortedBooks, Collections.reverseOrder(QueryStrategy.INSTANCE.queryByPublicationDateFunc));
                     break;
                 default:
                     return "info,invalid-sort-order";
@@ -167,7 +167,7 @@ public class BookStoreSearchRequest implements Request {
             id++;
         }
 
-        return message + ";";
+        return message + ";"; // 	info,title,{authors},[isbn, [publisher,[sort order]]];
     }
 
     /**
