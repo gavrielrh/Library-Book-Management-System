@@ -16,6 +16,7 @@ public class Transaction {
     private Date dueDate;
     private int copyNum;
 
+    private boolean isComplete;
     private double amountPaid;
 
     /**
@@ -33,6 +34,7 @@ public class Transaction {
         this.dueDate = dueDate;
         this.copyNum = copyNum;
         this.amountPaid = 0.0;
+        this.isComplete = false;
     }
 
     public Transaction(LBMS lbms, Book bookType, Date dateBorrowed, Date dueDate, int copyNum, double amountPaid) {
@@ -54,6 +56,9 @@ public class Transaction {
         return dateBorrowed;
     }
 
+    public void complete(){
+        this.isComplete = true;
+    }
     public Date getDueDate(){
         return dueDate;
     }

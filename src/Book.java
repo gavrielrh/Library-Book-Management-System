@@ -189,4 +189,7 @@ public class Book {
         this.numCheckedOut -= 1;
     }
 
+    public void returnBook(){
+        this.numCheckedOut += 1;
+    }
 }
