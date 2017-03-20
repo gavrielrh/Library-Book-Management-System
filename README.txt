@@ -37,3 +37,4 @@ All .txt files used by LBMS (including books.txt) are located in ./data/
 SearchRequests don't return results if all parameters are empty/*;
 Books are purchased using their ISBN, rather than temporary ID based on earlier Searches.
 Clean shutdowns only occur if the system is exited using the "quit;" request.
+Statistics requests don't work for a range of days.
