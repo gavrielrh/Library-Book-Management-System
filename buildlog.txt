@@ -1,0 +1,12 @@
+Information:Using javac 1.8.0_121 to compile java sources
+Information:3/20/2017 1:38 PM - Compilation completed successfully with 2 warnings in 3s 796ms
+D:\SWEN-262\lbms\src\LBMS.java
+Warning:(411, 58) java: non-varargs call of varargs method with inexact argument type for last parameter;
+  cast to java.lang.Object for a varargs call
+  cast to java.lang.Object[] for a non-varargs call and to suppress this warning
+Warning:(412, 58) java: non-varargs call of varargs method with inexact argument type for last parameter;
+  cast to java.lang.Object for a varargs call
+  cast to java.lang.Object[] for a non-varargs call and to suppress this warning
+D:\SWEN-262\lbms\src\LibraryBookSearchRequest.java
+Information:java: Some input files use unchecked or unsafe operations.
+Information:java: Recompile with -Xlint:unchecked for details.
