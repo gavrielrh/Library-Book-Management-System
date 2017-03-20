@@ -28,6 +28,8 @@ public class LBMS {
     /* The maximum amount of books LBMS allows visitors to take out */
     public static int MAX_BOOKS = 5;
 
+
+    private double finesCollected;
     /* LBMS Data */
     private Date time;
     private HashMap<String, Book> books;
@@ -45,6 +47,7 @@ public class LBMS {
     public LBMS() {
 
 
+        this.finesCollected = 0.0;
         // LBMS stores its' books in a HashMap<String bookId (isbn), Book bookObjectItself>
         this.books = new HashMap<String, Book>();
 
@@ -399,32 +402,27 @@ public class LBMS {
         return null;
     }
 
-    /**
-     * generateBookReport creates and returns a report of all of the Book data.
-     * @return - String representation of Book Report
-     */
-    public String generateBookReport() {
-        String report = "";
-        report += String.format("Number of books currently owned by LBMS: %d\n", this.books.size());
-        report += String.format("Number of unique visitors: %d/\n", this.visitors.size());
-        report += String.format("Average time per library visit: %f\n", Integer.toString(averageVisitDuration()));
-        report += String.format("Books purchased: %d\n", null);
-        report += String.format("Fines collected: %f\n", null);
+   public double getFinesCollected(){
+      return this.finesCollected;
+   }
 
-        return report;
-    }
+   public void payFine(double amount){
+      this.finesCollected += amount;
+   }
 
     /**
      * averageVisitDuration gets the integer value of the average visit duration for all visits in LBMS.
      * @return - the int value of the average visit duration in LBMS.
      * //TODO: what does the int represent? miliseconds? minutes?
      */
-    public int averageVisitDuration() {
-        int sum = 0;
+    public long averageVisitDuration() {
+        long sum = 0;
         for (Visit v : visits) {
-            sum += v.getVisitDuration();
+            if(v.isComplete()) {
+               sum += v.getVisitDuration();
+            }
         }
-        return sum / visits.size();
+        return sum;
     }
 
     /**
@@ -880,9 +878,9 @@ public class LBMS {
                        System.out.println(currentTime.response());
                     //<13> Library Statistics Report - report[,days];
                     case "report":
-                        // No possible potential missing parameter requests.
-                        break;
-
+                        Request LibraryStatisticsReport = new LibraryStatisticsReportRequest(self);
+                        LibraryStatisticsReport.execute();
+                        System.out.println(LibraryStatisticsReport.response());
 
                     //TODO: Replace this with the actual prompt for shutting down the system.
                     case "quit":

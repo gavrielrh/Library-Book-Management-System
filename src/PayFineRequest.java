@@ -26,6 +26,7 @@ public class PayFineRequest implements Request {
             this.invalidAmount = (this.visitor.getFine() < this.amount);
             if(!invalidAmount){
                 this.visitor.payFine(this.amount);
+                this.lbms.payFine(this.amount);
             }
         }else{
             this.invalidVisitorId = true;
