@@ -26,7 +26,15 @@ import java.util.*;
 public class LBMS {
 
     /* The maximum amount of books LBMS allows visitors to take out */
-    public static int MAX_BOOKS = 5;
+    final int MAX_BOOKS = 5;
+
+
+    /* The maximum and minimum values LBMS allows time to be advanced by */
+    final int MAX_ADVANCE_DAYS = 7;
+    final int MIN_ADVANCE_DAYS = 0;
+
+    final int MAX_ADVANCE_HOURS = 23;
+    final int MIN_ADVANCE_HOURS = 0;
 
 
     private double finesCollected;
