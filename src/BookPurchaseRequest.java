@@ -1,21 +1,37 @@
+/**
+ * Filename: BookPurchaseRequest.java
+ * @author - Brendan Jones, bpj1651@rit.edu
+ * BookPurchaseRequest is a concreteCommand for the LBMS.
+ * Upon invoking this request, LBMS purchases the requested book from the "BookStore"
+ */
+
+/* imports */
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-/**
- * Created by brendanjones44 on 3/20/17.
- */
+
 public class BookPurchaseRequest implements Request {
 
-    private int quantity;
+    /* Have the LBMS part of the request, in order to execute commands */
     private LBMS lbms;
+
+    /* all of the required information to PurchaseBook(s) */
+    private int quantity;
     private ArrayList<String> isbns;
 
+    /**
+     * Constructor for the concreteCommand.
+     * @param lbms - the LBMS itself.
+     * @param quantity - the number of books to purchase.
+     * @param isbns - the ArrayList<String> of book isbn numbers to purchase
+     */
     public BookPurchaseRequest(LBMS lbms, int quantity, ArrayList<String> isbns){
         this.lbms = lbms;
         this.quantity = quantity;
         this.isbns = isbns;
     }
 
+    @Override
     public void execute(){
         for(String isbn : this.isbns){
             Book book = lbms.getBookFromStore(isbn);
@@ -25,9 +41,11 @@ public class BookPurchaseRequest implements Request {
         }
     }
 
+    @Override
     public String response(){
         String response = "buy,succcess," + Integer.toString(this.isbns.size());
         if(this.isbns.size() >= 0) {
+            //get all book information
             for (String isbn : this.isbns){
                 response += "\n";
                 Book book = this.lbms.getBook(isbn);
@@ -36,6 +54,7 @@ public class BookPurchaseRequest implements Request {
                 response += book.getTitle();
                 response += ",";
                 response += " {";
+                //potential multiple authors
                 for(String author : book.getAuthors()){
                     response += author;
                     response += ",";
