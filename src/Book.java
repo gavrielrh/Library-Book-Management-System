@@ -11,7 +11,7 @@ import java.util.Date;
  * Books are unique and keep track of their copy and checked out count.
  * All books initially start out with 0 copies and 0 checked out.
  */
-public class Book {
+public class Book implements java.io.Serializable{
     private String isbn;
     private String title;
     private String[] authors;

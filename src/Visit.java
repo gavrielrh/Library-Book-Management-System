@@ -8,7 +8,7 @@ import java.util.Date;
  * Visit represents a visit that a visitor has within the LBMS
  * Visits can be "not-complete" meaning the visitor is in the library
  */
-public class Visit {
+public class Visit implements java.io.Serializable{
 
     /* Fields for a Visit */
     private Visitor visitor;

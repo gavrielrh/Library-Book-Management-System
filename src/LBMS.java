@@ -23,7 +23,7 @@ import java.util.*;
  * LBMS is the system itself. Only one system is meant to be made, following the "Singleton" Design Pattern
  * The main method creates that Singleton LBMS and calls it "self"
  */
-public class LBMS {
+public class LBMS implements java.io.Serializable{
 
     /* The maximum amount of books LBMS allows visitors to take out */
     final int MAX_BOOKS = 5;
@@ -175,6 +175,7 @@ public class LBMS {
        }
        //isbn,title,publisher,longDatePublished, intPageCount, author1, author2, ..authorn
         /* get the LBMS date from the stored file */
+
        File dateFile = new File("data/SystemDate.txt");
 
        // initialize to 0, if no date is saved, it stays as 0.

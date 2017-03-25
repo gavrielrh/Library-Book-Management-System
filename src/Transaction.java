@@ -6,7 +6,7 @@ import java.util.Date;
  * Records this information for later use when the book is returned
  * At the point of return, calculates and potential fine.
  */
-public class Transaction {
+public class Transaction implements java.io.Serializable{
     /* The LBMS itself so the current date can be checked */
     private LBMS lbms;
 
