@@ -1,10 +1,14 @@
+/**
+ * Filename: BeginVisitRequest.java
+ * @author - Brendan Jones, bpj1651@rit.edu
+ * BeginVisitRequest represents a ConcreteCommand within the Command Design pattern.
+ * Invoking the command begins the visit of the given visitor within the LBMS.
+ */
+
+/* imports */
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * BeginVisitRequest represents a ConcreteCommand within the Command Design pattern.
- * Executing the command begins the visit of the given visitor within the LBMS.
- */
 public class BeginVisitRequest implements Request {
 
     /* Have the LBMS part of the request, in order to execute commands */

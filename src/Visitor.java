@@ -3,7 +3,7 @@ import java.util.ArrayList;
  * Visitor represents a registered visitor in the LBMS.
  * Visitors have unique 10 digit ID's generated upon creation.
  */
-public class Visitor {
+public class Visitor implements java.io.Serializable{
 
     /* Fields for a Visitor */
     private String firstName;

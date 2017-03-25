@@ -63,7 +63,7 @@ public class BorrowBookRequest implements Request {
         if (this.validBookIds()) {
             if (this.lbms.hasVisitor(this.visitorId)) {
                 this.visitor = this.lbms.getVisitor(this.visitorId);
-                if ((this.visitor.getNumBooksCheckedOut() + this.numBooksRequested) > LBMS.MAX_BOOKS) {
+                if ((this.visitor.getNumBooksCheckedOut() + this.numBooksRequested) > lbms.MAX_BOOKS) {
                     this.exceedBookLimit = true;
                 }else{
                     if(this.visitor.hasFines()){
