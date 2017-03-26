@@ -440,6 +440,10 @@ public class SystemInvoker {
         SystemInvoker invoker = new SystemInvoker();
         LBMS self = invoker.startUp();
         invoker.promptRequests(self);
-
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                invoker.shutdown(self);
+            }
+        }, "Shutdown-thread"));
     }
 }
