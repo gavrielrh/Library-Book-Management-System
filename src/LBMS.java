@@ -18,6 +18,7 @@ import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.sql.Time;
 import java.util.*;
 
 /**
@@ -29,6 +30,11 @@ public class LBMS implements java.io.Serializable {
     /* The maximum amount of books LBMS allows visitors to take out */
     final int MAX_BOOKS = 5;
 
+    /* The integer time that the library opens. 800 represents 8:00 */
+    final int LIBRARY_OPEN_TIME = 800;
+
+    /* The integer time that the library closes 1900 represents 19:00 or 7:00pm */
+    final int LIBRARY_CLOSED_TIME = 1900;
 
     /* The maximum and minimum values LBMS allows time to be advanced by */
     final int MAX_ADVANCE_DAYS = 7;
@@ -36,6 +42,8 @@ public class LBMS implements java.io.Serializable {
 
     final int MAX_ADVANCE_HOURS = 23;
     final int MIN_ADVANCE_HOURS = 0;
+
+    /* The open and closing times of the LBMS */
 
 
     private double finesCollected;
@@ -62,8 +70,6 @@ public class LBMS implements java.io.Serializable {
 
     /**
      * LBMS Constructor
-     *
-     * @precondition -  timeToSet is stored in "data/SystemDate.txt"
      */
     public LBMS() {
 
@@ -95,15 +101,6 @@ public class LBMS implements java.io.Serializable {
      */
     public Date getTime() {
         return time;
-    }
-
-    /**
-     * setTime sets LBMS time to the Date object
-     *
-     * @param time - the Date object to set LBMS to.
-     */
-    public void setTime(Date time) {
-        this.time = time;
     }
 
     /**
@@ -223,6 +220,27 @@ public class LBMS implements java.io.Serializable {
         return null;
     }
 
+    /**
+     *
+     * @param timeClosed
+     */
+    public void close(Date timeClosed){
+        for(Visitor v : this.visitors.values()){
+            v.endVisit();
+        }
+        for(Visit v : this.visits){
+            v.endVisit(timeClosed);
+        }
+    }
+
+    /**
+     * isOpen is used to determine whether or not the libary is open, based on the OPEN and CLOSE times
+     * @return - the boolean value if the libarary is open or not
+     */
+    public boolean isOpen(){
+        int currentHour = Integer.parseInt(String.format("%tH", this.time));
+        return (currentHour >= this.LIBRARY_OPEN_TIME && currentHour <= this.LIBRARY_CLOSED_TIME);
+    }
     public double getFinesCollected() {
         return this.finesCollected;
     }
