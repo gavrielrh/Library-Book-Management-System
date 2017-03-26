@@ -62,20 +62,28 @@ public class SystemInvoker {
     }
 
     private void promptRequests(LBMS self){
+        String partialRequestString = "";
+        //requests are from System.in
+        Scanner inputRequest = new Scanner(System.in);
         while (true) {
 
-            //requests are from System.in
-            Scanner inputRequest = new Scanner(System.in);
             //get the request and split it by comma
             String requestLine = inputRequest.nextLine();
+
+            //Prepend any partialRequestStrings
+            requestLine = partialRequestString + requestLine;
             String[] request = requestLine.split(",");
 
             // All requests must end with ";". Otherwise it's a PartialRequest.
             if (!(request[request.length - 1].endsWith(";"))) {
                 Request partialRequest = new PartialRequest();
+                partialRequestString += requestLine;
                 partialRequest.execute();
                 System.out.println(partialRequest.response());
             } else {
+
+                //If it's not a partialRequest, remove any potentially saved partial request string
+                partialRequestString = "";
             /*
             * requests can be:
             *
@@ -434,6 +442,7 @@ public class SystemInvoker {
      * Running SystemInvoker's main method will start up the LBMS
      * and prompt for requests.
      * Requests are then invoked using the Command pattern and LBMS - request subsystem
+     * When the invoker is done running, all data is saved using a "Shutdown-thread"
      * @param args - not used.
      */
     public static void main(String[] args){
