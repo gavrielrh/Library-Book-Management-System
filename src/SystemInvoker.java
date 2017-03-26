@@ -423,6 +423,7 @@ public class SystemInvoker {
                         currentTime.execute();
                         System.out.println(currentTime.response());
                         //<13> Library Statistics Report - report[,days];
+                        break;
                     case "report":
                         Request LibraryStatisticsReport = new LibraryStatisticsReportRequest(self);
                         LibraryStatisticsReport.execute();

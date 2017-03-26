@@ -21,11 +21,14 @@ import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.*;
 
+
+
 /**
  * LBMS is the system itself. Only one system is meant to be made, following the "Singleton" Design Pattern
  * The main method creates that Singleton LBMS and calls it "self"
  */
 public class LBMS implements java.io.Serializable {
+    private static final long serialVersionUID = 8640384775929272738L;
 
     /* The maximum amount of books LBMS allows visitors to take out */
     final int MAX_BOOKS = 5;
@@ -238,8 +241,8 @@ public class LBMS implements java.io.Serializable {
      * @return - the boolean value if the libarary is open or not
      */
     public boolean isOpen(){
-        int currentHour = Integer.parseInt(String.format("%tH", this.time));
-        return (currentHour >= this.LIBRARY_OPEN_TIME && currentHour <= this.LIBRARY_CLOSED_TIME);
+        int currentTime = Integer.parseInt(String.format("%tH%tm", this.time, this.time));
+        return (currentTime >= this.LIBRARY_OPEN_TIME && currentTime <= this.LIBRARY_CLOSED_TIME);
     }
     public double getFinesCollected() {
         return this.finesCollected;
@@ -354,4 +357,8 @@ public class LBMS implements java.io.Serializable {
         this.transactions.add(transaction);
     }
 
+    public int getNumMinWhenClosed(){
+        int numMinInHours = 60 * (this.LIBRARY_CLOSED_TIME / 100);
+        return (this.LIBRARY_CLOSED_TIME % 100) + numMinInHours;
+    }
 }

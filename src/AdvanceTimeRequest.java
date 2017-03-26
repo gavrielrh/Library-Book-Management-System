@@ -7,6 +7,9 @@
 
 
 /* imports */
+import com.sun.org.apache.xml.internal.security.algorithms.implementations.IntegrityHmac;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class AdvanceTimeRequest implements Request {
@@ -85,22 +88,23 @@ public class AdvanceTimeRequest implements Request {
             boolean wasOpen = this.lbms.isOpen();
             //Adavance the actual LBMS time
             this.lbms.setTime(addedTime + oldTime.getTime());
-            boolean nowClosed = !this.lbms.isOpen();
-
+            boolean nowClosed = !this.lbms.isOpen() || this.numDays > 0;
             /* If the advance in time made the LBMS close, end all visits */
             if(wasOpen && nowClosed){
-                //Let's say it's 15:00 and we want to advance 8 hours.
-                //The new time is 23:00, but all visits ended at 19:00.
-                //So we need to get a new Date object representing:
-                // - the current date(day) + 19:00
-                //So the math here is as follows:
-                //OldTime.getTime - (oldTime.getTime() % 8.64e+7)
-                //this get's just the Date at 00:00
-                //then add the Library closing times minutes * milliseconds in a minute
-                //Thus getting the time the visits end to be the right Date object
-                Date timeVisitsEnd = new Date(oldTime.getTime() -
-                        (long)(oldTime.getTime() % 8.64e+7) + (this.lbms.LIBRARY_CLOSED_TIME * 60000));
+                SimpleDateFormat formatMin = new SimpleDateFormat("mm");
+                SimpleDateFormat formatSec = new SimpleDateFormat("ss");
 
+                int currentNumHours = Integer.parseInt(String.format("%tH", oldTime));
+                int currentNumMinutes = Integer.parseInt(formatMin.format(oldTime));
+                int currentNumSec = Integer.parseInt(formatSec.format(oldTime));
+                int currentNumMiliSec = Integer.parseInt(String.format("%tS", oldTime));
+
+                long numMiliSecSinceDay = (long)currentNumMiliSec + (long)(currentNumSec * 1000) +
+                        (long)(currentNumMinutes * 60000) + (long)(currentNumHours * 3.6e+6);
+                oldTime = new Date(oldTime.getTime() - numMiliSecSinceDay);
+                Date timeVisitsEnd = new Date(oldTime.getTime() + (this.lbms.getNumMinWhenClosed() * 60000));
+                System.out.print("All visits ended at: ");
+                System.out.println(timeVisitsEnd);
                 this.close(timeVisitsEnd);
             }
         }

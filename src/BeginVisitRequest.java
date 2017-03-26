@@ -22,6 +22,7 @@ public class BeginVisitRequest implements Request {
     /* boolean information associated with the ConcreteCommand to help response */
     private boolean isDuplicate;
     private boolean isInvalidId;
+    private boolean libraryOpen;
 
 
     /**
@@ -32,6 +33,8 @@ public class BeginVisitRequest implements Request {
     public BeginVisitRequest(LBMS lbms, String visitorId){
         this.lbms = lbms;
         this.visitorId = visitorId;
+        /* check if the libaray is open */
+        this.libraryOpen = this.lbms.isOpen();
         /* initially set potential errors to false */
         this.isDuplicate = false;
         this.isInvalidId = false;
@@ -41,31 +44,36 @@ public class BeginVisitRequest implements Request {
     }
 
     @Override
-    public void execute(){
-        if(this.lbms.hasVisitor(this.visitorId)) {
-            //If the lbms has the visitor, assign this commands visitor to be the visitor
-            this.visitor = this.lbms.getVisitors().get(this.visitorId);
-            if (this.visitor.isVisiting()) {
-                //If the visitor is already visiting, the error is a duplicate
-                this.isDuplicate = true;
+    public void execute() {
+        if (this.libraryOpen) {
+            if (this.lbms.hasVisitor(this.visitorId)) {
+                //If the lbms has the visitor, assign this commands visitor to be the visitor
+                this.visitor = this.lbms.getVisitors().get(this.visitorId);
+                if (this.visitor.isVisiting()) {
+                    //If the visitor is already visiting, the error is a duplicate
+                    this.isDuplicate = true;
+                } else {
+                    //If a visit is valid, get the lbms time for the visit
+                    this.visitDate = lbms.getTime();
+                    //Set the visitors isVisiting to be true
+                    this.visitor.startVisit();
+                    Visit startingVisit = new Visit(this.visitor, this.visitDate);
+                    this.visitor.setCurrentVisit(startingVisit);
+                    this.lbms.beginVisit(startingVisit);
+                }
             } else {
-                //If a visit is valid, get the lbms time for the visit
-                this.visitDate = lbms.getTime();
-                //Set the visitors isVisiting to be true
-                this.visitor.startVisit();
-                Visit startingVisit = new Visit(this.visitor, this.visitDate);
-                this.visitor.setCurrentVisit(startingVisit);
-                this.lbms.beginVisit(startingVisit);
+                //If lbms doesn't have the visitor, it is an inValidId error
+                this.isInvalidId = true;
             }
-        }else{
-            //If lbms doesn't have the visitor, it is an inValidId error
-            this.isInvalidId = true;
         }
     }
 
     @Override
     public String response(){
-        if(this.isDuplicate){
+        if(!this.libraryOpen){
+            return "arrive,cannot-arrive-library-closed;";
+        }
+        else if(this.isDuplicate){
             return "arrive,duplicate;";
         } else if (this.isInvalidId) {
             return "arrive,invalid-id;";
