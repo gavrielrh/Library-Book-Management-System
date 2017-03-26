@@ -13,9 +13,9 @@
 
 /* imports */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
+import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -46,6 +46,16 @@ public class LBMS implements java.io.Serializable{
     private HashMap<String, Visitor> visitors;
     private ArrayList<Transaction> transactions;
 
+    public LBMS(LBMS otherLBMS){
+        this.finesCollected = otherLBMS.finesCollected;
+        this.books = otherLBMS.books;
+        this.bookStore = otherLBMS.bookStore;
+        this.time = otherLBMS.time;
+        this.transactions = otherLBMS.transactions;
+        this.visitors = otherLBMS.visitors;
+        this.visits = otherLBMS.visits;
+        this.transactions = otherLBMS.transactions;
+    }
     /**
      * LBMS Constructor
      *
@@ -142,87 +152,107 @@ public class LBMS implements java.io.Serializable{
       return this.bookStore.get(isbn);
    }
 
-
+    @SuppressWarnings("unchecked")
     public void startup() {
-       /* get all the LBMS book data */
 
-       File bookFile = new File("data/SystemBooks.txt");
-       //(String isbn, String title, String[] authors, String publisher, Date publishedDate, int pageCount, int total copies, int numCheckedOut);
-       try {
-          Scanner fileReaderBook = new Scanner(bookFile);
-          while(fileReaderBook.hasNext()) {
-             String line = fileReaderBook.nextLine();
-             String[] lineVals = line.split(",");
-             int numAuthors = lineVals.length - 7;
-             String[] authors = new String[numAuthors];
-             String isbn = lineVals[0];
-             String title = lineVals[1];
-             String publisher = lineVals[2];
-             long publishTime = Long.parseLong(lineVals[3]);
-             int pageCount = Integer.parseInt(lineVals[4]);
-             int totalCopies = Integer.parseInt(lineVals[5]);
-             int numCheckedOut = Integer.parseInt(lineVals[6]);
-             for(int i = 0; i < numAuthors; i++){
-                authors[i] = lineVals[i+7];
-             }
-             Date publishedDate = new Date(publishTime);
-             Book book = new Book(isbn, title, authors, publisher, publishedDate, pageCount, totalCopies, numCheckedOut);
-             this.addBook(book);
-          }
+        /* Load the LBMS Book Data */
+        try {
+            FileInputStream fileIn = new FileInputStream("data/LBMS-BOOKS.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object o = in.readObject();
+            this.books = (HashMap<String, Book>) o;
 
-       } catch (IOException e) {
-          e.printStackTrace();
-       }
-       //isbn,title,publisher,longDatePublished, intPageCount, author1, author2, ..authorn
-        /* get the LBMS date from the stored file */
-
-       File dateFile = new File("data/SystemDate.txt");
-
-       // initialize to 0, if no date is saved, it stays as 0.
-       long timeToSet = 0;
-       try {
-          Scanner fileReaderDate = new Scanner(dateFile);
-          if (fileReaderDate.hasNext()) {
-             timeToSet = fileReaderDate.nextLong();
-          } else {
-             timeToSet = 0;
-          }
-       } catch (IOException e) {
-          e.printStackTrace();
-       }
-
-       boolean firstTime = (timeToSet == 0);
-
-       if(!firstTime) {
-          this.time = new Date(timeToSet);
-       }
-
-
-        LoadVisitors loadVisitors = new LoadVisitors();
-        loadVisitors.LoadObjects();
-        ArrayList<Visitor> fileVisitors = loadVisitors.getVisitors();
-        for(Visitor v : fileVisitors){
-            this.registerVisitor(v);
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Data not found");
+            c.printStackTrace();
         }
 
-       HashMap<String, Visitor> visitorsToSet = new HashMap<String, Visitor>();
+        /* Load the LBMS Book Store Data */
+        try {
+            FileInputStream fileIn = new FileInputStream("data/LBMS-BOOKSTORE.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object o = in.readObject();
+            this.bookStore = (HashMap<String, Book>) o;
 
-        /*
-       File visitFile = new File("data/SystemVisits.txt");
-       try {
-          Scanner fileReaderVisit = new Scanner(visitFile);
-          while(fileReaderVisit.hasNext()){
-             String[] values = fileReaderVisit.nextLine().split(",");
-             Visitor visitor = this.getVisitor(values[0]);
-             Date startDate = new Date(Long.parseLong(values[1]));
-             Date endDate = new Date(Long.parseLong(values[2]));
-             this.visits.add(new Visit(visitor, startDate, endDate));
-          }
-       }catch (IOException e){
-          e.printStackTrace();
-       }
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Data not found");
+            c.printStackTrace();
+        }
 
-       */
+        /* Load the LBMS Fines Collected Data */
+        try {
+            FileInputStream fileIn = new FileInputStream("data/LBMS-FINESCOLLECTED.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object o = in.readObject();
+            this.finesCollected = (double) o;
+
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Data not found");
+            c.printStackTrace();
+        }
+
+        /* Load the LBMS Time Data */
+        try {
+            FileInputStream fileIn = new FileInputStream("data/LBMS-TIME.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object o = in.readObject();
+            this.time = (Date) o;
+
+
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Data not found");
+            c.printStackTrace();
+        }
+
+        /* Load the LBMS Transactions Data */
+        try {
+            FileInputStream fileIn = new FileInputStream("data/LBMS-TRANSACTIONS.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object o = in.readObject();
+            this.transactions = (ArrayList<Transaction>) o;
+
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Data not found");
+            c.printStackTrace();
+        }
+
+        /* Load the LBMS Visitors Data */
+        try {
+            FileInputStream fileIn = new FileInputStream("data/LBMS-VISITORS.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object o = in.readObject();
+            this.visitors = (HashMap<String, Visitor>) o;
+
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Data not found");
+            c.printStackTrace();
+        }
+
+        /* Load the LBMS Visits Data */
+        try {
+            FileInputStream fileIn = new FileInputStream("data/LBMS-VISITS.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object o = in.readObject();
+            this.visits = (ArrayList<Visit>) o;
+
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Data not found");
+            c.printStackTrace();
+        }
 
     }
 
@@ -231,72 +261,82 @@ public class LBMS implements java.io.Serializable{
      */
     public void shutdown() {
 
-
-      /* Save the Date */
-        try {
-            PrintWriter dateWriter = new PrintWriter("data/SystemDate.txt", "UTF-8");
-            dateWriter.println(this.time.getTime());
-            dateWriter.close();
-        } catch (IOException e) {
-            System.out.println(e);
+        /* Save the LBMS Book Data */
+        try{
+            FileOutputStream fileOut = new FileOutputStream("data/LBMS-BOOKS.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.books);
+            out.close();
+            fileOut.close();
+        }catch(IOException i){
+            i.printStackTrace();
         }
 
-       /* save the Books */
-       try {
-          PrintWriter bookWriter = new PrintWriter("data/SystemBooks.txt", "UTF-8");
-          for(Book b : this.getBooks().values()) {
-             bookWriter.print(b.getIsbn());
-             bookWriter.print(",");
-             bookWriter.print(b.getTitle());
-             bookWriter.print(",");
-             bookWriter.print(b.getPublisher());
-             bookWriter.print(",");
-             bookWriter.print(b.getPublishedDate().getTime());
-             bookWriter.print(",");
-             bookWriter.print(b.getPageCount());
-             bookWriter.print(",");
-             bookWriter.print(b.getTotalCopies());
-             bookWriter.print(",");
-             bookWriter.print(b.getNumCheckedOut());
-             bookWriter.print(",");
-            for(int i = 0; i < b.getAuthors().length; i++){
-               if(i == b.getAuthors().length - 1){
-                  bookWriter.print(b.getAuthors()[i]);
-               }else{
-                  bookWriter.print(b.getAuthors()[i]);
-                  bookWriter.print(",");
-               }
-            }
-             bookWriter.println();
+        /* Save the LBMS BookStore Data */
+        try{
+            FileOutputStream fileOut = new FileOutputStream("data/LBMS-BOOKSTORE.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.bookStore);
+            out.close();
+            fileOut.close();
+        }catch(IOException i){
+            i.printStackTrace();
+        }
 
-          }
-          bookWriter.close();
-       } catch (IOException e) {
-          System.out.println(e);
-       }
-        ArrayList<Visitor> al = new ArrayList<Visitor>(this.visitors.values());
-        SaveVisitors saveVisitors = new SaveVisitors(al);
-        saveVisitors.writeObjects();
+        /* Save the LBMS Fines Collected Data */
+        try{
+            FileOutputStream fileOut = new FileOutputStream("data/LBMS-FINESCOLLECTED.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.finesCollected);
+            out.close();
+            fileOut.close();
+        }catch(IOException i){
+            i.printStackTrace();
+        }
 
-      /* Save the visitors */
-       try{
-          PrintWriter visitWriter = new PrintWriter("data/SystemVisits.txt", "UTF-8");
-          for(Visit v: this.visits){
-             visitWriter.write(v.getVisitor().getUniqueId());
-             visitWriter.write(",");
-             visitWriter.write(Long.toString(v.getVisitStartTime()));
-             if(v.isComplete()){
-                visitWriter.write(",");
-                visitWriter.write(Long.toString(v.getVisitEndTime()));
-                visitWriter.write("\n");
-             }else{
-                visitWriter.write("\n");
-             }
-          }
-          visitWriter.close();
-       }catch (IOException e){
-          System.out.println((e));
-       }
+        /* Save the LBMS Time Data */
+        try{
+            FileOutputStream fileOut = new FileOutputStream("data/LBMS-TIME.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.time);
+            out.close();
+            fileOut.close();
+        }catch(IOException i){
+            i.printStackTrace();
+        }
+
+        /* Save the LBMS Transactions Data */
+        try{
+            FileOutputStream fileOut = new FileOutputStream("data/LBMS-TRANSACTIONS.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.transactions);
+            out.close();
+            fileOut.close();
+        }catch(IOException i){
+            i.printStackTrace();
+        }
+
+        /* Save the LBMS Visitors Data */
+        try{
+            FileOutputStream fileOut = new FileOutputStream("data/LBMS-VISITORS.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.visitors);
+            out.close();
+            fileOut.close();
+        }catch(IOException i){
+            i.printStackTrace();
+        }
+
+        /* Save the LBMS Visits Data */
+        try{
+            FileOutputStream fileOut = new FileOutputStream("data/LBMS-VISITS.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.visits);
+            out.close();
+            fileOut.close();
+        }catch(IOException i){
+            i.printStackTrace();
+        }
 
     }
 
@@ -470,6 +510,8 @@ public class LBMS implements java.io.Serializable{
             e.printStackTrace();
         }
        self.startup();
+
+
 
 
         //requests are from System.in
