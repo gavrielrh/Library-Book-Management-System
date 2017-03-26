@@ -1,3 +1,8 @@
 .idea/*
 lbms.iml
 output/*
+/output/
+/.idea/
+.idea/
+out/
+output/

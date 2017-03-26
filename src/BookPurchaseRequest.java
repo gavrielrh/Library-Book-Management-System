@@ -8,6 +8,7 @@
 /* imports */
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class BookPurchaseRequest implements Request {
@@ -17,24 +18,24 @@ public class BookPurchaseRequest implements Request {
 
     /* all of the required information to PurchaseBook(s) */
     private int quantity;
-    private ArrayList<String> isbns;
+    private ArrayList<Integer> ids;
 
     /**
      * Constructor for the concreteCommand.
      * @param lbms - the LBMS itself.
      * @param quantity - the number of books to purchase.
-     * @param isbns - the ArrayList<String> of book isbn numbers to purchase
+     * @param ids - the ArrayList<String> of book isbn numbers to purchase
      */
-    public BookPurchaseRequest(LBMS lbms, int quantity, ArrayList<String> isbns){
+    public BookPurchaseRequest(LBMS lbms, int quantity, ArrayList<Integer> ids){
         this.lbms = lbms;
         this.quantity = quantity;
-        this.isbns = isbns;
+        this.ids = ids;
     }
 
     @Override
     public void execute(){
-        for(String isbn : this.isbns){
-            Book book = lbms.getBookFromStore(isbn);
+        for(Integer id : this.ids){
+            Book book = lbms.getBookFromQueryId(id);
             Book purchasedBook = new Book(book);
             purchasedBook.setTotalCopies(this.quantity);
             this.lbms.addBook(purchasedBook);
@@ -43,12 +44,12 @@ public class BookPurchaseRequest implements Request {
 
     @Override
     public String response(){
-        String response = "buy,succcess," + Integer.toString(this.isbns.size());
-        if(this.isbns.size() >= 0) {
+        String response = "buy,succcess," + Integer.toString(this.ids.size());
+        if(this.ids.size() >= 0) {
             //get all book information
-            for (String isbn : this.isbns){
+            for (Integer id : this.ids){
                 response += "\n";
-                Book book = this.lbms.getBook(isbn);
+                Book book = this.lbms.getBookFromQueryId(id);
                 response += book.getIsbn();
                 response += ",";
                 response += book.getTitle();

@@ -23,7 +23,7 @@ import java.util.*;
  * LBMS is the system itself. Only one system is meant to be made, following the "Singleton" Design Pattern
  * The main method creates that Singleton LBMS and calls it "self"
  */
-public class LBMS implements java.io.Serializable{
+public class LBMS implements java.io.Serializable {
 
     /* The maximum amount of books LBMS allows visitors to take out */
     final int MAX_BOOKS = 5;
@@ -41,36 +41,40 @@ public class LBMS implements java.io.Serializable{
     /* LBMS Data */
     private Date time;
     private HashMap<String, Book> books;
+    private HashMap<Integer, Book> booksForPurchaseById;
     private HashMap<String, Book> bookStore;
     private ArrayList<Visit> visits;
     private HashMap<String, Visitor> visitors;
     private ArrayList<Transaction> transactions;
 
-    public LBMS(LBMS otherLBMS){
+    public LBMS(LBMS otherLBMS) {
         this.finesCollected = otherLBMS.finesCollected;
         this.books = otherLBMS.books;
         this.bookStore = otherLBMS.bookStore;
+        this.booksForPurchaseById = otherLBMS.booksForPurchaseById;
         this.time = otherLBMS.time;
         this.transactions = otherLBMS.transactions;
         this.visitors = otherLBMS.visitors;
         this.visits = otherLBMS.visits;
         this.transactions = otherLBMS.transactions;
     }
+
     /**
      * LBMS Constructor
-     *
      *
      * @precondition -  timeToSet is stored in "data/SystemDate.txt"
      */
     public LBMS() {
 
-
         this.finesCollected = 0.0;
         // LBMS stores its' books in a HashMap<String bookId (isbn), Book bookObjectItself>
         this.books = new HashMap<String, Book>();
 
-        // LBMS tores its' purchasable books in a HashMap<String bookId (isbn), Book bookObjectItself>
+        // LBMS stores its' purchasable books in a HashMap<String bookId (isbn), Book bookObjectItself>
         this.bookStore = new HashMap<String, Book>();
+
+        // LBMS stores its' list of latest queried book ids for purchase
+        this.booksForPurchaseById = new HashMap<Integer, Book>();
 
         // LBMS stores its' visitors in a HashMap<String visitorId, Visitor visitorObjectItself>
         this.visitors = new HashMap<String, Visitor>();
@@ -80,11 +84,12 @@ public class LBMS implements java.io.Serializable{
         //Set LBMS to current Date if it's the first time running LBMS
         this.time = new Date();
 
-       this.transactions = new ArrayList<Transaction>();
+        this.transactions = new ArrayList<Transaction>();
     }
 
     /**
      * getTime returns the LBMS time. Used throughout other classes to help create Visits, loans, etc.
+     *
      * @return - the Date object of the simiulated LBMS time.
      */
     public Date getTime() {
@@ -93,6 +98,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * setTime sets LBMS time to the Date object
+     *
      * @param time - the Date object to set LBMS to.
      */
     public void setTime(Date time) {
@@ -101,6 +107,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * getBooks returns the actual HashMap<String bookId (isbn), Book bookObjectItself> of LBMS books.
+     *
      * @return - return the HashMap of the LBMS books.
      */
     public HashMap<String, Book> getBooks() {
@@ -118,6 +125,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * addBook adds a Book to the LBMS itself
+     *
      * @param book - the Book object itself to add
      */
     public void addBook(Book book) {
@@ -126,6 +134,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * getVisits returns all of the Visit objects in LBMS.
+     *
      * @return - ArrayList<Visit> of all the visits in LBMS.
      */
     public ArrayList<Visit> getVisits() {
@@ -134,6 +143,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * addVisit adds a visit to LBMS. This is used in generating reports.
+     *
      * @param visit - the Visit object itself to add
      */
     public void addVisits(Visit visit) {
@@ -142,15 +152,29 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * getVisitors returns all of the registered visitors in LBMS.
+     *
      * @return - HashMap<String visitorId, Visitor visitorObjectItself> for all the visitors registered in the LBMS.
      */
     public HashMap<String, Visitor> getVisitors() {
         return visitors;
     }
 
-   public Book getBookFromStore(String isbn){
-      return this.bookStore.get(isbn);
-   }
+    /**
+     * setBooksForPurchaseById sets the internal list of queried books for purchase
+     * @param booksForPurchaseById the new list of queried books
+     */
+    public void setBooksForPurchaseById(HashMap<Integer, Book> booksForPurchaseById) {
+        this.booksForPurchaseById = booksForPurchaseById;
+    }
+
+    /**
+     * getBooksFromQueryId returns the book specified by the purchase query id
+     * @param id purchase query identification number
+     * @return - Book the book if found, otherwise null
+     */
+    public Book getBookFromQueryId(int id) {
+        return this.booksForPurchaseById.get(id);
+    }
 
     @SuppressWarnings("unchecked")
     public void startup() {
@@ -262,79 +286,79 @@ public class LBMS implements java.io.Serializable{
     public void shutdown() {
 
         /* Save the LBMS Book Data */
-        try{
+        try {
             FileOutputStream fileOut = new FileOutputStream("data/LBMS-BOOKS.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.books);
             out.close();
             fileOut.close();
-        }catch(IOException i){
+        } catch (IOException i) {
             i.printStackTrace();
         }
 
         /* Save the LBMS BookStore Data */
-        try{
+        try {
             FileOutputStream fileOut = new FileOutputStream("data/LBMS-BOOKSTORE.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.bookStore);
             out.close();
             fileOut.close();
-        }catch(IOException i){
+        } catch (IOException i) {
             i.printStackTrace();
         }
 
         /* Save the LBMS Fines Collected Data */
-        try{
+        try {
             FileOutputStream fileOut = new FileOutputStream("data/LBMS-FINESCOLLECTED.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.finesCollected);
             out.close();
             fileOut.close();
-        }catch(IOException i){
+        } catch (IOException i) {
             i.printStackTrace();
         }
 
         /* Save the LBMS Time Data */
-        try{
+        try {
             FileOutputStream fileOut = new FileOutputStream("data/LBMS-TIME.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.time);
             out.close();
             fileOut.close();
-        }catch(IOException i){
+        } catch (IOException i) {
             i.printStackTrace();
         }
 
         /* Save the LBMS Transactions Data */
-        try{
+        try {
             FileOutputStream fileOut = new FileOutputStream("data/LBMS-TRANSACTIONS.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.transactions);
             out.close();
             fileOut.close();
-        }catch(IOException i){
+        } catch (IOException i) {
             i.printStackTrace();
         }
 
         /* Save the LBMS Visitors Data */
-        try{
+        try {
             FileOutputStream fileOut = new FileOutputStream("data/LBMS-VISITORS.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.visitors);
             out.close();
             fileOut.close();
-        }catch(IOException i){
+        } catch (IOException i) {
             i.printStackTrace();
         }
 
         /* Save the LBMS Visits Data */
-        try{
+        try {
             FileOutputStream fileOut = new FileOutputStream("data/LBMS-VISITS.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.visits);
             out.close();
             fileOut.close();
-        }catch(IOException i){
+        } catch (IOException i) {
             i.printStackTrace();
         }
 
@@ -364,6 +388,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * getVisitorIds gets all of the Ids of visitors registered in LBMS. This is used for making sure an ID is unique.
+     *
      * @return - an ArrayList<String> of the visitorIds.
      */
     public ArrayList<String> getVisitorIds() {
@@ -377,6 +402,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * generateVisitorReport creates and returns a report of all of the visitor data
+     *
      * @return - String representation of Visitor Report
      */
     public String generateVisitorReport() {
@@ -384,24 +410,25 @@ public class LBMS implements java.io.Serializable{
         return null;
     }
 
-   public double getFinesCollected(){
-      return this.finesCollected;
-   }
+    public double getFinesCollected() {
+        return this.finesCollected;
+    }
 
-   public void payFine(double amount){
-      this.finesCollected += amount;
-   }
+    public void payFine(double amount) {
+        this.finesCollected += amount;
+    }
 
     /**
      * averageVisitDuration gets the integer value of the average visit duration for all visits in LBMS.
+     *
      * @return - the int value of the average visit duration in LBMS.
      * //TODO: what does the int represent? miliseconds? minutes?
      */
     public long averageVisitDuration() {
         long sum = 0;
         for (Visit v : visits) {
-            if(v.isComplete()) {
-               sum += v.getVisitDuration();
+            if (v.isComplete()) {
+                sum += v.getVisitDuration();
             }
         }
         return sum;
@@ -409,6 +436,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * hasVisitor checks if a given visitorId is registered in the LBMS. This is useful for checking duplicates.
+     *
      * @param visitorId - the String of the visitorId to check.
      * @return - boolean value if the LBMS has the visitorId registered in the system.
      */
@@ -419,12 +447,11 @@ public class LBMS implements java.io.Serializable{
     /**
      *
      */
-    public void setTime(long time){
-       this.time = new Date(time);
+    public void setTime(long time) {
+        this.time = new Date(time);
     }
 
     /**
-     *
      * @param visitorId - the String id of the visitor that is requested
      * @return the visitor object itself matching the visitorId
      * @throws AssertionError if the lbms does not have the visitor in it's registered visitors
@@ -436,6 +463,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * registerVisitor adds the visitor object to the LBMS HashMap of visitors
+     *
      * @param visitor - the visitor object to register to the LBMS
      */
     public void registerVisitor(Visitor visitor) {
@@ -444,6 +472,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * beginVisit adds the visit to the LBMS set of visits
+     *
      * @param visit - the visit to begin
      */
     public void beginVisit(Visit visit) {
@@ -452,6 +481,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * hasBook is used to see if the book, based on Id, is in the LBMS
+     *
      * @param bookId - the String Id value of the book to look up
      * @return - boolean value if the book is in the LBMS
      */
@@ -460,7 +490,6 @@ public class LBMS implements java.io.Serializable{
     }
 
     /**
-     *
      * @param bookId - String value of the bookId to look up.
      * @return - the Book object from LBMS
      * @throws AssertionError - if the LBMS doesn't have the book.
@@ -472,6 +501,7 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * hasCopy checks if the LBMS has an available copy of the book requested by the String bookId (isbn)
+     *
      * @param bookId - String value of the book's id (isbn).
      * @return - boolean value if there is an avaiable copy of the book being requested.
      */
@@ -486,19 +516,20 @@ public class LBMS implements java.io.Serializable{
 
     /**
      * addTransaction adds the transaction object created when checking out a book
+     *
      * @param transaction - the transaction object itself
      */
-   public void addTransaction(Transaction transaction){
-      this.transactions.add(transaction);
-   }
+    public void addTransaction(Transaction transaction) {
+        this.transactions.add(transaction);
+    }
 
     /**
      * The main method in LBMS acts as the invoker in the Command Design Pattern.
      * Running the main method "starts" the system.
+     *
      * @param args - not used
      */
     public static void main(String[] args) {
-
 
 
         //"start up" the system by creating the LBMS with the previous data.
@@ -509,9 +540,7 @@ public class LBMS implements java.io.Serializable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-       self.startup();
-
-
+        self.startup();
 
 
         //requests are from System.in
@@ -555,10 +584,10 @@ public class LBMS implements java.io.Serializable{
                 if (firstWord.endsWith(";")) {
                     firstWord = firstWord.substring(0, firstWord.length() - 1);
                 }
-               String lastWord = request[request.length-1];
-               if (lastWord.endsWith(";")) {
-                  request[request.length-1] = lastWord.substring(0, lastWord.length() - 1);
-               }
+                String lastWord = request[request.length - 1];
+                if (lastWord.endsWith(";")) {
+                    request[request.length - 1] = lastWord.substring(0, lastWord.length() - 1);
+                }
 
                 switch (firstWord) {
 
@@ -819,17 +848,21 @@ public class LBMS implements java.io.Serializable{
                             Request missingParam = new MissingParamsRequest("Book Purchase", missingParameters);
                             missingParam.execute();
                             System.out.println(missingParam.response());
-                        }else{
-                           String quantityVal = request[1];
-                           int quantity = Integer.parseInt(quantityVal);
-                           ArrayList<String> isbns = new ArrayList<String>();
-                           for(int i = 2; i < request.length; i++){
-                              isbns.add(request[i]);
-                           }
+                        } else {
+                            String quantityVal = request[1];
+                            int quantity = Integer.parseInt(quantityVal);
+                            ArrayList<Integer> ids = new ArrayList<>();
+                            for (int i = 2; i < request.length; i++) {
+                                int id = Integer.parseInt(request[i]);
 
-                           Request bookPurchaseRequest = new BookPurchaseRequest(self, quantity, isbns);
-                           bookPurchaseRequest.execute();
-                           System.out.println(bookPurchaseRequest.response());
+                                if(self.getBookFromQueryId(id) != null) {
+                                    ids.add(id);
+                                }
+                            }
+
+                            Request bookPurchaseRequest = new BookPurchaseRequest(self, quantity, ids);
+                            bookPurchaseRequest.execute();
+                            System.out.println(bookPurchaseRequest.response());
 
 
                         }
@@ -842,34 +875,34 @@ public class LBMS implements java.io.Serializable{
                             Request missingParam = new MissingParamsRequest("Advance Time", missingParameters);
                             missingParam.execute();
                             System.out.println(missingParam.response());
-                        }else{
-                           if(request.length == 2){
-                              //just days
-                              int days = Integer.parseInt(request[1]);
-                              Request advanceTimeRequest = new AdvanceTimeRequest(self, days);
-                              advanceTimeRequest.execute();
-                              System.out.println(advanceTimeRequest.response());
-                           }else if(request.length == 3){
-                              int days = Integer.parseInt((request[1]));
-                              int hours = Integer.parseInt((request[2]));
-                              Request advanceTimeRequest = new AdvanceTimeRequest(self, days, hours);
-                              advanceTimeRequest.execute();
-                              System.out.println(advanceTimeRequest.response());
-                           }
+                        } else {
+                            if (request.length == 2) {
+                                //just days
+                                int days = Integer.parseInt(request[1]);
+                                Request advanceTimeRequest = new AdvanceTimeRequest(self, days);
+                                advanceTimeRequest.execute();
+                                System.out.println(advanceTimeRequest.response());
+                            } else if (request.length == 3) {
+                                int days = Integer.parseInt((request[1]));
+                                int hours = Integer.parseInt((request[2]));
+                                Request advanceTimeRequest = new AdvanceTimeRequest(self, days, hours);
+                                advanceTimeRequest.execute();
+                                System.out.println(advanceTimeRequest.response());
+                            }
                         }
                         break;
                     //<12> Current Date & Time - datetime;
                     case "datetime":
-                       Request currentTime = new CurrentTimeRequest(self);
-                       currentTime.execute();
-                       System.out.println(currentTime.response());
-                    //<13> Library Statistics Report - report[,days];
+                        Request currentTime = new CurrentTimeRequest(self);
+                        currentTime.execute();
+                        System.out.println(currentTime.response());
+                        //<13> Library Statistics Report - report[,days];
                     case "report":
                         Request LibraryStatisticsReport = new LibraryStatisticsReportRequest(self);
                         LibraryStatisticsReport.execute();
                         System.out.println(LibraryStatisticsReport.response());
 
-                    //TODO: Replace this with the actual prompt for shutting down the system.
+                        //TODO: Replace this with the actual prompt for shutting down the system.
                     case "quit":
                         self.shutdown();
                         break;

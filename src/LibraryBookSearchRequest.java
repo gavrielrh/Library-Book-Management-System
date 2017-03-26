@@ -61,61 +61,22 @@ public class LibraryBookSearchRequest implements Request {
      */
     @Override
     public void execute() {
-        HashSet<Book> byIsbn = new HashSet<>();
-        HashSet<Book> byTitle = new HashSet<>();
-        HashSet<Book> byPublisher = new HashSet<>();
-        HashSet<Book> byAuthors = new HashSet<>();
-        HashSet<Book> unfilteredResults = new HashSet<>();
-
-        if (this.isbn != null) {
-            byIsbn.add(this.lbms.getBooks().get(this.isbn));
-        }
-        if (this.title != null) {
-            byTitle.addAll(
-                    this.lbms.getBooks().entrySet().stream()
-                            .filter(entry -> this.title.equals(entry.getValue().getTitle()))
-                            .map(Map.Entry::getValue).collect(Collectors.toList()));
-        }
-        if (this.publisher != null) {
-            byPublisher.addAll(
-                    this.lbms.getBooks().entrySet().stream()
-                            .filter(entry -> this.publisher.equals(entry.getValue().getPublisher()))
-                            .map(Map.Entry::getValue).collect(Collectors.toList()));
-        }
-        if (this.authors != null) {
-            byAuthors.addAll(this.lbms.getBooks().entrySet().stream()
-                    .filter(entry -> !Collections.disjoint(new ArrayList<>(Arrays.asList(entry.getValue().getAuthors())), this.authors))
-                    .map(Map.Entry::getValue).collect(Collectors.toList()));
-        }
-
-        unfilteredResults.addAll(byIsbn);
-        unfilteredResults.addAll(byTitle);
-        unfilteredResults.addAll(byPublisher);
-        unfilteredResults.addAll(byAuthors);
-
-        for (Book book : unfilteredResults) {
-            if (byIsbn.size() > 0) {
-                if (!byIsbn.contains(book)) {
-                    break;
-                }
+        this.searchResults.addAll(this.lbms.getBookStore().values());
+        this.searchResults.removeIf(book -> {
+            if(this.isbn != null && !this.isbn.equals(book.getIsbn())) {
+                return true;
             }
-            if (byTitle.size() > 0) {
-                if (!byTitle.contains(book)) {
-                    break;
-                }
+            if(this.title != null && !this.title.equals(book.getTitle())) {
+                return true;
             }
-            if (byPublisher.size() > 0) {
-                if (!byPublisher.contains(book)) {
-                    break;
-                }
+            if(this.publisher != null && !this.publisher.equals(book.getPublisher())) {
+                return true;
             }
-            if (byAuthors.size() > 0) {
-                if (!byAuthors.contains(book)) {
-                    break;
-                }
+            if(!this.authors.isEmpty() && Collections.disjoint(new ArrayList<>(Arrays.asList(book.getAuthors())), this.authors)) {
+                return true;
             }
-            searchResults.add(book);
-        }
+            return false;
+        });
     }
 
     /**
