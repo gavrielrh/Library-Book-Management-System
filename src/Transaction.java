@@ -23,7 +23,6 @@ public class Transaction implements java.io.Serializable{
      * Constructor for Transaction
      * @param lbms  -  The system itself. This is so execute can call lbms commands.
      * @param bookType - the Book object itself that is being loaned out.
-     * @param visitor  - the visitor beginning a request.
      * @param dateBorrowed  -  date the book was taken out from the library, LMBS
      * @param dueDate  -  date the book is due back the the LMBS, at most 7 days after the dateBorrowed
      */
@@ -59,6 +58,7 @@ public class Transaction implements java.io.Serializable{
     public void complete(){
         this.isComplete = true;
     }
+
     public Date getDueDate(){
         return dueDate;
     }
@@ -71,8 +71,9 @@ public class Transaction implements java.io.Serializable{
      * @return total fine (capped at $30.00)
      */
     public Double calculateFine(){
-        double fine = 0.0;
+        double fine = (-1 * this.amountPaid);
 
+        //TODO: days
         if (lbms.getTime().getTime() < dueDate.getTime()) {
             return fine;
         } else {

@@ -72,7 +72,7 @@ public class RegisterVisitorRequest implements Request {
         }else if(this.registeredSuccessfully){
             String response = "register," + this.uniqueId + ",";
             SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-            response += formatter.format(this.lbms.getTime());
+            response += LBMS.dateFormatter.format(this.lbms.getTime());
             return response + ";";
         }else{
             return "Should never happen";

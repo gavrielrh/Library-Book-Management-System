@@ -19,6 +19,7 @@ import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -29,6 +30,8 @@ import java.util.*;
  */
 public class LBMS implements java.io.Serializable {
     private static final long serialVersionUID = 8640384775929272738L;
+    public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy/MM/dd");
+
 
     /* The maximum amount of books LBMS allows visitors to take out */
     final int MAX_BOOKS = 5;
@@ -361,4 +364,5 @@ public class LBMS implements java.io.Serializable {
         int numMinInHours = 60 * (this.LIBRARY_CLOSED_TIME / 100);
         return (this.LIBRARY_CLOSED_TIME % 100) + numMinInHours;
     }
+
 }
