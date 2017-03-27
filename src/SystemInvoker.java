@@ -207,10 +207,10 @@ public class SystemInvoker {
                         missingParam.execute();
                         return (missingParam.response());
                     } else {
-                        ArrayList<String> bookIds = new ArrayList<String>();
+                        ArrayList<Integer> bookIds = new ArrayList<Integer>();
                         String visitorId = request[1];
                         for (int i = 2; i < request.length; i++) {
-                            bookIds.add(request[i]);
+                            bookIds.add(Integer.parseInt(request[i]));
                         }
                         Request borrowBookRequest = new BorrowBookRequest(self, visitorId, bookIds);
                         borrowBookRequest.execute();

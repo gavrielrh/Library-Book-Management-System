@@ -58,6 +58,8 @@ public class LBMS implements java.io.Serializable {
     private Date time;
     private HashMap<String, Book> books;
     private HashMap<Integer, Book> booksForPurchaseById;
+    private HashMap<Integer, Book> booksForBorrowById;
+
     private HashMap<String, Book> bookStore;
     private ArrayList<Visit> visits;
     private HashMap<String, Visitor> visitors;
@@ -89,6 +91,8 @@ public class LBMS implements java.io.Serializable {
 
         // LBMS stores its' list of latest queried book ids for purchase
         this.booksForPurchaseById = new HashMap<Integer, Book>();
+
+        this.booksForBorrowById = new HashMap<Integer, Book>();
 
         // LBMS stores its' visitors in a HashMap<String visitorId, Visitor visitorObjectItself>
         this.visitors = new HashMap<String, Visitor>();
@@ -181,6 +185,14 @@ public class LBMS implements java.io.Serializable {
      */
     public Book getBookFromQueryId(int id) {
         return this.booksForPurchaseById.get(id);
+    }
+
+    public void setBooksForBorrowById(HashMap<Integer, Book> booksForBorrowById){
+        this.booksForBorrowById = booksForBorrowById;
+    }
+
+    public Book getBookFromBorrowId(int id){
+        return this.booksForBorrowById.get(id);
     }
 
     /**

@@ -118,6 +118,8 @@ public class LibraryBookSearchRequest implements Request {
 
         message += searchResults.size();
 
+        HashMap<Integer, Book> booksForBorrowById = new HashMap<>();
+        int id = 0;
         for (Book book : sortedBooks) {
             message += ",\n," + book.getCopiesAvailable() + ",";
             message += book.getIsbn() + ",";
@@ -131,8 +133,11 @@ public class LibraryBookSearchRequest implements Request {
             message += book.getPublisher() + ",";
             message += getPublishedDate(book) + ",";
             message += book.getPageCount();
+            booksForBorrowById.put(id,book);
+            id++;
         }
 
+        lbms.setBooksForBorrowById(booksForBorrowById);
         return message + ";";
     }
 
