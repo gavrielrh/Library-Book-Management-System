@@ -28,7 +28,7 @@ public class MissingParamsRequest implements Request {
 
     @Override
     public String response(){
-        String returnString = "<" + this.requestName + ">,missing-parameters,{";
+        String returnString = this.requestName + ",missing-parameters,{";
         for (int i = 0; i < this.missingParamNames.size(); i++){
             String missingParam = this.missingParamNames.get(i);
             returnString += (missingParam);

@@ -36,6 +36,7 @@ public class SystemInvoker {
             this.partialRequest = requestLine;
             return (partialRequest.response());
         } else {
+            this.partialRequest = "";
 
             /*
             * requests can be:
@@ -87,7 +88,7 @@ public class SystemInvoker {
                                 missingParameters.add(missingParameters.size(), "phone-number");
                             }
                         }
-                        Request missingParam = new MissingParamsRequest("Register Visitor", missingParameters);
+                        Request missingParam = new MissingParamsRequest("register", missingParameters);
                         missingParam.execute();
                         return (missingParam.response());
 

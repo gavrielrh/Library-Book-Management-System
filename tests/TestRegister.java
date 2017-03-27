@@ -18,7 +18,7 @@ public class TestRegister {
         LBMS system = SystemInvoker.startUp();
         this.invoker = new SystemInvoker(system);
         this.systemDate = system.getTime();
-        this.invoker.handleCommand("register,duplicateFirst,duplicateLast,duplicate address,1231231234");
+        this.invoker.handleCommand("register,duplicateFirst,duplicateLast,duplicate address,1231231234;");
     }
 
     @Test
@@ -36,6 +36,34 @@ public class TestRegister {
     public void testDuplicate() {
         String response = this.invoker.handleCommand("register,duplicateFirst,duplicateLast,duplicate address,1231231234;");
         String expected = "register,duplicate;";
+        assertEquals(expected, response);
+    }
+
+    @Test
+    public void testMissingParamPhoneNumber() {
+        String response = this.invoker.handleCommand("register,fname,lname,address;");
+        String expected = "register,missing-parameters,{phone-number};";
+        assertEquals(expected, response);
+    }
+
+    @Test
+    public void testMissingParamsAddressPhoneNumber(){
+        String response = this.invoker.handleCommand("register,fname,lname;");
+        String expected = "register,missing-parameters,{address,phone-number};";
+        assertEquals(expected, response);
+    }
+
+    @Test
+    public void testMissingParamsAddressPhoneNumberLastName(){
+        String response = this.invoker.handleCommand("register,fname;");
+        String expected = "register,missing-parameters,{last name,address,phone-number};";
+        assertEquals(expected, response);
+    }
+
+    @Test
+    public void testMissingParamsAddressPhoneNumberLastNameFirstName(){
+        String response = this.invoker.handleCommand("register;");
+        String expected = "register,missing-parameters,{first name,last name,address,phone-number};";
         assertEquals(expected, response);
     }
 }
