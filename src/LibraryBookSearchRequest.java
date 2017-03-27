@@ -61,7 +61,8 @@ public class LibraryBookSearchRequest implements Request {
      */
     @Override
     public void execute() {
-        this.searchResults.addAll(this.lbms.getBookStore().values());
+        this.searchResults.addAll(this.lbms.getBooks().values());
+        /*
         this.searchResults.removeIf(book -> {
             if(this.isbn != null && !this.isbn.equals(book.getIsbn())) {
                 return true;
@@ -77,6 +78,7 @@ public class LibraryBookSearchRequest implements Request {
             }
             return false;
         });
+        */
     }
 
     /**

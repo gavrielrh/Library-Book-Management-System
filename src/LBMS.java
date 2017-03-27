@@ -134,7 +134,9 @@ public class LBMS implements java.io.Serializable {
      * @param book - the Book object itself to add
      */
     public void addBook(Book book) {
-        this.books.put(book.getIsbn(), book);
+        if(this.books.values().contains(book)) {
+            book.setTotalCopies(book.getTotalCopies() + 1);
+        }
     }
 
     /**
