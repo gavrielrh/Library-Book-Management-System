@@ -62,7 +62,6 @@ public class LibraryBookSearchRequest implements Request {
     @Override
     public void execute() {
         this.searchResults.addAll(this.lbms.getBooks().values());
-        /*
         this.searchResults.removeIf(book -> {
             if(this.isbn != null && !this.isbn.equals(book.getIsbn())) {
                 return true;
@@ -78,7 +77,6 @@ public class LibraryBookSearchRequest implements Request {
             }
             return false;
         });
-        */
     }
 
     /**
@@ -97,6 +95,7 @@ public class LibraryBookSearchRequest implements Request {
 
         List<Book> sortedBooks = new ArrayList<>(searchResults);
         if (sortedBooks.isEmpty() || sortedBooks.get(0) == null) {
+            System.out.println("lol");
             return "info,0;";
         }
 
