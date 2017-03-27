@@ -95,7 +95,6 @@ public class LibraryBookSearchRequest implements Request {
 
         List<Book> sortedBooks = new ArrayList<>(searchResults);
         if (sortedBooks.isEmpty() || sortedBooks.get(0) == null) {
-            System.out.println("lol");
             return "info,0;";
         }
 
