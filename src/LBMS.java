@@ -30,7 +30,8 @@ import java.util.*;
  */
 public class LBMS implements java.io.Serializable {
     private static final long serialVersionUID = 8640384775929272738L;
-    public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy/MM/dd");
+    public static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy/MM/dd");
+    public static final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 
 
     /* The maximum amount of books LBMS allows visitors to take out */

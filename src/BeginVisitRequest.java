@@ -102,7 +102,6 @@ public class BeginVisitRequest implements Request {
      */
     public String getVisitDate(){
         assert this.visitDate != null;
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-        return formatter.format(this.visitDate);
+        return LBMS.dateFormatter.format(this.visitDate);
     }
 }

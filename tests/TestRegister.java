@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 /**
- * Tests is a J-Unit testing file used to test the behavior of LBMS
+ * TestRegister is a J-Unit testing file used to test the behavior of LBMS
  * @author - Brendan Jones (bpj1651@rit.edu)
  */
 public class TestRegister {

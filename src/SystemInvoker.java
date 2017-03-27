@@ -112,7 +112,7 @@ public class SystemInvoker {
                     if (request.length < 2) {
                         ArrayList<String> missingParameters = new ArrayList<String>();
                         missingParameters.add(0, "visitor ID");
-                        Request missingParam = new MissingParamsRequest("Begin Visit", missingParameters);
+                        Request missingParam = new MissingParamsRequest("arrive", missingParameters);
                         missingParam.execute();
                         return (missingParam.response());
                     } else {
