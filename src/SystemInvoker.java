@@ -19,6 +19,9 @@ public class SystemInvoker {
         this.partialRequest = "";
     }
 
+    public LBMS getLBMS(){
+        return this.self;
+    }
     public String handleCommand(String requestLine){
         requestLine = this.partialRequest + requestLine;
         if(requestLine.endsWith(";")){
