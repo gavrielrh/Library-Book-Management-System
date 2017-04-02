@@ -191,7 +191,7 @@ public class Book implements java.io.Serializable{
         }
         output = output.substring(0, output.length() - 1);
         output += "},";
-        output += this.getPublishedDate();
+        output += LBMS.bookDateFormatter.format(this.getPublishedDate());
 
         return output;
     }

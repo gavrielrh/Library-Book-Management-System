@@ -11,8 +11,12 @@ import java.util.Date;
 
 public class TestLibraryBookSearch {
 
+    private TestUtil testUtil;
+
     /* invoker is part of the test to test the handleCommand method */
     private SystemInvoker invoker;
+
+    private LBMS system;
 
 
     /**
@@ -21,10 +25,20 @@ public class TestLibraryBookSearch {
      */
     @Before
     public void setUp(){
-        LBMS system = SystemInvoker.startUp();
-        this.invoker = new SystemInvoker(system);
-        this.invoker.handleCommand("search,10;");
+        this.testUtil = new TestUtil();
+        this.invoker = this.testUtil.getInvoker();
+        this.system = this.testUtil.getLbms();
+        this.testUtil.searchBooksFromStore();
+        this.testUtil.purchaseBooksFromSearch();
     }
+
+    public void testStarTitleStarAuthors(){
+        String response = this.invoker.handleCommand("info,*,*;");
+
+
+    }
+
+
 
 }
 

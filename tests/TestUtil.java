@@ -7,8 +7,10 @@
 
 public class TestUtil {
 
+    /* Allow tests access to the system */
     private LBMS lbms;
 
+    /* tests will use the invoker to give commands */
     private SystemInvoker invoker;
 
     /**
@@ -62,5 +64,14 @@ public class TestUtil {
         this.invoker.handleCommand(request);
     }
 
+    public void searchBooksFromStore(){
+        String request = "search,*,*;";
+        this.invoker.handleCommand(request);
+    }
+
+    public void purchaseBooksFromSearch(){
+        String request = "buy,10,1,2,3,4,5;";
+        this.invoker.handleCommand(request);
+    }
 
 }
