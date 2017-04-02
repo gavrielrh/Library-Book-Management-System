@@ -120,16 +120,7 @@ public class LibraryBookSearchRequest implements Request {
         int id = 0;
         for (Book book : sortedBooks) {
             message += ",\n," + book.getCopiesAvailable() + ",";
-            message += book.getIsbn() + ",";
-            message += "\"" + book.getTitle() + "\",";
-            message += "{";
-            for (String author : book.getAuthors()) {
-                message += author + ",";
-            }
-            message = message.substring(0, message.length() - 1);
-            message += "},";
-            message += book.getPublisher() + ",";
-            message += getPublishedDate(book) + ",";
+            message += book.toString() + ",";
             message += book.getPageCount();
             booksForBorrowById.put(id,book);
             id++;

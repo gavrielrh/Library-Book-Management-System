@@ -54,25 +54,21 @@ public class BookPurchaseRequest implements Request {
             for (Integer id : this.ids){
                 response += "\n";
                 Book book = this.lbms.getBookFromQueryId(id);
-                response += book.getIsbn();
-                response += ",";
-                response += book.getTitle();
-                response += ",";
-                response += " {";
-                //potential multiple authors
-                for(String author : book.getAuthors()){
-                    response += author;
-                    response += ",";
-                }
-                //remove the last ,
-                response = response.substring(0, response.length() - 1);
-                response += "},";
-                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-                response += formatter.format(book.getPublishedDate());
-                response += ",";
+                response += book.toString() + ",";
                 response += Integer.toString(this.quantity);
             }
         }
         return response;
+    }
+
+    /**
+     * getPublishedDate is a helper method to get the string of the visit Date
+     *
+     * @return - String representaton of the visit Date
+     * @throws AssertionError if the visit wasn't valid, meaning it didn't have a date
+     */
+    private String getPublishedDate(Book book) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return formatter.format(book.getPublishedDate());
     }
 }

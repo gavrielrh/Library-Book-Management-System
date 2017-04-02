@@ -181,7 +181,19 @@ public class Book implements java.io.Serializable{
 
     @Override
     public String toString(){
-        return null;
+        String output = "";
+
+        output += this.getIsbn() + ",";
+        output += "\"" + this.getTitle() + "\",";
+        output += "{";
+        for (String author : this.getAuthors()) {
+            output += author + ",";
+        }
+        output = output.substring(0, output.length() - 1);
+        output += "},";
+        output += this.getPublishedDate();
+
+        return output;
     }
 
 
