@@ -108,6 +108,7 @@ public class LibraryBookSearchRequest implements Request {
                     break;
                 case "book-status":
                     Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByAvailabilityFunc);
+                    sortedBooks.removeIf(Book::isAvailable);
                     break;
                 default:
                     return "info,invalid-sort-order";

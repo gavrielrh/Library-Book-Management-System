@@ -30,6 +30,14 @@ public class BookStoreSearchRequest implements Request {
     /* The books matching the request */
     private Set<Book> searchResults;
 
+    //TODO REMOVE THIS TEMP VAR
+    private enum BOOKSERVICE {
+        local,
+        google
+    }
+
+    private BOOKSERVICE bookService;
+
     /**
      * Constructor for the BookStoreSearchRequest
      *
@@ -54,6 +62,8 @@ public class BookStoreSearchRequest implements Request {
             Collections.addAll(this.authors, authors.split(","));
         }
         this.searchResults = new HashSet<>();
+        //TODO REMOVE THIS TEMP VAR
+        this.bookService = BOOKSERVICE.google;
     }
 
     /**
@@ -61,22 +71,56 @@ public class BookStoreSearchRequest implements Request {
      */
     @Override
     public void execute() {
-        this.searchResults.addAll(this.lbms.getBookStore().values());
-        this.searchResults.removeIf(book -> {
-            if(this.isbn != null && !this.isbn.equals(book.getIsbn())) {
-                return true;
+        //TODO REMOVE THIS TEMP VAR
+        if(this.bookService == BOOKSERVICE.local) {
+            this.searchResults.addAll(this.lbms.getBookStore().values());
+            this.searchResults.removeIf(book -> {
+                if (this.isbn != null && !this.isbn.equals(book.getIsbn())) {
+                    return true;
+                }
+                if (this.title != null && !book.getTitle().toLowerCase().contains(this.title.toLowerCase())) {
+                    return true;
+                }
+                if (this.publisher != null && !this.publisher.equals(book.getPublisher())) {
+                    return true;
+                }
+                if (!this.authors.isEmpty() && Collections.disjoint(new ArrayList<>(Arrays.asList(book.getAuthors())), this.authors)) {
+                    return true;
+                }
+                return false;
+            });
+        } else {
+            String queryURL = "https://www.googleapis.com/books/v1/volumes?q=";
+            /*
+             *
+             Books are only considered available for purchase via the LBMS
+              - if the "saleability" is "FOR_SALE" and in the "country" is "US."
+             Title
+             Authors
+             Publisher
+             PublishedDate
+             PageCount
+             type = ISBN_12_Identifier
+             Country
+             Saleability
+             */
+            if(this.isbn != null) {
+                queryURL += "+isbn:" + this.isbn;
             }
-            if(this.title != null && !book.getTitle().toLowerCase().contains(this.title.toLowerCase())) {
-                return true;
+            if(this.title != null) {
+                queryURL += "+intitle:" + this.title;
             }
-            if(this.publisher != null && !this.publisher.equals(book.getPublisher())) {
-                return true;
+            if(this.publisher != null) {
+                queryURL += "+inpublisher:" + this.publisher;
             }
-            if(!this.authors.isEmpty() && Collections.disjoint(new ArrayList<>(Arrays.asList(book.getAuthors())), this.authors)) {
-                return true;
+            if(!this.authors.isEmpty()) {
+                for(String author : authors) {
+                    queryURL += "+inauthor:" + author;
+                }
             }
-            return false;
-        });
+
+
+        }
     }
 
     /**
@@ -118,15 +162,7 @@ public class BookStoreSearchRequest implements Request {
         int id = 0;
         for (Book book : sortedBooks) {
             message += id + ",,";
-            message += book.getIsbn() + ",";
-            message += "\"" + book.getTitle() + "\",";
-            message += "{";
-            for (String author : book.getAuthors()) {
-                message += author + ",";
-            }
-            message = message.substring(0, message.length() - 1);
-            message += "},";
-            message += getPublishedDate(book) + ",\n";
+            message += book.toString() + ",\n";
             booksForPurchaseById.put(id, book);
             id++;
         }

@@ -19,14 +19,20 @@ public class Parser {
      * @return parsed date
      */
     private static Date parseDate(String dateString) {
-        String[] formats = {"y", "M-d-y"};
-        for (String format : formats) {
-            try {
-                return new SimpleDateFormat(format).parse(dateString);
-            } catch (ParseException e) {
-                e.printStackTrace();
+        try {
+            String format = "M-d-y";
+            String[] splitDate = dateString.split("-");
+            if (splitDate.length == 1) {
+                format = "y";
+            } else if(splitDate.length == 2) {
+                format = "y-M";
             }
+
+            return new SimpleDateFormat(format).parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+
         return null;
     }
 
@@ -63,8 +69,7 @@ public class Parser {
     }
 
     /**
-     * TODO write some basic tests, use args instead of hard-coded filename
-     * @param args
+     * @param args command line args for main
      */
     public static void main(String[] args) {
         Parser parser = new Parser();
