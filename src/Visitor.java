@@ -49,6 +49,7 @@ public class Visitor implements java.io.Serializable{
         this.phoneNum = phoneNum;
         this.uniqueId = uniqueId;
         this.booksLoaned = booksOnLoan;
+        this.borrowedBooksQuery = new HashMap<>();
     }
 
     @Override
@@ -185,5 +186,9 @@ public class Visitor implements java.io.Serializable{
 
     public HashMap<Integer, Transaction> getBorrowedBooksQuery(){
         return this.borrowedBooksQuery;
+    }
+
+    public void setBooksLoaned(ArrayList<Transaction> transactions){
+        this.booksLoaned = transactions;
     }
 }

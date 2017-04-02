@@ -16,7 +16,7 @@ public class BorrowBookRequest implements Request {
 
     /* All of the required information to Borrow Books */
     private String visitorId;
-    private ArrayList<Integer> bookIds;
+    private ArrayList<String> bookIds;
     private Visitor visitor;
     private int numBooksRequested;
 
@@ -36,7 +36,7 @@ public class BorrowBookRequest implements Request {
      * @param visitorId - the Id of the visitor borrowing books.
      * @param bookIds - a List of bookIds that are being checked out.
      */
-    public BorrowBookRequest(LBMS lbms, String visitorId, ArrayList<Integer> bookIds){
+    public BorrowBookRequest(LBMS lbms, String visitorId, ArrayList<String> bookIds){
         this.visitorId = visitorId;
         this.bookIds = bookIds;
         this.lbms = lbms;
@@ -90,8 +90,8 @@ public class BorrowBookRequest implements Request {
      */
     private boolean validBookIds(){
         boolean valid = true;
-        for(int bookId : this.bookIds){
-            Book book = this.lbms.getBookFromBorrowId(bookId);
+        for(String bookId : this.bookIds){
+            Book book = this.lbms.getBook(bookId);
             if(!(this.lbms.hasBook(book.getIsbn()))){
                 valid = false;
             }else{
@@ -134,8 +134,8 @@ public class BorrowBookRequest implements Request {
      * This is called to do the logic of actually checking out the books
      */
     private void checkOutBooks(){
-        for(int bookId: this.bookIds){
-            Book book = lbms.getBookFromBorrowId(bookId);
+        for(String bookId: this.bookIds){
+            Book book = lbms.getBook(bookId);
             book.checkOutBook();
             int copyNum = book.getTotalCopies() - book.getNumCheckedOut();
             Transaction transaction = new Transaction(this.lbms, book, this.dateBorrowed, this.dueDate, copyNum);

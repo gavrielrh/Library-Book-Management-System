@@ -207,10 +207,10 @@ public class SystemInvoker {
                         missingParam.execute();
                         return (missingParam.response());
                     } else {
-                        ArrayList<Integer> bookIds = new ArrayList<Integer>();
+                        ArrayList<String> bookIds = new ArrayList<>();
                         String visitorId = request[1];
                         for (int i = 2; i < request.length; i++) {
-                            bookIds.add(Integer.parseInt(request[i]));
+                            bookIds.add(request[i]);
                         }
                         Request borrowBookRequest = new BorrowBookRequest(self, visitorId, bookIds);
                         borrowBookRequest.execute();
@@ -244,6 +244,15 @@ public class SystemInvoker {
                         Request missingParam = new MissingParamsRequest("Return Book", missingParameters);
                         missingParam.execute();
                         return (missingParam.response());
+                    }else{
+                        String visitorId = request[1];
+                        ArrayList<Integer> bookIds = new ArrayList<>();
+                        for (int i = 2; i < request.length; i++){
+                            bookIds.add(Integer.parseInt(request[i]));
+                        }
+                        Request returnBookRequest = new ReturnBookRequest(self, visitorId, bookIds);
+                        returnBookRequest.execute();
+                        return returnBookRequest.response();
                     }
                     //<8> Pay Fine - pay,visitor ID,amount;
                 case "pay":

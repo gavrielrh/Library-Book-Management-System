@@ -51,7 +51,7 @@ public class FindBorrowedBooksRequest implements Request {
         String response = "borrowed,";
         response += Integer.toString(this.numBorrowed);
         response += ",";
-        int queryId = 0;
+        int queryId = 1;
         HashMap<Integer, Transaction> booksQueried = new HashMap<>();
 
         for(Transaction transaction : this.booksCheckedOut){

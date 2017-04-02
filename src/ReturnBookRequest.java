@@ -22,7 +22,7 @@ public class ReturnBookRequest implements Request {
         this.lbms = lbms;
         this.visitorId = visitorId;
         this.bookIds = bookIds;
-        this.visitor = null;
+        this.visitor = this.lbms.getVisitor(this.visitorId);
         this.invalidIsbns = "";
     }
 
@@ -32,6 +32,8 @@ public class ReturnBookRequest implements Request {
                 this.visitor = this.lbms.getVisitor(this.visitorId);
                 if(visitor.hasFines()){
                     this.isOverdue = true;
+                    this.returnBooks();
+                }else{
                     this.returnBooks();
                 }
             }else{
@@ -66,7 +68,13 @@ public class ReturnBookRequest implements Request {
                 }
             }
             transaction.complete();
-            visitor.getBooksLoaned().remove(transaction);
+            ArrayList<Transaction> newBooksLoaned = new ArrayList<>();
+            for(Transaction t: this.visitor.getBooksLoaned()){
+                if(t != transaction){
+                    newBooksLoaned.add(t);
+                }
+            }
+            this.visitor.setBooksLoaned(newBooksLoaned);
         }
     }
     public String response(){

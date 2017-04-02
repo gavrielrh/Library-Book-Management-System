@@ -191,6 +191,7 @@ public class Book implements java.io.Serializable{
         }
         output = output.substring(0, output.length() - 1);
         output += "},";
+        output += this.getPublisher() + ",";
         output += LBMS.bookDateFormatter.format(this.getPublishedDate());
 
         return output;
@@ -198,10 +199,10 @@ public class Book implements java.io.Serializable{
 
 
     public void checkOutBook(){
-        this.numCheckedOut -= 1;
+        this.numCheckedOut += 1;
     }
 
     public void returnBook(){
-        this.numCheckedOut += 1;
+        this.numCheckedOut -= 1;
     }
 }
