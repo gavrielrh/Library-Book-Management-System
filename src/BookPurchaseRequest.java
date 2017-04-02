@@ -34,11 +34,15 @@ public class BookPurchaseRequest implements Request {
 
     @Override
     public void execute(){
-        for(Integer id : this.ids){
-            Book book = lbms.getBookFromQueryId(id);
-            Book purchasedBook = new Book(book);
-            purchasedBook.setTotalCopies(this.quantity);
-            this.lbms.addBook(purchasedBook);
+        if(quantity > 0) {
+            for (Integer id : this.ids) {
+                Book book = lbms.getBookFromQueryId(id);
+                if (book != null) {
+                    Book purchasedBook = new Book(book);
+                    purchasedBook.setTotalCopies(this.quantity);
+                    this.lbms.addBook(purchasedBook);
+                }
+            }
         }
     }
 
