@@ -66,7 +66,7 @@ public class LibraryBookSearchRequest implements Request {
             if(this.isbn != null && !this.isbn.equals(book.getIsbn())) {
                 return true;
             }
-            if(this.title != null && !this.title.equals(book.getTitle())) {
+            if(this.title != null && !book.getTitle().toLowerCase().contains(this.title.toLowerCase())) {
                 return true;
             }
             if(this.publisher != null && !this.publisher.equals(book.getPublisher())) {
