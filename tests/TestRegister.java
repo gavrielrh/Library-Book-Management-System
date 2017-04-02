@@ -1,40 +1,46 @@
-import org.junit.*;
-import static org.junit.Assert.*;
-import java.io.InputStream;
-
-import java.util.Date;
-import java.util.Scanner;
-
 /**
  * TestRegister is a J-Unit testing file used to test the behavior of LBMS
  * @author - Brendan Jones (bpj1651@rit.edu)
  */
+
+
+/* imports */
+import org.junit.*;
+import static org.junit.Assert.*;
+import java.util.Date;
+
+
 public class TestRegister {
     private SystemInvoker invoker;
+    private LBMS system;
     private Date systemDate;
+    private TestUtil testUtil;
 
     @Before
     public void setUp() {
-        LBMS system = SystemInvoker.startUp();
-        this.invoker = new SystemInvoker(system);
-        this.systemDate = system.getTime();
-        this.invoker.handleCommand("register,duplicateFirst,duplicateLast,duplicate address,1231231234;");
+        this.testUtil = new TestUtil();
+        this.invoker = this.testUtil.getInvoker();
+        this.system = this.testUtil.getLbms();
+        this.systemDate = this.system.getTime();
+        /** used for testing duplicate:
+         * registerVisitor registers a visitor with:
+         * register,sampleFirst,sampleLast,sample address,1234561223;
+         */
+        this.testUtil.registerVisitor();
     }
 
     @Test
     public void testSuccess() {
-        String response = this.invoker.handleCommand("register,sampleFirst,sampleLast,sample address,1234561223;");
+        String response = this.invoker.handleCommand("register,sampleF,sampleL,sampleA,1231231234;");
+        String visitorId = response.split(",")[1];
         String expectedDate = LBMS.dateFormatter.format(this.systemDate);
-        String expected = "register" + expectedDate + ";";
-        //Ignore the 10 digit ID, it's random so can't be tested
-        String[] responseArray = response.split(",");
-        response = responseArray[0] + responseArray[2];
+        String expected = "register," + visitorId + "," + expectedDate + ";";
         assertEquals(expected, response);
     }
 
     @Test
     public void testDuplicate() {
-        String response = this.invoker.handleCommand("register,duplicateFirst,duplicateLast,duplicate address,1231231234;");
+        String response = this.invoker.handleCommand("register,sampleFirst,sampleLast,sample address,1234561223;");
         String expected = "register,duplicate;";
         assertEquals(expected, response);
     }

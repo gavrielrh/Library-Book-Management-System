@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Visitor represents a registered visitor in the LBMS.
  * Visitors have unique 10 digit ID's generated upon creation.
@@ -12,6 +14,7 @@ public class Visitor implements java.io.Serializable{
     private String phoneNum;
     private String uniqueId;
     private boolean isVisiting;
+    private HashMap<Integer, Transaction> borrowedBooksQuery;
 
     /* ArrayList of Books that the Visitor has on loan */
     private ArrayList<Transaction> booksLoaned;
@@ -36,6 +39,7 @@ public class Visitor implements java.io.Serializable{
         this.booksLoaned = new ArrayList<Transaction>();
         this.isVisiting = false;
         this.currentVisit = null;
+        this.borrowedBooksQuery = new HashMap<>();
     }
 
     public Visitor(String firstName, String lastName, String address, String phoneNum, String uniqueId, ArrayList<Transaction> booksOnLoan){
@@ -166,5 +170,20 @@ public class Visitor implements java.io.Serializable{
 
     public void payFine(double amount){
         //TODO:
+    }
+
+    /**
+     * setBorrowedBooksQuery is a method that is called when the LBMS queries for
+     * the borrowed books from the visitor.
+     * This query is used later when returning books as visitors return books
+     * based on the Integer Key - ID of the query.
+     * @param borrowedBooksQuery - a HashMap of <Integer - queryId, Transaction - each book checked out>
+     */
+    public void setBorrowedBooksQuery(HashMap<Integer, Transaction> borrowedBooksQuery){
+        this.borrowedBooksQuery = borrowedBooksQuery;
+    }
+
+    public HashMap<Integer, Transaction> getBorrowedBooksQuery(){
+        return this.borrowedBooksQuery;
     }
 }

@@ -3,10 +3,9 @@
  * @author - Brendan Jones (bpj1651@rit.edu)
  */
 
+/* imports */
 import org.junit.*;
 import static org.junit.Assert.*;
-import java.io.InputStream;
-
 import java.util.Date;
 
 public class TestEndVisit {
@@ -21,20 +20,20 @@ public class TestEndVisit {
 
     private String notVisitingVisitorId;
 
+    private TestUtil testUtil;
+
     /**
      * setUp the test with the LBMS and invoker created.
      * Also get the time for response formatting.
      */
     @Before
     public void setUp(){
-        LBMS system = SystemInvoker.startUp();
-        this.invoker = new SystemInvoker(system);
-        this.systemDate = system.getTime();
+        this.testUtil = new TestUtil();
+        this.invoker = this.testUtil.getInvoker();
         this.invoker.getLBMS().setTime((long)1.5341688e+12);
-        this.alreadyVistingVisitorId = this.invoker.handleCommand("register,sampleFirst,sampleLast," +
-                "sample address,1234561223;").split(",")[1];
-        this.invoker.handleCommand("arrive," + this.alreadyVistingVisitorId + ";");
-        this.notVisitingVisitorId = this.invoker.handleCommand("register,first,last,sample address,12345632132;").split(",")[1];
+        this.alreadyVistingVisitorId = this.testUtil.registerVisitor();
+        this.testUtil.arriveVisitor(this.alreadyVistingVisitorId);
+        this.notVisitingVisitorId = this.testUtil.registerSecond();
     }
 
     @Test
@@ -56,12 +55,22 @@ public class TestEndVisit {
     }
 
     @Test
+    public void testSuccessWithLibraryClosing(){
+        String visitorId = this.testUtil.registerThird();
+        this.testUtil.arriveVisitor(visitorId);
+        this.invoker.handleCommand("advance,1;");
+        Visit visit = this.invoker.getLBMS().getVisits().get(this.invoker.getLBMS().getVisits().size()-1);
+        //From 10am to 7pm is 9 hours which is 32400000 ms.
+        long timeLibraryIsOpen = 32400000;
+        assertEquals(timeLibraryIsOpen, visit.getVisitDuration());
+    }
+
+    @Test
     public void testInvalidId(){
         String response = this.invoker.handleCommand("depart," + this.notVisitingVisitorId + ";");
         String expected = "arrive,invalid-id;";
         assertEquals(expected, response);
     }
-
 
 }
 

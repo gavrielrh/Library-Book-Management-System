@@ -3,10 +3,10 @@
  * @author - Brendan Jones (bpj1651@rit.edu)
  */
 
+
+/* imports */
 import org.junit.*;
 import static org.junit.Assert.*;
-import java.io.InputStream;
-
 import java.util.Date;
 
 public class TestBeginVisit {
@@ -17,6 +17,9 @@ public class TestBeginVisit {
     /* systemDate required for repsonse */
     private Date systemDate;
 
+    private LBMS system;
+
+    private TestUtil testUtil;
     private String alreadyVistingVisitorId;
 
     private String visitorId;
@@ -27,14 +30,13 @@ public class TestBeginVisit {
      */
     @Before
     public void setUp(){
-        LBMS system = SystemInvoker.startUp();
-        this.invoker = new SystemInvoker(system);
-        this.systemDate = system.getTime();
-        this.alreadyVistingVisitorId = this.invoker.handleCommand("register,sampleFirst,sampleLast," +
-                "sample address,1234561223;").split(",")[1];
-        this.visitorId = this.invoker.handleCommand("register,first,Last," +
-                "address,1231261223;").split(",")[1];
-        this.invoker.handleCommand("arrive," + this.alreadyVistingVisitorId + ";");
+        this.testUtil = new TestUtil();
+        this.invoker = this.testUtil.getInvoker();
+        this.system = this.testUtil.getLbms();
+        this.systemDate = this.system.getTime();
+        this.alreadyVistingVisitorId = this.testUtil.registerVisitor();
+        this.visitorId = this.testUtil.registerSecond();
+        this.testUtil.arriveVisitor(this.alreadyVistingVisitorId);
     }
 
     @Test

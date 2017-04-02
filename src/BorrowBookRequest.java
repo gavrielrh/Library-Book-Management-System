@@ -6,6 +6,7 @@ import java.util.Date;
  * BorrowBookRequest represents a ConcreteCommand within the Command Design pattern.
  * Executing the command borrows all books in the List of bookIds assuming no errors.
  * Errors are checked and reported in response.
+ * TODO: Potential change: right now a book is due 7 days after the date checked out. The day it was checked out counts as day 1.
  */
 public class BorrowBookRequest implements Request {
 

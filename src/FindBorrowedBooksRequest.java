@@ -1,6 +1,8 @@
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * FindBorrowedBooksRequest represents a ConcreteCommand within the Command Design Pattern.
@@ -49,9 +51,12 @@ public class FindBorrowedBooksRequest implements Request {
         String response = "borrowed,";
         response += Integer.toString(this.numBorrowed);
         response += ",";
+        int queryId = 0;
+        HashMap<Integer, Transaction> booksQueried = new HashMap<>();
+
         for(Transaction transaction : this.booksCheckedOut){
             response += "\n";
-            response += Integer.toString(transaction.getCopyNum());
+            response += Integer.toString(queryId);
             response += ",";
             response += transaction.getBookType().getIsbn();
             response += ",";
@@ -60,8 +65,11 @@ public class FindBorrowedBooksRequest implements Request {
             Date borrowDate = transaction.getDateBorrowed();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
             response +=  formatter.format(borrowDate);
+            booksQueried.put(queryId, transaction);
+            queryId ++;
         }
         response += ";";
+        this.visitor.setBorrowedBooksQuery(booksQueried);
         return response;
     }
 }

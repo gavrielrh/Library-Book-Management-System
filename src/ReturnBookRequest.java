@@ -7,7 +7,7 @@ public class ReturnBookRequest implements Request {
 
     private LBMS lbms;
     private String visitorId;
-    private ArrayList<String> isbns;
+    private ArrayList<Integer> bookIds;
     private ArrayList<Transaction> overDueTransactions;
     private String invalidIsbns;
 
@@ -18,10 +18,10 @@ public class ReturnBookRequest implements Request {
 
     private Visitor visitor;
 
-    public ReturnBookRequest(LBMS lbms, String visitorId, ArrayList<String> isbns){
+    public ReturnBookRequest(LBMS lbms, String visitorId, ArrayList<Integer> bookIds){
         this.lbms = lbms;
         this.visitorId = visitorId;
-        this.isbns = isbns;
+        this.bookIds = bookIds;
         this.visitor = null;
         this.invalidIsbns = "";
     }
@@ -44,9 +44,9 @@ public class ReturnBookRequest implements Request {
 
     private boolean validBookIds(){
         boolean valid = true;
-        for(String bookId : this.isbns) {
-            if (!(this.lbms.hasBook(bookId))) {
-                this.invalidIsbns += "," + bookId;
+        for(int bookId : this.bookIds) {
+            if (!(this.visitor.getBorrowedBooksQuery().keySet().contains(bookId))){
+                this.invalidIsbns += "," + Integer.toString(bookId);
                 valid = false;
             }
         }
@@ -54,7 +54,8 @@ public class ReturnBookRequest implements Request {
     }
 
     private void returnBooks(){
-        for(String isbn: this.isbns){
+        for(int bookId: this.bookIds){
+            String isbn = this.visitor.getBorrowedBooksQuery().get(bookId).getBookType().getIsbn();
             this.lbms.getBook(isbn).returnBook();
         }
         for(Transaction transaction : this.visitor.getBooksLoaned()){
