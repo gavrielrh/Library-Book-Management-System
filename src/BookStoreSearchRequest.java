@@ -5,9 +5,16 @@
  * ConcreteCommand for searching for purchasable books matching given parameters.
  */
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * BookStoreSearchRequest represents a ConcreteCommand within the Command Design pattern.
@@ -38,6 +45,48 @@ public class BookStoreSearchRequest implements Request {
 
     private BOOKSERVICE bookService;
 
+    class IndustryIdentifierPojo {
+        String type;
+        String identifier;
+    }
+
+    class SaleInfoPojo {
+        String country;
+        String saleability;
+    }
+
+    class VolumeInfoPojo {
+        String title;
+        String[] authors;
+    }
+
+    class ItemPojo {
+        String publisher;
+        String publishedDate;
+        IndustryIdentifierPojo[] industryIdentifiers;
+        SaleInfoPojo saleInfo;
+    }
+
+    class VolumePojo {
+        String totalItems;
+        String pageCount;
+        ItemPojo[] items;
+    }
+
+    interface GoogleBooksAPI {
+        String ENDPOINT = "https://www.googleapis.com";
+
+        // authors needs to be manually inputted since there are multiple possible authors
+        // inauthor:{author}+inauthor:{author}...
+        @GET("/book/v1/volumes?q=inisbn:{isbn}+intitle:{title}+inpublisher:{publisher}+{authors}")
+        Call<VolumePojo> getBooks(
+                @Path("isbn") String isbn,
+                @Path("title") String title,
+                @Path("publisher") String publisher,
+                @Path("authors") String authors
+                );
+    }
+
     /**
      * Constructor for the BookStoreSearchRequest
      *
@@ -63,7 +112,7 @@ public class BookStoreSearchRequest implements Request {
         }
         this.searchResults = new HashSet<>();
         //TODO REMOVE THIS TEMP VAR
-        this.bookService = BOOKSERVICE.local;
+        this.bookService = BOOKSERVICE.google;
     }
 
     /**
@@ -72,7 +121,7 @@ public class BookStoreSearchRequest implements Request {
     @Override
     public void execute() {
         //TODO REMOVE THIS TEMP VAR
-        if(this.bookService == BOOKSERVICE.local) {
+        if(this.bookService == BOOKSERVICE.google) {
             this.searchResults.addAll(this.lbms.getBookStore().values());
             this.searchResults.removeIf(book -> {
                 if (this.isbn != null && !this.isbn.equals(book.getIsbn())) {
@@ -104,6 +153,7 @@ public class BookStoreSearchRequest implements Request {
              Country
              Saleability
              */
+
             if(this.isbn != null) {
                 queryURL += "+isbn:" + this.isbn;
             }
@@ -119,7 +169,18 @@ public class BookStoreSearchRequest implements Request {
                 }
             }
 
+            Gson gson = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd")
+                    .create();
 
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(GoogleBooksAPI.ENDPOINT)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+
+            GoogleBooksAPI googleBooksAPI = retrofit.create(GoogleBooksAPI.class);
+
+            //Call<VolumePojo> call = googleBooksAPI.getBooks();
         }
     }
 
