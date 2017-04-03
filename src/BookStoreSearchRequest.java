@@ -63,7 +63,7 @@ public class BookStoreSearchRequest implements Request {
         }
         this.searchResults = new HashSet<>();
         //TODO REMOVE THIS TEMP VAR
-        this.bookService = BOOKSERVICE.google;
+        this.bookService = BOOKSERVICE.local;
     }
 
     /**
