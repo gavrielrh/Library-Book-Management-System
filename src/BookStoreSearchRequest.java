@@ -93,7 +93,7 @@ public class BookStoreSearchRequest implements Request {
         // authors needs to be manually inputted since there are multiple possible authors
         // inauthor:{author}+inauthor:{author}...
         @GET("/book/v1/volumes?q=inisbn:{isbn}+intitle:{title}+inpublisher:{publisher}{authors}")
-        Call<ItemPojo> getBooks(
+        Call<VolumePojo> getBooks(
                 @Path("isbn") String isbn,
                 @Path("title") String title,
                 @Path("publisher") String publisher,
@@ -205,16 +205,16 @@ public class BookStoreSearchRequest implements Request {
 
             GoogleBooksAPI googleBooksAPI = retrofit.create(GoogleBooksAPI.class);
 
-            Call<ItemPojo> call = googleBooksAPI.getBooks(isbn, title, publisher, authors);
-            call.enqueue(new Callback<ItemPojo>() {
+            Call<VolumePojo> call = googleBooksAPI.getBooks(isbn, title, publisher, authors);
+            call.enqueue(new Callback<VolumePojo>() {
                 @Override
-                public void onResponse(Call<ItemPojo> call, Response<ItemPojo> response) {
+                public void onResponse(Call<VolumePojo> call, Response<VolumePojo> response) {
                     int statusCode = response.code();
-                    ItemPojo items = response.body();
+                    VolumePojo volume = response.body();
                 }
 
                 @Override
-                public void onFailure(Call<ItemPojo> call, Throwable throwable) {
+                public void onFailure(Call<VolumePojo> call, Throwable throwable) {
                     System.out.println("Something went wrong with the request");
                 }
             });
