@@ -5,14 +5,16 @@
  * ConcreteCommand for searching for purchasable books matching given parameters.
  */
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -73,13 +75,25 @@ public class BookStoreSearchRequest implements Request {
         ItemPojo[] items;
     }
 
+    class ItemSerializer implements JsonDeserializer<ItemPojo>
+    {
+        @Override
+        public ItemPojo deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            // Get the item element from the parsed JSON
+            JsonElement item = jsonElement.getAsJsonObject().get("items");
+
+            // Deserialize it
+            return new Gson().fromJson(item, ItemPojo.class);
+        }
+    }
+
     interface GoogleBooksAPI {
         String ENDPOINT = "https://www.googleapis.com";
 
         // authors needs to be manually inputted since there are multiple possible authors
         // inauthor:{author}+inauthor:{author}...
-        @GET("/book/v1/volumes?q=inisbn:{isbn}+intitle:{title}+inpublisher:{publisher}+{authors}")
-        Call<VolumePojo> getBooks(
+        @GET("/book/v1/volumes?q=inisbn:{isbn}+intitle:{title}+inpublisher:{publisher}{authors}")
+        Call<ItemPojo> getBooks(
                 @Path("isbn") String isbn,
                 @Path("title") String title,
                 @Path("publisher") String publisher,
@@ -112,7 +126,7 @@ public class BookStoreSearchRequest implements Request {
         }
         this.searchResults = new HashSet<>();
         //TODO REMOVE THIS TEMP VAR
-        this.bookService = BOOKSERVICE.google;
+        this.bookService = BOOKSERVICE.local;
     }
 
     /**
@@ -139,7 +153,7 @@ public class BookStoreSearchRequest implements Request {
                 return false;
             });
         } else {
-            String queryURL = "https://www.googleapis.com/books/v1/volumes?q=";
+            //String queryURL = "https://www.googleapis.com/books/v1/volumes?q=";
             /*
              *
              Books are only considered available for purchase via the LBMS
@@ -153,23 +167,34 @@ public class BookStoreSearchRequest implements Request {
              Country
              Saleability
              */
+            String title = "*";
+            String authors = "";
+            String isbn = "*";
+            String publisher = "*";
 
             if(this.isbn != null) {
-                queryURL += "+isbn:" + this.isbn;
+                //queryURL += "+isbn:" + this.isbn;
+                isbn = this.isbn;
             }
             if(this.title != null) {
-                queryURL += "+intitle:" + this.title;
+                //queryURL += "+intitle:" + this.title;
+                title = this.title;
             }
             if(this.publisher != null) {
-                queryURL += "+inpublisher:" + this.publisher;
+                //queryURL += "+inpublisher:" + this.publisher;
+                publisher = this.publisher;
             }
             if(!this.authors.isEmpty()) {
-                for(String author : authors) {
-                    queryURL += "+inauthor:" + author;
+                for(String author : this.authors) {
+                    //queryURL += "+inauthor:" + author;
+                    authors += "+inauthor:" + author;
                 }
+            } else {
+                authors = "*";
             }
 
             Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(ItemPojo.class, new ItemSerializer())
                     .setDateFormat("yyyy-MM-dd")
                     .create();
 
@@ -180,7 +205,19 @@ public class BookStoreSearchRequest implements Request {
 
             GoogleBooksAPI googleBooksAPI = retrofit.create(GoogleBooksAPI.class);
 
-            //Call<VolumePojo> call = googleBooksAPI.getBooks();
+            Call<ItemPojo> call = googleBooksAPI.getBooks(isbn, title, publisher, authors);
+            call.enqueue(new Callback<ItemPojo>() {
+                @Override
+                public void onResponse(Call<ItemPojo> call, Response<ItemPojo> response) {
+                    int statusCode = response.code();
+                    ItemPojo items = response.body();
+                }
+
+                @Override
+                public void onFailure(Call<ItemPojo> call, Throwable throwable) {
+                    System.out.println("Something went wrong with the request");
+                }
+            });
         }
     }
 
