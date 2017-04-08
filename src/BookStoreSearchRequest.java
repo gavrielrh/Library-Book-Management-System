@@ -10,9 +10,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+//import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -92,12 +93,12 @@ public class BookStoreSearchRequest implements Request {
 
         // authors needs to be manually inputted since there are multiple possible authors
         // inauthor:{author}+inauthor:{author}...
-        @GET("/book/v1/volumes?q=inisbn:{isbn}+intitle:{title}+inpublisher:{publisher}{authors}")
+        @GET("/book/v1/volumes?q=")
         Call<VolumePojo> getBooks(
-                @Path("isbn") String isbn,
-                @Path("title") String title,
-                @Path("publisher") String publisher,
-                @Path("authors") String authors
+                @Query("isbn") String isbn,
+                @Query("+title") String title,
+                @Query("+publisher") String publisher,
+                @Query("authors") String authors
                 );
     }
 
@@ -135,7 +136,7 @@ public class BookStoreSearchRequest implements Request {
     @Override
     public void execute() {
         //TODO REMOVE THIS TEMP VAR
-        if(this.bookService == BOOKSERVICE.google) {
+        if(this.bookService == BOOKSERVICE.local) {
             this.searchResults.addAll(this.lbms.getBookStore().values());
             this.searchResults.removeIf(book -> {
                 if (this.isbn != null && !this.isbn.equals(book.getIsbn())) {
@@ -192,32 +193,33 @@ public class BookStoreSearchRequest implements Request {
             } else {
                 authors = "*";
             }
-
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(ItemPojo.class, new ItemSerializer())
-                    .setDateFormat("yyyy-MM-dd")
-                    .create();
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(GoogleBooksAPI.ENDPOINT)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
-
-            GoogleBooksAPI googleBooksAPI = retrofit.create(GoogleBooksAPI.class);
-
-            Call<VolumePojo> call = googleBooksAPI.getBooks(isbn, title, publisher, authors);
-            call.enqueue(new Callback<VolumePojo>() {
-                @Override
-                public void onResponse(Call<VolumePojo> call, Response<VolumePojo> response) {
-                    int statusCode = response.code();
-                    VolumePojo volume = response.body();
-                }
-
-                @Override
-                public void onFailure(Call<VolumePojo> call, Throwable throwable) {
-                    System.out.println("Something went wrong with the request");
-                }
-            });
+//
+//            Gson gson = new GsonBuilder()
+//                    .registerTypeAdapter(ItemPojo.class, new ItemSerializer())
+//                    .setDateFormat("yyyy-MM-dd")
+//                    .create();
+//
+//            Retrofit retrofit = new Retrofit.Builder()
+//                    .baseUrl(GoogleBooksAPI.ENDPOINT)
+//                    .addConverterFactory(GsonConverterFactory.create(gson))
+//                    .build();
+//
+//            GoogleBooksAPI googleBooksAPI = retrofit.create(GoogleBooksAPI.class);
+//
+//            Call<VolumePojo> call = googleBooksAPI.getBooks(isbn, title, publisher, authors);
+//            call.enqueue(new Callback<VolumePojo>() {
+//                @Override
+//                public void onResponse(Call<VolumePojo> call, Response<VolumePojo> response) {
+//                    int statusCode = response.code();
+//                    VolumePojo volume = response.body();
+//                    System.out.println(statusCode);
+//                }
+//
+//                @Override
+//                public void onFailure(Call<VolumePojo> call, Throwable throwable) {
+//                    System.out.println("Something went wrong with the request");
+//                }
+//            });
         }
     }
 
