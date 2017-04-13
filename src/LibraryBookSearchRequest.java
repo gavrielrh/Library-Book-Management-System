@@ -115,7 +115,7 @@ public class LibraryBookSearchRequest implements Request {
             }
         }
 
-        message += searchResults.size();
+        message += sortedBooks.size();
 
         HashMap<Integer, Book> booksForBorrowById = new HashMap<>();
         int id = 0;
