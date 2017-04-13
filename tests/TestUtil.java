@@ -75,16 +75,15 @@ public class TestUtil {
         this.invoker.handleCommand(request);
     }
 
-    public void setUpNotAvailableBook(){
+    public void setUpNotAvailableBook() {
         String visitorId = this.registerVisitor();
         this.arriveVisitor(visitorId);
         this.searchBooksFromStore();
         this.invoker.handleCommand("buy,1,6;");
         this.invoker.handleCommand("info,*,*;");
         this.invoker.handleCommand("borrow," + visitorId + "9780979616310;");
-        this.invoker.handleCommand("borrowed," + visitorId + ";");
-        this.invoker.handleCommand("return," + visitorId + "1;");
     }
+
 
 
 }

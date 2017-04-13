@@ -97,7 +97,9 @@ public class TestLibraryBookSearch {
      * info,*,*,*,*,book-status;
      */
     public void testSortByBookStatus(){
+        this.testUtil.setUpNotAvailableBook();
         String response = this.invoker.handleCommand("info,*,*,*,*,book-status;");
+
     }
 
 }

@@ -4,7 +4,7 @@
  *
  * ConcreteCommand for searching for purchasable books matching given parameters.
  */
-
+/*
 import com.google.gson.*;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,7 +14,7 @@ import retrofit2.Retrofit;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-
+*/
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -75,7 +75,7 @@ public class BookStoreSearchRequest implements Request {
         String pageCount;
         ItemPojo[] items;
     }
-
+/*
     class ItemSerializer implements JsonDeserializer<ItemPojo>
     {
         @Override
@@ -101,7 +101,7 @@ public class BookStoreSearchRequest implements Request {
                 @Query("authors") String authors
                 );
     }
-
+*/
     /**
      * Constructor for the BookStoreSearchRequest
      *
