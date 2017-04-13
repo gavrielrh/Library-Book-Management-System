@@ -120,7 +120,7 @@ public class LibraryBookSearchRequest implements Request {
         HashMap<Integer, Book> booksForBorrowById = new HashMap<>();
         int id = 0;
         for (Book book : sortedBooks) {
-            message += ",\n," + book.getCopiesAvailable() + ",";
+            message += ",\n" + book.getCopiesAvailable() + ",";
             message += book.toString() + ",";
             message += book.getPageCount();
             booksForBorrowById.put(id,book);

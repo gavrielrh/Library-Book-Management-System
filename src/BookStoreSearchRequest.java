@@ -261,7 +261,7 @@ public class BookStoreSearchRequest implements Request {
 
         int id = 0;
         for (Book book : sortedBooks) {
-            message += id + ",,";
+            message += id + ",";
             message += book.toString() + ",\n";
             booksForPurchaseById.put(id, book);
             id++;
