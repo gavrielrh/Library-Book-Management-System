@@ -268,6 +268,12 @@ public class SystemInvoker {
                         Request missingParam = new MissingParamsRequest("Pay Fine", missingParameters);
                         missingParam.execute();
                         return (missingParam.response());
+                    }else{
+                        String visitorId = request[1];
+                        double amount = Double.parseDouble(request[2]);
+                        Request payFineRequest = new PayFineRequest(self, visitorId, amount);
+                        payFineRequest.execute();
+                        return payFineRequest.response();
                     }
                     //<9> Book Store Search - search,title,[{authors},isbn[,publisher[,sort order]]];
                 case "search":

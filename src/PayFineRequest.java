@@ -18,7 +18,9 @@ public class PayFineRequest implements Request {
     public PayFineRequest(LBMS lbms, String visitorId, double amount){
         this.lbms = lbms;
         this.visitorId = visitorId;
+        this.visitor = this.lbms.getVisitor(this.visitorId);
         this.amount = amount;
+        this.invalidAmount = false;
     }
 
     public void execute(){

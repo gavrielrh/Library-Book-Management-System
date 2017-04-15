@@ -170,7 +170,19 @@ public class Visitor implements java.io.Serializable{
     }
 
     public void payFine(double amount){
-        //TODO:
+        double amountLeft = amount;
+        for(Transaction t : this.booksLoaned){
+            if (amountLeft > 0.0) {
+                double fineLeftOnBook = t.calculateFine();
+                if (fineLeftOnBook > amountLeft) {
+                    t.pay(amountLeft);
+                    amountLeft = 0.0;
+                } else {
+                    t.pay(fineLeftOnBook);
+                    amountLeft -= fineLeftOnBook;
+                }
+            }
+        }
     }
 
     /**

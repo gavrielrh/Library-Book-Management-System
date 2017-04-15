@@ -71,7 +71,7 @@ public class Transaction implements java.io.Serializable{
      * @return total fine (capped at $30.00)
      */
     public Double calculateFine(){
-        double fine = (-1 * this.amountPaid);
+        double fine = 0.0;
 
         if (lbms.getTime().getTime() < dueDate.getTime()) {
             return fine;
@@ -86,10 +86,15 @@ public class Transaction implements java.io.Serializable{
             fine += (weeksOverdue) * 2;
         }
 
-        return fine < 30 ? fine : 30.0;
+        double amountBeforePaying = fine < 30 ? fine : 30.0;
+        return (amountBeforePaying - this.amountPaid);
     }
 
     public Double getAmountPaid(){
         return this.amountPaid;
+    }
+
+    public void pay(double amount){
+        this.amountPaid += amount;
     }
 }

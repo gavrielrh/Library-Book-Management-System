@@ -95,12 +95,22 @@ public class TestUtil {
         this.invoker.handleCommand("buy,1,0;");
     }
 
+    public void searchAndBuySecondBook(){
+        this.invoker.handleCommand("search,*,{Sharon Stewart};");
+        this.invoker.handleCommand("buy,1,0;");
+    }
+
     public void checkOutBook() {
         this.registerVisitor();
         this.arriveVisitor(this.visitorId);
         this.searchAndBuyOneBook();
         this.invoker.handleCommand("info,*,*;");
         this.invoker.handleCommand("borrow," + this.visitorId + "," + "9780226258881;");
+    }
+    public void checkOutSecondBook() {
+        this.searchAndBuySecondBook();
+        this.invoker.handleCommand("info,*,{Sharon Stewart};");
+        this.invoker.handleCommand("borrow," + this.visitorId + "," + "9781575058948;");
     }
 
     public String getVisitorId(){
