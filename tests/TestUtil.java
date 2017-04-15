@@ -65,7 +65,7 @@ public class TestUtil {
     }
 
     public void searchBooksFromStore(){
-        String request = "search,*,*;";
+        String request = "search,*,*,*,*,title;";
         this.invoker.handleCommand(request);
     }
 

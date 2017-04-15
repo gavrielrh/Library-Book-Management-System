@@ -93,6 +93,13 @@ public class LibraryBookSearchRequest implements Request {
     public String response() {
         String message = "info,";
 
+        if(this.sortOrder != null){
+            if(!(this.sortOrder.equals("title") || this.sortOrder.equals("publish-date") ||
+                    this.sortOrder.equals("book-status"))){
+                return "info,invalid-sort-order";
+            }
+        }
+
         List<Book> sortedBooks = new ArrayList<>(searchResults);
         if (sortedBooks.isEmpty() || sortedBooks.get(0) == null) {
             return "info,0;";
