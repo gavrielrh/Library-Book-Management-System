@@ -1,3 +1,5 @@
+import java.util.Date;
+
 /**
  * Filename: TestUtil.java
  * @author - Brendan Jones (bpj1651@rit.edu)
@@ -13,11 +15,14 @@ public class TestUtil {
     /* tests will use the invoker to give commands */
     private SystemInvoker invoker;
 
+    private String visitorId;
+
     /**
      * TestUtil constructor - sets up the LBMS system and invoker
      */
     public TestUtil(){
         this.lbms = SystemInvoker.startUp();
+        lbms.setTime(((long)1.5341688e+12));
         this.invoker = new SystemInvoker(this.lbms);
     }
 
@@ -44,6 +49,7 @@ public class TestUtil {
     public String registerVisitor(){
         String response = this.invoker.handleCommand("register,sampleFirst,sampleLast,sample address,1234561223;");
         String[] responseArray = response.split(",");
+        this.visitorId = responseArray[1];
         return responseArray[1];
     }
 
@@ -84,6 +90,21 @@ public class TestUtil {
         this.invoker.handleCommand("borrow," + visitorId + "9780979616310;");
     }
 
+    public void searchAndBuyOneBook() {
+        this.invoker.handleCommand("search,*,{Wallace Fowlie};");
+        this.invoker.handleCommand("buy,1,0;");
+    }
 
+    public void checkOutBook() {
+        this.registerVisitor();
+        this.arriveVisitor(this.visitorId);
+        this.searchAndBuyOneBook();
+        this.invoker.handleCommand("info,*,*;");
+        this.invoker.handleCommand("borrow," + this.visitorId + "," + "9780226258881;");
+    }
+
+    public String getVisitorId(){
+        return this.visitorId;
+    }
 
 }

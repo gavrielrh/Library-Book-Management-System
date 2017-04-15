@@ -73,7 +73,6 @@ public class Transaction implements java.io.Serializable{
     public Double calculateFine(){
         double fine = (-1 * this.amountPaid);
 
-        //TODO: days
         if (lbms.getTime().getTime() < dueDate.getTime()) {
             return fine;
         } else {
@@ -81,10 +80,10 @@ public class Transaction implements java.io.Serializable{
         }
 
         double msOverdue = lbms.getTime().getTime() - dueDate.getTime();
-        int weeksOverdue = (int) msOverdue / (7 * 24 * 60 * 60 * 1000);
+        int weeksOverdue = (int) (msOverdue / (7 * 24 * 60 * 60 * 1000));
 
-        if (weeksOverdue > 1) {
-            fine += (weeksOverdue - 1) * 2;
+        if (weeksOverdue >= 1) {
+            fine += (weeksOverdue) * 2;
         }
 
         return fine < 30 ? fine : 30.0;

@@ -19,25 +19,100 @@ public class TestFine {
 
     private Visitor visitor;
 
+    private TestUtil testUtil;
+
     /**
      * setUp the test with the LBMS and invoker created.
      * Also get the time for response formatting.
      */
     @Before
     public void setUp(){
-        LBMS system = SystemInvoker.startUp();
-        this.invoker = new SystemInvoker(system);
-        //Set the time initially to 10 am
-        this.systemDate = new Date((long)1.5341688e+12);
-        String visitorId = this.invoker.handleCommand("register,first,last,sample address,12345632132;").split(",")[1];
-        this.visitor = this.invoker.getLBMS().getVisitor(visitorId);
-        this.invoker.handleCommand("arrive" + this.visitor.getUniqueId() + ";");
-        this.invoker.handleCommand("search,*,{J.K. Rowling};");
-        this.invoker.handleCommand("buy,1,0;");
-        this.invoker.handleCommand("info,*,{J.K. Rowling},book-status");
-        this.invoker.handleCommand("borrow,1;" + this.visitor.getUniqueId() + ",");
+        this.testUtil = new TestUtil();
+        this.invoker = this.testUtil.getInvoker();
+        this.testUtil.checkOutBook();
+    }
+
+
+    @Test
+    public void testRightBeforeFine(){
+        //Book is being checked out on the August 13th, 2018
+        //due: 20th
+        //late: 21st
+        //20th: No fee
+        //21st: $10 fee
+        //28th: $12 fee
+        //4th: $14 fee
+        //11th: $16 fee
+        //18th: $18 fee
+        //25th: $20 fee
+        //2nd: $22 fee
+        //9th: $24 fee
+        //16th: $26 fee
+        //23rd: $28 fee
+        //30th: $30 fee
+        //6th: $30 fee
+
+
+
+        this.invoker.handleCommand("advance,7;");
+        double fine = this.getFine();
+        double expectedFine = 0.0;
+        assertEquals(expectedFine, fine, 0.0);
+    }
+
+    @Test
+    public void testFirstDayOfFine(){
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,1;");
+        double fine = this.getFine();
+        double expectedFine = 10.0;
+        assertEquals(expectedFine, fine, 0.0);
 
     }
 
+    @Test
+    public void testWeekAfterDue(){
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,1;");
+        this.invoker.handleCommand("advance,7;");
+        double expectedFine = 12;
+        assertEquals(expectedFine, this.getFine(), 0.0);
+    }
+
+    @Test
+    public void testMultipleWeeksAfterDue(){
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,1;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        double expectedFine = 20;
+        assertEquals(expectedFine, this.getFine(), 0.0);
+    }
+
+    @Test
+    public void testCappedFine(){
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,1;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        this.invoker.handleCommand("advance,7;");
+        double expectedFine = 30;
+        assertEquals(expectedFine, this.getFine(), 0.0);
+    }
+    private double getFine(){
+        return this.invoker.getLBMS().getVisitor(this.testUtil.getVisitorId()).getBooksLoaned().get(0).calculateFine();
+    }
 }
 

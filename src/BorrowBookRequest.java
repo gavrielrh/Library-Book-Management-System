@@ -71,7 +71,7 @@ public class BorrowBookRequest implements Request {
                         this.visitorHasFines = true;
                     }else{
                         this.dateBorrowed = lbms.getTime();
-                        long timeForSevenDays = (long)(6.048e+8);
+                        long timeForSevenDays = (long)(6.912e+8);
                         this.dueDate = new Date(this.dateBorrowed.getTime() + timeForSevenDays);
                         this.checkOutBooks();
                     }

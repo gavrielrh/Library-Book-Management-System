@@ -376,4 +376,6 @@ public class LBMS implements java.io.Serializable {
         return (this.LIBRARY_CLOSED_TIME % 100) + numMinInHours;
     }
 
+
+
 }
