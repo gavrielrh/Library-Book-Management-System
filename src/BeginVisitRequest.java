@@ -55,8 +55,6 @@ public class BeginVisitRequest implements Request {
                 } else {
                     //If a visit is valid, get the lbms time for the visit
                     this.visitDate = lbms.getTime();
-                    //Set the visitors isVisiting to be true
-                    this.visitor.startVisit();
                     Visit startingVisit = new Visit(this.visitor, this.visitDate);
                     this.visitor.setCurrentVisit(startingVisit);
                     this.lbms.addVisit(startingVisit);

@@ -19,7 +19,8 @@ import java.util.*;
 
 /**
  * LBMS is the system itself. Only one system is meant to be made, following the "Singleton" Design Pattern
- * The main method creates that Singleton LBMS and calls it "self"
+ * The main method creates thosb
+ * at Singleton LBMS and calls it "self"
  */
 public class LBMS implements java.io.Serializable {
     private static final long serialVersionUID = 8640384775929272738L;
