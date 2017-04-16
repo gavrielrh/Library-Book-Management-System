@@ -1,3 +1,11 @@
+/**
+ * Filename: MissingParamsRequest.java
+ * @author - Brendan Jones, bpj1651@rit.edu
+ * MissingParamsRequest represents a ConcreteCommand within the Command Design Pattern.
+ * No action is handled in the execute method, just a simple response back.
+ */
+
+/* imports */
 import java.util.ArrayList;
 
 /**
@@ -6,8 +14,7 @@ import java.util.ArrayList;
  */
 public class MissingParamsRequest implements Request {
 
-    /* Have the LBMS part of the request, in order to execute commands */
-    private LBMS lbms;
+    /* information needed for request */
     private String requestName;
     private ArrayList<String> missingParamNames;
 
@@ -26,6 +33,10 @@ public class MissingParamsRequest implements Request {
         //do nothing. The command was a partial request
     }
 
+    /**
+     * response returns the missing parameters in a String format.
+     * @return - the String of missing parameters.
+     */
     @Override
     public String response(){
         String returnString = this.requestName + ",missing-parameters,{";

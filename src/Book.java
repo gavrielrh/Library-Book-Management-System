@@ -202,6 +202,9 @@ public class Book implements java.io.Serializable{
         this.numCheckedOut += 1;
     }
 
+    /**
+     * returnBook is called to update the amount available in the library
+     */
     public void returnBook(){
         this.numCheckedOut -= 1;
     }

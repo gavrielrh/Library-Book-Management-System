@@ -1,11 +1,17 @@
+/**
+ * Filename: RegisterVisitorRequest.java
+ * @author - Brendan Jones, bpj1651@rit.edu
+ *
+ * RegisterVisitorRequest represents a ConcreteCommand within the Command Design Pattern.
+ * Executing the command registers the visitor within the LBMS.
+ */
+
+/* imports */
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * RegisterVisitorRequest represents a ConcreteCommand within the Command Design Pattern.
- * Executing the command registers the visitor within the LBMS.
- */
+
 public class RegisterVisitorRequest implements Request {
 
     /* Have the LBMS part of the request, in order to execute commands */
@@ -21,7 +27,6 @@ public class RegisterVisitorRequest implements Request {
     private String uniqueId;
 
     /* boolean information associated with the ConcreteCommand to help response */
-
     public boolean registeredSuccessfully;
     public boolean duplicateRegistration;
 
@@ -47,6 +52,9 @@ public class RegisterVisitorRequest implements Request {
         this.duplicateRegistration = false;
     }
 
+    /**
+     * execute generates an Id, checks for duplicates and registers the visitor if appropriate
+     */
     @Override
     public void execute() {
         this.uniqueId = generateId();
@@ -65,13 +73,16 @@ public class RegisterVisitorRequest implements Request {
         }
     }
 
+    /**
+     * response is based on any errors caught in execute.
+     * @return - String response for the command.
+     */
     @Override
     public String response(){
         if (this.duplicateRegistration){
             return "register,duplicate;";
         }else if(this.registeredSuccessfully){
             String response = "register," + this.uniqueId + ",";
-            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
             response += LBMS.dateFormatter.format(this.lbms.getTime());
             return response + ";";
         }else{
