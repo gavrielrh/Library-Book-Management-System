@@ -122,7 +122,7 @@ public class BorrowBookRequest implements Request {
         }else if(exceedBookLimit){
             response += "book-limit-exceeded";
         }else if(visitorHasFines) {
-            response += "outstanding-fine," + Double.toString(this.visitor.getFine());
+            response += "outstanding-fine," + Double.toString(this.visitor.getBalance());
         }
         response += ";";
         return response;
@@ -137,8 +137,7 @@ public class BorrowBookRequest implements Request {
         for(String bookId: this.bookIds){
             Book book = lbms.getBook(bookId);
             book.checkOutBook();
-            int copyNum = book.getTotalCopies() - book.getNumCheckedOut();
-            Transaction transaction = new Transaction(this.lbms, book, this.dateBorrowed, this.dueDate, copyNum);
+            Transaction transaction = new Transaction(this.lbms, book, this.dateBorrowed, this.dueDate);
             this.visitor.checkOutBook(transaction);
             this.lbms.addTransaction(transaction);
         }

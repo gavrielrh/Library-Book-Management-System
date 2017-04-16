@@ -60,7 +60,7 @@ public class RegisterVisitorRequest implements Request {
             this.duplicateRegistration = true;
         }
         else{
-            this.lbms.registerVisitor(visitorToRegister);
+            this.lbms.addVisitor(visitorToRegister);
             this.registeredSuccessfully = true;
         }
     }

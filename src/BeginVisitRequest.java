@@ -59,7 +59,7 @@ public class BeginVisitRequest implements Request {
                     this.visitor.startVisit();
                     Visit startingVisit = new Visit(this.visitor, this.visitDate);
                     this.visitor.setCurrentVisit(startingVisit);
-                    this.lbms.beginVisit(startingVisit);
+                    this.lbms.addVisit(startingVisit);
                 }
             } else {
                 //If lbms doesn't have the visitor, it is an inValidId error

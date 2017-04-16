@@ -47,7 +47,7 @@ public class ReturnBookRequest implements Request {
     private boolean validBookIds(){
         boolean valid = true;
         for(int bookId : this.bookIds) {
-            if (!(this.visitor.getBorrowedBooksQuery().keySet().contains(bookId))){
+            if (!(this.visitor.wasQueried(bookId))){
                 this.invalidIsbns += "," + Integer.toString(bookId);
                 valid = false;
             }
@@ -57,8 +57,8 @@ public class ReturnBookRequest implements Request {
 
     private void returnBooks(){
         for(int bookId: this.bookIds){
-            String isbn = this.visitor.getBorrowedBooksQuery().get(bookId).getBookType().getIsbn();
-            this.lbms.getBook(isbn).returnBook();
+            Book bookToReturn = this.visitor.getTransactionFromQuery(bookId).getBookType();
+            bookToReturn.returnBook();
         }
         for(Transaction transaction : this.visitor.getBooksLoaned()){
             if(this.isOverdue){

@@ -310,20 +310,20 @@ public class LBMS implements java.io.Serializable {
     }
 
     /**
-     * registerVisitor adds the visitor object to the LBMS HashMap of visitors
+     * addVisitor adds the visitor object to the LBMS HashMap of visitors
      *
      * @param visitor - the visitor object to register to the LBMS
      */
-    public void registerVisitor(Visitor visitor) {
+    public void addVisitor(Visitor visitor) {
         this.visitors.put(visitor.getUniqueId(), visitor);
     }
 
     /**
-     * beginVisit adds the visit to the LBMS set of visits
+     * addVisit adds the visit to the LBMS set of visits
      *
      * @param visit - the visit to begin
      */
-    public void beginVisit(Visit visit) {
+    public void addVisit(Visit visit) {
         this.visits.add(visit);
     }
 
@@ -375,6 +375,7 @@ public class LBMS implements java.io.Serializable {
         int numMinInHours = 60 * (this.LIBRARY_CLOSED_TIME / 100);
         return (this.LIBRARY_CLOSED_TIME % 100) + numMinInHours;
     }
+
 
 
 

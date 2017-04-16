@@ -1,3 +1,16 @@
+/**
+ * Filename: Visitor.java
+ * @author - Brendan Jones, bpj1651@rit.edu
+ * Purpose:
+     * Visitor represents a visitor in the LBMS.
+     * Visitors have:
+     * - information associated with their account
+     * - information about if they're visiting the library.
+     * - information with their books checked out from the library
+ *
+ */
+
+/* imports */
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,7 +26,8 @@ public class Visitor implements java.io.Serializable{
     private String address;
     private String phoneNum;
     private String uniqueId;
-    private boolean isVisiting;
+
+    /* borrowedBooksQuery used to return books */
     private HashMap<Integer, Transaction> borrowedBooksQuery;
 
     /* ArrayList of Books that the Visitor has on loan */
@@ -36,22 +50,15 @@ public class Visitor implements java.io.Serializable{
         this.address = address;
         this.phoneNum = phoneNum;
         this.uniqueId = uniqueId;
-        this.booksLoaned = new ArrayList<Transaction>();
-        this.isVisiting = false;
+        this.booksLoaned = new ArrayList<>();
         this.currentVisit = null;
         this.borrowedBooksQuery = new HashMap<>();
     }
 
-    public Visitor(String firstName, String lastName, String address, String phoneNum, String uniqueId, ArrayList<Transaction> booksOnLoan){
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.phoneNum = phoneNum;
-        this.uniqueId = uniqueId;
-        this.booksLoaned = booksOnLoan;
-        this.borrowedBooksQuery = new HashMap<>();
-    }
-
+    /**
+     * a visitor is considered equal to another visitor if:
+     * - they have the same firstname, lastname, address, and phone number
+     */
     @Override
     public boolean equals(Object other){
         if(other instanceof Visitor){
@@ -78,15 +85,7 @@ public class Visitor implements java.io.Serializable{
      * @return boolean value of if the visitor is visiting the library.
      */
     public boolean isVisiting(){
-        return this.isVisiting;
-    }
-
-    /**
-     * startVisit sets the visitors isVisiting to be true.
-     * This is used in BeginVisit and helps check for errors
-     */
-    public void startVisit(){
-        this.isVisiting = true;
+        return this.currentVisit != null;
     }
 
     /**
@@ -94,7 +93,6 @@ public class Visitor implements java.io.Serializable{
      * This is used in EndVisit and helps check errors
      */
     public void endVisit() {
-        this.isVisiting = false;
         this.currentVisit = null;
     }
 
@@ -104,17 +102,32 @@ public class Visitor implements java.io.Serializable{
      * @throws AssertionError if the visitor isn't visiting
      */
     public Visit getCurrentVisit(){
-        assert this.isVisiting;
         return this.currentVisit;
     }
 
     /**
      * Sets the current visit to the visitor.
      * @param visit - the visit object itself to attach to visitor
-     * @throws AssertionError if th visitor isn't visiting
      */
     public void setCurrentVisit(Visit visit){
         this.currentVisit = visit;
+    }
+
+    /**
+     * getBooksLoaned returns all transactions associated with the visitor
+     * @return - ArrayList of Transactions the visitor has on loan.
+     */
+    public ArrayList<Transaction> getBooksLoaned(){
+        return this.booksLoaned;
+    }
+
+    /**
+     * checkOutBook is a method to add a transaction to the visitor. This is to track what books
+     * a visitor has out and when they are due.
+     * @param transaction - the transaction object that reprents the book being checked out.
+     */
+    public void checkOutBook(Transaction transaction){
+        this.booksLoaned.add(transaction);
     }
 
     /**
@@ -131,37 +144,15 @@ public class Visitor implements java.io.Serializable{
      * @return boolean value for whether or not the visitor has fines
      */
     public boolean hasFines(){
-        double totalFines = 0.0;
-        for(Transaction t: this.booksLoaned){
-            totalFines += t.calculateFine();
-        }
-        return (totalFines > 0.0);
+        return (this.getBalance() > 0.0);
     }
 
-    public String getFirstName(){
-        return this.firstName;
-    }
-
-    public String getLastName(){
-        return this.lastName;
-    }
-
-    public String getAddress(){
-        return this.address;
-    }
-
-    public String getPhoneNum(){
-        return this.phoneNum;
-    }
-    public ArrayList<Transaction> getBooksLoaned(){
-        return this.booksLoaned;
-    }
-
-    public void checkOutBook(Transaction transaction){
-        this.booksLoaned.add(transaction);
-    }
-
-    public double getFine(){
+    /**
+     * getBalance accumulates all the fines the visitor has on any books they have loaned out
+     * and returns the sum, being what the visitor owes in total.
+     * @return - the double amount the visitor owes the library
+     */
+    public double getBalance(){
         double totalFines = 0.0;
         for(Transaction t: this.booksLoaned){
             totalFines += t.calculateFine();
@@ -169,6 +160,12 @@ public class Visitor implements java.io.Serializable{
         return totalFines;
     }
 
+    /**
+     * payFine is method called when a visitor wants to pay towards their balance with the library.
+     * To pay the fine, the method checks all books on loan the visitor has and pays as much as possible
+     * (with no order).
+     * @param amount - the amount to pay for one or more books.
+     */
     public void payFine(double amount){
         double amountLeft = amount;
         for(Transaction t : this.booksLoaned){
@@ -196,11 +193,32 @@ public class Visitor implements java.io.Serializable{
         this.borrowedBooksQuery = borrowedBooksQuery;
     }
 
-    public HashMap<Integer, Transaction> getBorrowedBooksQuery(){
-        return this.borrowedBooksQuery;
+    /**
+     * getTransaction is a method used to get a transaction from the borrowed query id. This is used
+     * for returning books.
+     * @param queryId - the id from the query for the transaction
+     * @return - the Transaction object representing the book to return
+     */
+    public Transaction getTransactionFromQuery(int queryId){
+        return this.borrowedBooksQuery.get(queryId);
     }
 
-    public void setBooksLoaned(ArrayList<Transaction> transactions){
+    /**
+     * wasQueried checks the borrowed book's query to see if an id is there. This is used to validate
+     * a return books request.
+     * @param idToCheck - the id to check
+     * @return - boolean, true if id was in borrowed query, false otherwise
+     */
+    public boolean wasQueried(int idToCheck){
+        return this.borrowedBooksQuery.keySet().contains(idToCheck);
+    }
+
+    /**
+     * setBooksLoaned is a method used to help "remove" the transaction when returning a book
+     * @param transactions - the new ArrayList without the returned book in it.
+     */
+    public void setBooksLoaned(ArrayList<Transaction> transactions) {
         this.booksLoaned = transactions;
     }
+
 }

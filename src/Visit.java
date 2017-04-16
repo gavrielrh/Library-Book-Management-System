@@ -1,7 +1,10 @@
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+/**
+ * Filename: Visit.java
+ * @author - Brendan Jones, bpj1651@rit.edu
+ * Purpose: visits are tracked for library statistics purpose
+ */
+
+/* imports */
 import java.util.Date;
 
 /**
@@ -14,8 +17,6 @@ public class Visit implements java.io.Serializable{
     private Visitor visitor;
     private Date visitStartDate;
     private Date visitEndDate;
-    private boolean isComplete;
-    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     /**
      * Constructor for Visitor
      * @param visitor - the visitor that is visiting
@@ -26,49 +27,34 @@ public class Visit implements java.io.Serializable{
         this.visitStartDate = visitStartDate;
         // initially the visit isn't complete
         this.visitEndDate = null;
-        this.isComplete = false;
-    }
-
-    public Visit(Visitor visitor, Date visitStartDate, Date VisitEndDate){
-        this.visitor = visitor;
-        this.visitStartDate = visitStartDate;
-        this.visitEndDate = visitEndDate;
     }
 
     /**
-     *
-     * @param visitEndDate
+     * endVisit is called with a date object to represent when the visit ended
+     * @param visitEndDate - the date object that the visit ended on.
      */
     public void endVisit(Date visitEndDate){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         this.visitEndDate = visitEndDate;
-        this.isComplete = true;
     }
 
     /**
      * getVisitDuration calculates the difference of start and end date's and returns an int version
      * of the duration
      * @return long representation of the duration of the visit
+     * @throws AssertionError - if the visit isn't complete, no time can be calculated.
      */
     public long getVisitDuration() {
-        assert this.isComplete;
+        assert isComplete();
         return this.visitEndDate.getTime() - this.visitStartDate.getTime();
     }
 
+    /**
+     * isComplete tells whether the visit object has been completed.
+     * @return - boolean value if the visit is complete
+     */
     public boolean isComplete(){
-        return this.isComplete;
+        return this.visitEndDate != null;
     }
 
-    public Visitor getVisitor(){
-        return this.visitor;
-    }
 
-    public long getVisitStartTime(){
-        return this.visitStartDate.getTime();
-    }
-
-    public long getVisitEndTime(){
-        assert this.isComplete();
-        return this.visitEndDate.getTime();
-    }
 }

@@ -25,7 +25,7 @@ public class PayFineRequest implements Request {
 
     public void execute(){
         if(this.lbms.hasVisitor(visitorId)) {
-            this.invalidAmount = (this.visitor.getFine() < this.amount);
+            this.invalidAmount = (this.visitor.getBalance() < this.amount);
             if(!invalidAmount){
                 this.visitor.payFine(this.amount);
                 this.lbms.payFine(this.amount);
@@ -36,7 +36,7 @@ public class PayFineRequest implements Request {
     }
 
     public String response(){
-        double balance = this.visitor.getFine();
+        double balance = this.visitor.getBalance();
         if(this.invalidVisitorId){
             return "pay,invalid-visitor-id;";
         }else if(this.invalidAmount){
