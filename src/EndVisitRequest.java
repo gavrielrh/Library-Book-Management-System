@@ -1,11 +1,16 @@
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
 /**
+ * Filname: EndVisitRequest.java
+ * @author - Brendan Jones, bpj1651@rit.edu
+ *
  * EndVisitRequest represents a ConcreteCommand within the Command Design pattern.
  * Executing the command ends the visit of the given visitor within the LBMS.
  */
+
+/* imports */
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+
 public class EndVisitRequest implements Request {
 
     /* Have the LBMS part of the request, in order to execute commands */
@@ -36,6 +41,11 @@ public class EndVisitRequest implements Request {
         this.visitDate = null;
     }
 
+    /**
+     * execute check's if the library has the visitor given the id requested and
+     * also checks if the visitor is visiting.
+     * If appropriate, execute then ends the visit for the visitor.
+     */
     @Override
     public void execute(){
         if(this.lbms.hasVisitor(this.visitorId)) {
@@ -56,28 +66,27 @@ public class EndVisitRequest implements Request {
         }
     }
 
+    /**
+     * given any error caught with visitor id, response returns the appropriate response for the command
+     * @return - String response representing the result from executing the command.
+     */
     @Override
     public String response(){
         if(this.isInvalidId){
             return "arrive,invalid-id;";
         }else{
             return "depart," + this.visitorId + "," +
-                    this.getVisitTime() + "," +
+                    LBMS.timeFormatter.format(this.visitDate) + "," +
                     this.getVisitDuration(this.visit.getVisitDuration()) + ";";
         }
     }
 
-    /**
-     * getVisitTime is a helper method to get the string of the visit Time
-     * @return - String representation of the visit Time
-     * @throws AssertionError if the visit wasn't valid, meaning it didn't have a date
-     */
-    public String getVisitTime(){
-        assert this.visitDate != null;
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-        return formatter.format(this.visitDate);
-    }
 
+    /**
+     * getVisitDuration returns a string friendly version of the visit's duration
+     * @param millis - the long value of ms of the visit
+     * @return - String version of the duration
+     */
     private String getVisitDuration(long millis){
         return String.format("%02d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toHours(millis),

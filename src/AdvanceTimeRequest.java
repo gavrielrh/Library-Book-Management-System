@@ -58,6 +58,9 @@ public class AdvanceTimeRequest implements Request {
         this.invalidHours = false;
     }
 
+    /**
+     * execute checks for any invalid hours/days and advances time if appropriate
+     */
     @Override
     public void execute(){
 
@@ -103,13 +106,15 @@ public class AdvanceTimeRequest implements Request {
                         (long)(currentNumMinutes * 60000) + (long)(currentNumHours * 3.6e+6);
                 oldTime = new Date(oldTime.getTime() - numMiliSecSinceDay);
                 Date timeVisitsEnd = new Date(oldTime.getTime() + (this.lbms.getNumMinWhenClosed() * 60000));
-                System.out.print("All visits ended at: ");
-                System.out.println(timeVisitsEnd);
                 this.close(timeVisitsEnd);
             }
         }
     }
 
+    /**
+     * response returns the string whether there was an error or if it was successful
+     * @return - String representation of what happened in execute.
+     */
     @Override
     public String response(){
         if(this.invalidDays){

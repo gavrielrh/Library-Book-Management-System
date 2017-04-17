@@ -23,6 +23,8 @@ import java.util.*;
  * at Singleton LBMS and calls it "self"
  */
 public class LBMS implements java.io.Serializable {
+
+    /* serialized ID for loading/saving */
     private static final long serialVersionUID = 8640384775929272738L;
     public static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy/MM/dd");
     public static final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
@@ -45,10 +47,9 @@ public class LBMS implements java.io.Serializable {
     final int MAX_ADVANCE_HOURS = 23;
     final int MIN_ADVANCE_HOURS = 0;
 
-    /* The open and closing times of the LBMS */
-
-
+    /* The library's fine data */
     private double finesCollected;
+
     /* LBMS Data */
     private Date time;
     private HashMap<String, Book> books;
@@ -59,18 +60,6 @@ public class LBMS implements java.io.Serializable {
     private ArrayList<Visit> visits;
     private HashMap<String, Visitor> visitors;
     private ArrayList<Transaction> transactions;
-
-    public LBMS(LBMS otherLBMS) {
-        this.finesCollected = otherLBMS.finesCollected;
-        this.books = otherLBMS.books;
-        this.bookStore = otherLBMS.bookStore;
-        this.booksForPurchaseById = otherLBMS.booksForPurchaseById;
-        this.time = otherLBMS.time;
-        this.transactions = otherLBMS.transactions;
-        this.visitors = otherLBMS.visitors;
-        this.visits = otherLBMS.visits;
-        this.transactions = otherLBMS.transactions;
-    }
 
     /**
      * LBMS Constructor

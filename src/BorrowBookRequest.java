@@ -1,15 +1,19 @@
+/**
+ * Filename: BorrowBookRequest.java
+ * @author - Brendan Jones, bpj1651@rit.edu
+ *
+ * BorrowBookRequest represents a ConcreteCommand within the Command Design pattern.
+ * Executing the command borrows all books in the List of bookIds assuming no errors.
+ * Errors are checked and reported in response.
+ */
+
+/* imports */
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * BorrowBookRequest represents a ConcreteCommand within the Command Design pattern.
- * Executing the command borrows all books in the List of bookIds assuming no errors.
- * Errors are checked and reported in response.
- * TODO: Potential change: right now a book is due 7 days after the date checked out. The day it was checked out counts as day 1.
- */
-public class BorrowBookRequest implements Request {
 
+public class BorrowBookRequest implements Request {
 
     /* Have the LBMS part of the request, in order to execute commands */
     private LBMS lbms;
@@ -20,6 +24,7 @@ public class BorrowBookRequest implements Request {
     private Visitor visitor;
     private int numBooksRequested;
 
+    /* Dates for the borrowed books */
     private Date dateBorrowed;
     private Date dueDate;
 
@@ -41,11 +46,15 @@ public class BorrowBookRequest implements Request {
         this.bookIds = bookIds;
         this.lbms = lbms;
         this.numBooksRequested = bookIds.size();
+
+        //initially no errors
         this.invalidBookId = false;
         this.exceedBookLimit = false;
         this.invalidVisitorId = false;
         this.visitorHasFines = false;
+        //initially no visitor
         this.visitor = null;
+        //initially no date to set for the borrowed books
         this.dateBorrowed = null;
         this.dueDate = null;
     }
@@ -101,6 +110,24 @@ public class BorrowBookRequest implements Request {
         return valid;
     }
 
+    /**
+     * A helper method that is called in execute() assuming no errors.
+     * This is called to do the logic of actually checking out the books
+     */
+    private void checkOutBooks(){
+        for(String bookId: this.bookIds){
+            Book book = lbms.getBook(bookId);
+            book.checkOutBook();
+            Transaction transaction = new Transaction(this.lbms, book, this.dateBorrowed, this.dueDate);
+            this.visitor.checkOutBook(transaction);
+            this.lbms.addTransaction(transaction);
+        }
+    }
+
+    /**
+     * response is formatted based on what errors execute had found.
+     * @return - String response of the borrow action.
+     */
     @Override
     public String response(){
         String response = "borrow,";
@@ -126,20 +153,6 @@ public class BorrowBookRequest implements Request {
         }
         response += ";";
         return response;
-
     }
 
-    /**
-     * A helper method that is called in execute() assuming no errors.
-     * This is called to do the logic of actually checking out the books
-     */
-    private void checkOutBooks(){
-        for(String bookId: this.bookIds){
-            Book book = lbms.getBook(bookId);
-            book.checkOutBook();
-            Transaction transaction = new Transaction(this.lbms, book, this.dateBorrowed, this.dueDate);
-            this.visitor.checkOutBook(transaction);
-            this.lbms.addTransaction(transaction);
-        }
-    }
 }

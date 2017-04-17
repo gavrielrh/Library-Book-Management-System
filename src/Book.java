@@ -1,10 +1,11 @@
 /*
  * File: Book.java
- * Author: Gavriel Rachael-Homann (gxr2329@rit.edu)
+ * Author: Gavriel Rachael-Homann (gxr2329@rit.edu), Brendan Jone (bpj1651@rit.edu)
  *
  * Class for representing Books in the Library
  */
 
+/* imports */
 import java.util.Date;
 
 /**
@@ -12,12 +13,16 @@ import java.util.Date;
  * All books initially start out with 0 copies and 0 checked out.
  */
 public class Book implements java.io.Serializable{
+
+    /* info specific to book */
     private String isbn;
     private String title;
     private String[] authors;
     private String publisher;
     private Date publishedDate;
     private int pageCount;
+
+    /* information about the book in the library */
     private int totalCopies;
     private int numCheckedOut;
 
@@ -39,11 +44,13 @@ public class Book implements java.io.Serializable{
         this.publishedDate = publishedDate;
         this.pageCount = pageCount;
 
+        /* initially no book in the library */
         this.totalCopies = 0;
         this.numCheckedOut = 0;
     }
 
 
+    /* copy constructor used for purchasing books */
     public Book(Book book){
         this.isbn = book.isbn;
         this.title = book.title;
@@ -54,31 +61,6 @@ public class Book implements java.io.Serializable{
         this.totalCopies = 0;
         this.numCheckedOut = 0;
     }
-
-
-    /**
-     * Constructor for Book
-     *
-     * @param isbn          13 digit isbn (id)
-     * @param title         title
-     * @param authors       list of author(s)
-     * @param publisher     publisher
-     * @param publishedDate published date (month/day/year)
-     * @param pageCount     page count
-     */
-
-    public Book(String isbn, String title, String[] authors, String publisher, Date publishedDate, int pageCount, int totalCopies, int numCheckedOut) {
-        this.isbn = isbn;
-        this.title = title;
-        this.authors = authors;
-        this.publisher = publisher;
-        this.publishedDate = publishedDate;
-        this.pageCount = pageCount;
-
-        this.totalCopies = totalCopies;
-        this.numCheckedOut = numCheckedOut;
-    }
-
 
     /**
      * Gets the Book's isbn
@@ -155,21 +137,6 @@ public class Book implements java.io.Serializable{
         this.totalCopies = totalCopies;
     }
 
-    /**
-     * Gets the Book's number of copies checked out
-     * @return number checked out
-     */
-    public int getNumCheckedOut() {
-        return numCheckedOut;
-    }
-
-    /**
-     * Sets the Book's number of copies checked out
-     * @param numCheckedOut number to check out
-     */
-    public void setNumCheckedOut(int numCheckedOut) {
-        this.numCheckedOut = numCheckedOut;
-    }
 
     /**
      * Gets whether the Book has any copies available
@@ -179,6 +146,10 @@ public class Book implements java.io.Serializable{
         return totalCopies > numCheckedOut;
     }
 
+    /** the toString of Book is:
+     * isbn,title, {authors},pusher,publish-date
+     * @return - String of the Book in above format
+     */
     @Override
     public String toString(){
         String output = "";
@@ -197,7 +168,9 @@ public class Book implements java.io.Serializable{
         return output;
     }
 
-
+    /**
+     * checkOutBook updates the amount available in the library
+     */
     public void checkOutBook(){
         this.numCheckedOut += 1;
     }
