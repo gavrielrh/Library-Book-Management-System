@@ -42,7 +42,7 @@ public class BookStoreSearchRequest implements Request {
     private Set<Book> searchResults;
 
     //TODO REMOVE THIS TEMP VAR
-    private enum BOOKSERVICE {
+    public enum BOOKSERVICE {
         local,
         google
     }
@@ -62,7 +62,7 @@ public class BookStoreSearchRequest implements Request {
      *                  and book status will only show books with at least one copy available for check out.
      */
     public BookStoreSearchRequest(LBMS lbms, String title, String authors,
-                                  String isbn, String publisher, String sortOrder) {
+                                  String isbn, String publisher, String sortOrder, BOOKSERVICE bookService) {
         this.lbms = lbms;
         this.title = title;
         this.isbn = isbn;
@@ -73,8 +73,7 @@ public class BookStoreSearchRequest implements Request {
             Collections.addAll(this.authors, authors.split(","));
         }
         this.searchResults = new HashSet<>();
-        //TODO REMOVE THIS TEMP VAR
-        this.bookService = BOOKSERVICE.google;
+        this.bookService = bookService;
     }
 
     /**
@@ -82,7 +81,6 @@ public class BookStoreSearchRequest implements Request {
      */
     @Override
     public void execute() {
-        //TODO REMOVE THIS TEMP VAR
         if(this.bookService == BOOKSERVICE.local) {
             this.searchResults.addAll(this.lbms.getBookStore().values());
             this.searchResults.removeIf(book -> {
