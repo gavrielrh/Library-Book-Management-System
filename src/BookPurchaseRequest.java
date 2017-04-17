@@ -6,9 +6,7 @@
  */
 
 /* imports */
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class BookPurchaseRequest implements Request {
@@ -32,6 +30,9 @@ public class BookPurchaseRequest implements Request {
         this.ids = ids;
     }
 
+    /**
+     * No errors to check as per the request format, but execute purchases the books given
+     */
     @Override
     public void execute(){
         if(quantity > 0) {
@@ -45,6 +46,11 @@ public class BookPurchaseRequest implements Request {
             }
         }
     }
+
+    /**
+     * response returns the books purchased
+     * @return - String of purchase being successful and the book info
+     */
 
     @Override
     public String response(){
