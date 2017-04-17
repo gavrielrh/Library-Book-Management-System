@@ -10,17 +10,15 @@ import java.util.regex.Pattern;
  * Provides functions for parsing books from text files
  */
 public class Parser {
-
-    //TODO: Add correct published dates for books with published date listed
     /**
      * Parses String in date format as Date object
      *
      * @param dateString date to parse
      * @return parsed date
      */
-    private static Date parseDate(String dateString) {
+    public static Date parseDate(String dateString) {
         try {
-            String format = "M-d-y";
+            String format = "y-M-d";
             String[] splitDate = dateString.split("-");
             if (splitDate.length == 1) {
                 format = "y";
@@ -32,7 +30,6 @@ public class Parser {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 

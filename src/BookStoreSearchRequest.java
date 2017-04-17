@@ -15,6 +15,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 */
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,60 +49,6 @@ public class BookStoreSearchRequest implements Request {
 
     private BOOKSERVICE bookService;
 
-    class IndustryIdentifierPojo {
-        String type;
-        String identifier;
-    }
-
-    class SaleInfoPojo {
-        String country;
-        String saleability;
-    }
-
-    class VolumeInfoPojo {
-        String title;
-        String[] authors;
-    }
-
-    class ItemPojo {
-        String publisher;
-        String publishedDate;
-        IndustryIdentifierPojo[] industryIdentifiers;
-        SaleInfoPojo saleInfo;
-    }
-
-    class VolumePojo {
-        String totalItems;
-        String pageCount;
-        ItemPojo[] items;
-    }
-/*
-    class ItemSerializer implements JsonDeserializer<ItemPojo>
-    {
-        @Override
-        public ItemPojo deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-            // Get the item element from the parsed JSON
-            JsonElement item = jsonElement.getAsJsonObject().get("items");
-
-            // Deserialize it
-            return new Gson().fromJson(item, ItemPojo.class);
-        }
-    }
-
-    interface GoogleBooksAPI {
-        String ENDPOINT = "https://www.googleapis.com";
-
-        // authors needs to be manually inputted since there are multiple possible authors
-        // inauthor:{author}+inauthor:{author}...
-        @GET("/book/v1/volumes?q=")
-        Call<VolumePojo> getBooks(
-                @Query("isbn") String isbn,
-                @Query("+title") String title,
-                @Query("+publisher") String publisher,
-                @Query("authors") String authors
-                );
-    }
-*/
     /**
      * Constructor for the BookStoreSearchRequest
      *
@@ -127,7 +74,7 @@ public class BookStoreSearchRequest implements Request {
         }
         this.searchResults = new HashSet<>();
         //TODO REMOVE THIS TEMP VAR
-        this.bookService = BOOKSERVICE.local;
+        this.bookService = BOOKSERVICE.google;
     }
 
     /**
@@ -154,72 +101,16 @@ public class BookStoreSearchRequest implements Request {
                 return false;
             });
         } else {
-            //String queryURL = "https://www.googleapis.com/books/v1/volumes?q=";
-            /*
-             *
-             Books are only considered available for purchase via the LBMS
-              - if the "saleability" is "FOR_SALE" and in the "country" is "US."
-             Title
-             Authors
-             Publisher
-             PublishedDate
-             PageCount
-             type = ISBN_12_Identifier
-             Country
-             Saleability
-             */
-            String title = "*";
-            String authors = "";
-            String isbn = "*";
-            String publisher = "*";
-
-            if(this.isbn != null) {
-                //queryURL += "+isbn:" + this.isbn;
-                isbn = this.isbn;
+            title = title == null? "*" : title;
+            publisher = publisher == null? "*" : publisher;
+            isbn = isbn == null? "*" : isbn;
+            GoogleBooksAPI api = new GoogleBooksAPI(title, authors, isbn, publisher);
+            try {
+                api.readBooksFromAPI();
+                this.searchResults.addAll(api.getBooks());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            if(this.title != null) {
-                //queryURL += "+intitle:" + this.title;
-                title = this.title;
-            }
-            if(this.publisher != null) {
-                //queryURL += "+inpublisher:" + this.publisher;
-                publisher = this.publisher;
-            }
-            if(!this.authors.isEmpty()) {
-                for(String author : this.authors) {
-                    //queryURL += "+inauthor:" + author;
-                    authors += "+inauthor:" + author;
-                }
-            } else {
-                authors = "*";
-            }
-//
-//            Gson gson = new GsonBuilder()
-//                    .registerTypeAdapter(ItemPojo.class, new ItemSerializer())
-//                    .setDateFormat("yyyy-MM-dd")
-//                    .create();
-//
-//            Retrofit retrofit = new Retrofit.Builder()
-//                    .baseUrl(GoogleBooksAPI.ENDPOINT)
-//                    .addConverterFactory(GsonConverterFactory.create(gson))
-//                    .build();
-//
-//            GoogleBooksAPI googleBooksAPI = retrofit.create(GoogleBooksAPI.class);
-//
-//            Call<VolumePojo> call = googleBooksAPI.getBooks(isbn, title, publisher, authors);
-//            call.enqueue(new Callback<VolumePojo>() {
-//                @Override
-//                public void onResponse(Call<VolumePojo> call, Response<VolumePojo> response) {
-//                    int statusCode = response.code();
-//                    VolumePojo volume = response.body();
-//                    System.out.println(statusCode);
-//                }
-//
-//                @Override
-//                public void onFailure(Call<VolumePojo> call, Throwable throwable) {
-//                    System.out.println("Something went wrong with the request");
-//                }
-//            });
         }
     }
 
@@ -270,16 +161,5 @@ public class BookStoreSearchRequest implements Request {
         lbms.setBooksForPurchaseById(booksForPurchaseById);
 
         return message + ";"; // 	info,title,{authors},[isbn, [publisher,[sort order]]];
-    }
-
-    /**
-     * getPublishedDate is a helper method to get the string of the visit Date
-     *
-     * @return - String representaton of the visit Date
-     * @throws AssertionError if the visit wasn't valid, meaning it didn't have a date
-     */
-    private String getPublishedDate(Book book) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return formatter.format(book.getPublishedDate());
     }
 }
