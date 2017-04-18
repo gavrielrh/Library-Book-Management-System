@@ -10,11 +10,15 @@ public class Client {
     /* each client has a unique Id */
     private String clientId;
 
+    /* each client MAY have an account signed in to it. initially none */
     private Account account;
 
+    /* each client MAY have a proxy associated with it. initially none */
     private PermissionProxy proxy;
 
+    /* invoker used to handle client commands that don't require login */
     private SystemInvoker systemInvoker;
+
     /**
      * Constructor for Client.
      * @param lbms - used for concurrent users.
@@ -25,17 +29,26 @@ public class Client {
     }
 
     /**
-     * connect connects this to LBMS.
+     * connect establishes the connection with the clientId to the LBMS.
+     * @param clientId - the Id associated with the Client object and LBMS.
      */
-
     public void connect(String clientId){
         this.clientId = clientId;
     }
 
+    /**
+     * getId - returns the clientId used in the connection
+     * @return - String. clientId used in the connection.
+     */
     public String getId(){
         return this.clientId;
     }
 
+    /**
+     * handleClientCommand
+     * @param clientCommand
+     * @return
+     */
     public String handleClientCommand(String clientCommand){
         return this.proxy.handleCommand(clientCommand);
     }

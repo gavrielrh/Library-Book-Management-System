@@ -160,9 +160,19 @@ public class BorrowBookRequest implements Request, UndoableCommand{
         return response;
     }
 
+    /**
+     * success is a private helper method to check any errors caught in execute.
+     * @return - boolean. True if executing found no errors, false otherwise.
+     */
     private boolean success(){
         return (!this.invalidVisitorId && !this.invalidBookId && !this.exceedBookLimit && !this.visitorHasFines);
     }
+
+    /**
+     * undo checks if books were taken out, and if so returns them.
+     * @return - boolean. True if undo returned books, false otherwise.
+     */
+    @Override
     public boolean undo(){
         if(this.success()){
             for(String bookId: this.transactions.keySet()){
@@ -178,6 +188,11 @@ public class BorrowBookRequest implements Request, UndoableCommand{
         }
     }
 
+    /**
+     * redo checks if books were taken out, and if so, takes them out again.
+     * @return - boolean. True if redo took out the books, false otherwise.
+     */
+    @Override
     public boolean redo(){
         if(this.success()){
             for(String bookId : this.transactions.keySet()){

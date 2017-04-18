@@ -10,10 +10,11 @@ public class EmployeeProxy implements PermissionProxy{
     }
 
     public String handleCommand(String input){
-        return null;
+        return this.clientInvoker.handleCommand(input);
     }
 
     public boolean hasPermission(String commandName){
-        return false;
+        //all employees have "god status
+        return true;
     }
 }

@@ -34,7 +34,11 @@ public class ClientInvoker {
 
         switch (firstWord){
             case "arrive":
-                requestExecuted = new BeginVisitRequest(this.lbms, this.visitorId);
+                if(tokens.length == 1) {
+                    requestExecuted = new BeginVisitRequest(this.lbms, this.visitorId);
+                }else{
+                    requestExecuted = new BeginVisitRequest(this.lbms, tokens[1]);
+                }
                 break;
             case "depart":
                 requestExecuted = new EndVisitRequest(this.lbms, this.visitorId);
@@ -115,18 +119,15 @@ public class ClientInvoker {
             requestExecuted.execute();
             this.undoStack.push(requestExecuted);
             return requestExecuted.response();
-        }else if(requestLine.equals("undo;")){
         }else{
             return "unrecognized command;";
         }
-        return null;
     }
 
     private boolean isUndoable(Request request){
         if(request instanceof UndoableCommand){
             return true;
         }
-
         return false;
     }
 }

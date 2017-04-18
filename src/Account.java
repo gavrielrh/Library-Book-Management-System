@@ -8,11 +8,18 @@
  */
 public interface Account {
 
+    /* accounts must support logging in and out */
     void login();
     void logout();
+
+    /* used for account authentication */
     String getUsername();
     String getPassword();
+
+    /* used for authentication checking */
     boolean isLoggedIn();
     String getVisitorId();
+
+    /* used for determining which protection proxy to use */
     String getRole();
 }
