@@ -1,13 +1,13 @@
-/**
+/*
  * Filename: LoginRequest.java
+ *
  * @author - Brendan Jones (bpj1651@rit.edu)
- *
- * LoginRequest represents a concreteCommand in the Request subsystem.
- * The request is attempting to log a user in, given a client.
- *
+ *         <p>
+ *         LoginRequest represents a concreteCommand in the Request subsystem.
+ *         The request is attempting to log a user in, given a client.
  */
-public class LoginRequest implements Request {
 
+public class LoginRequest implements Request {
 
     private Client client;
     private LBMS lbms;
@@ -16,8 +16,15 @@ public class LoginRequest implements Request {
 
     boolean success;
 
-
-    public LoginRequest(Client client, LBMS lbms, String username, String password){
+    /**
+     * Constructor for LoginRequest
+     *
+     * @param client   the client being used to log in
+     * @param lbms     the lbms being logged into
+     * @param username the username for the given user
+     * @param password the password for the given user
+     */
+    public LoginRequest(Client client, LBMS lbms, String username, String password) {
         this.client = client;
         this.lbms = lbms;
         this.username = username;
@@ -25,27 +32,33 @@ public class LoginRequest implements Request {
         this.success = false;
     }
 
-    public void execute(){
-        if(this.lbms.hasAccount(this.username)){
-            if(this.lbms.authenticate(this.username, this.password)){
+    @Override
+    public void execute() {
+        if (this.lbms.hasAccount(this.username)) {
+            if (this.lbms.authenticate(this.username, this.password)) {
                 Account account = this.lbms.getAccount(this.username);
+
                 this.success = true;
+
                 this.client.logIn(account);
-            }else{
+            } else {
                 this.success = false;
             }
-        }else{
+        } else {
             this.success = false;
         }
     }
 
-    public String response(){
+    @Override
+    public String response() {
         String response = this.client.getId() + ",login,";
-        if(this.success){
+
+        if (this.success) {
             response += "success;";
-        }else{
+        } else {
             response += "bad-username-or-password";
         }
+
         return response;
     }
 }

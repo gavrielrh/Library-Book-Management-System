@@ -1,4 +1,4 @@
-/**
+/*
  * Filename: FindBorrowedBooksRequest.java
  * @author - Brendan Jones, bpj1651@rit.edu
  *
@@ -7,6 +7,7 @@
  */
 
 /* imports */
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,10 +29,11 @@ public class FindBorrowedBooksRequest implements Request {
 
     /**
      * Constructor for the FindBorrowedBookRequest
-     * @param lbms - the system itself. This is so execute can call lbms commands.
+     *
+     * @param lbms      - the system itself. This is so execute can call lbms commands.
      * @param visitorId - the String value of the visitor Id that has the books borrowed.
      */
-    public FindBorrowedBooksRequest(LBMS lbms, String visitorId){
+    public FindBorrowedBooksRequest(LBMS lbms, String visitorId) {
         this.lbms = lbms;
         this.visitorId = visitorId;
 
@@ -47,12 +49,12 @@ public class FindBorrowedBooksRequest implements Request {
      * and if so, finds the books the visitor has checked out.
      */
     @Override
-    public void execute(){
-        if(this.lbms.hasVisitor(this.visitorId)){
+    public void execute() {
+        if (this.lbms.hasVisitor(this.visitorId)) {
             this.visitor = this.lbms.getVisitor(this.visitorId);
             this.numBorrowed = visitor.getNumBooksCheckedOut();
             this.booksCheckedOut = visitor.getBooksLoaned();
-        }else{
+        } else {
             this.invalidId = true;
         }
     }
@@ -61,11 +63,12 @@ public class FindBorrowedBooksRequest implements Request {
      * otherwise, it just reports the invalid visitor id
      */
     @Override
-    public String response(){
+    public String response() {
         String response = "borrowed,";
-        if(!this.invalidId) {
+        if (!this.invalidId) {
             response += Integer.toString(this.numBorrowed);
             response += ",";
+
             int queryId = 1;
             HashMap<Integer, Transaction> booksQueried = new HashMap<>();
 
@@ -73,21 +76,29 @@ public class FindBorrowedBooksRequest implements Request {
                 response += "\n";
                 response += Integer.toString(queryId);
                 response += ",";
+
                 response += transaction.getBookType().getIsbn();
                 response += ",";
+
                 response += transaction.getBookType().getTitle();
                 response += ",";
+
                 Date borrowDate = transaction.getDateBorrowed();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
                 response += formatter.format(borrowDate);
+
                 booksQueried.put(queryId, transaction);
+
                 queryId++;
             }
+
             this.visitor.setBorrowedBooksQuery(booksQueried);
-        }else{
+        } else {
             response += "invalid-vsitor-id";
         }
+
         response += ";";
+
         return response;
     }
 

@@ -47,10 +47,12 @@ public class LibraryBookSearchRequest implements Request {
         this.isbn = isbn;
         this.publisher = publisher;
         this.sortOrder = sortOrder;
+
         this.authors = new HashSet<>();
         if (!authors.equals("*")) {
             Collections.addAll(this.authors, authors.split(","));
         }
+
         this.searchResults = new HashSet<>();
     }
 
@@ -60,6 +62,7 @@ public class LibraryBookSearchRequest implements Request {
     @Override
     public void execute() {
         this.searchResults.addAll(this.lbms.getBooks().values());
+
         this.searchResults.removeIf(book -> {
             if (!this.isbn.equals("*") && !this.isbn.equals(book.getIsbn())) {
                 return true;
@@ -73,6 +76,7 @@ public class LibraryBookSearchRequest implements Request {
             if (!this.authors.isEmpty() && Collections.disjoint(new ArrayList<>(Arrays.asList(book.getAuthors())), this.authors)) {
                 return true;
             }
+
             return false;
         });
     }
@@ -91,9 +95,9 @@ public class LibraryBookSearchRequest implements Request {
     public String response() {
         String message = "info,";
 
-        if(!this.sortOrder.equals("*")){
-            if(!(this.sortOrder.equals("title") || this.sortOrder.equals("publish-date") ||
-                    this.sortOrder.equals("book-status"))){
+        if (!this.sortOrder.equals("*")) {
+            if (!(this.sortOrder.equals("title") || this.sortOrder.equals("publish-date") ||
+                    this.sortOrder.equals("book-status"))) {
                 return "info,invalid-sort-order";
             }
         }
@@ -113,7 +117,9 @@ public class LibraryBookSearchRequest implements Request {
                     break;
                 case "book-status":
                     Collections.sort(sortedBooks, QueryStrategy.INSTANCE.queryByAvailabilityFunc);
+
                     sortedBooks.removeIf(book -> !book.isAvailable());
+
                     break;
                 default:
                     return "info,invalid-sort-order";
@@ -123,16 +129,23 @@ public class LibraryBookSearchRequest implements Request {
         message += sortedBooks.size();
 
         HashMap<Integer, Book> booksForBorrowById = new HashMap<>();
+
         int id = 1;
+
         for (Book book : sortedBooks) {
             message += ",\n" + book.getCopiesAvailable() + ",";
+
             message += book.toString() + ",";
+
             message += book.getPageCount();
-            booksForBorrowById.put(id,book);
+
+            booksForBorrowById.put(id, book);
+
             id++;
         }
 
         lbms.setBooksForBorrowById(booksForBorrowById);
+
         return message + ";";
     }
 }

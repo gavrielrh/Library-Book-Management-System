@@ -61,7 +61,7 @@ public class LBMS implements java.io.Serializable {
     private HashMap<String, Book> bookStore;
     private ArrayList<Visit> visits;
     private HashMap<String, Visitor> visitors;
-    private ArrayList<Transaction> transactions;
+    private ArrayList<Transaction> transactions; // TODO is there something wrong here? nothing is done with transactions
 
 
     /* know the amount of clients connected */
@@ -136,7 +136,7 @@ public class LBMS implements java.io.Serializable {
      * @param book - the Book object itself to add
      */
     public void addBook(Book book) {
-        if(this.books.containsKey(book.getIsbn())) {
+        if (this.books.containsKey(book.getIsbn())) {
             book.setTotalCopies(book.getTotalCopies() + 1);
         } else {
             this.books.put(book.getIsbn(), book);
@@ -172,6 +172,7 @@ public class LBMS implements java.io.Serializable {
 
     /**
      * Gets the current book service for search requests
+     *
      * @return the book service
      */
     public BookStoreSearchRequest.BOOKSERVICE getBookService() {
@@ -180,6 +181,7 @@ public class LBMS implements java.io.Serializable {
 
     /**
      * Sets the current book service for search requests
+     *
      * @param service the service to be set to
      */
     public void setBookService(BookStoreSearchRequest.BOOKSERVICE service) {
@@ -188,6 +190,7 @@ public class LBMS implements java.io.Serializable {
 
     /**
      * setBooksForPurchaseById sets the internal list of queried books for purchase
+     *
      * @param booksForPurchaseById the new list of queried books
      */
     public void setBooksForPurchaseById(HashMap<Integer, Book> booksForPurchaseById) {
@@ -196,6 +199,7 @@ public class LBMS implements java.io.Serializable {
 
     /**
      * getBooksFromQueryId returns the book specified by the purchase query id
+     *
      * @param id purchase query identification number
      * @return - Book the book if found, otherwise null
      */
@@ -203,11 +207,11 @@ public class LBMS implements java.io.Serializable {
         return this.booksForPurchaseById.get(id);
     }
 
-    public void setBooksForBorrowById(HashMap<Integer, Book> booksForBorrowById){
+    public void setBooksForBorrowById(HashMap<Integer, Book> booksForBorrowById) {
         this.booksForBorrowById = booksForBorrowById;
     }
 
-    public Book getBookFromBorrowId(int id){
+    public Book getBookFromBorrowId(int id) {
         return this.booksForBorrowById.get(id);
     }
 
@@ -219,6 +223,7 @@ public class LBMS implements java.io.Serializable {
      */
     public void seedInitialLibrary(String filename) throws IOException {
         List<Book> booksList = (List<Book>) Parser.readBooksFromFile(filename);
+
         booksList.forEach(b -> this.bookStore.put(b.getIsbn(), b));
     }
 
@@ -241,9 +246,11 @@ public class LBMS implements java.io.Serializable {
     public ArrayList<String> getVisitorIds() {
         ArrayList<String> visitorIds = new ArrayList<String>();
         Set<String> visitorNumIds = this.visitors.keySet();
+
         for (String v : visitorNumIds) {
             visitorIds.add(v);
         }
+
         return visitorIds;
     }
 
@@ -258,30 +265,43 @@ public class LBMS implements java.io.Serializable {
     }
 
     /**
+     * Closes the library, ending all current visits
      *
-     * @param timeClosed
+     * @param timeClosed the time of closing
      */
-    public void close(Date timeClosed){
-        for(Visitor v : this.visitors.values()){
+    public void close(Date timeClosed) {
+        for (Visitor v : this.visitors.values()) {
             v.endVisit();
         }
-        for(Visit v : this.visits){
+        for (Visit v : this.visits) {
             v.endVisit(timeClosed);
         }
     }
 
     /**
      * isOpen is used to determine whether or not the libary is open, based on the OPEN and CLOSE times
+     *
      * @return - the boolean value if the libarary is open or not
      */
-    public boolean isOpen(){
+    public boolean isOpen() {
         int currentTime = Integer.parseInt(String.format("%tH%tm", this.time, this.time));
         return (currentTime >= this.LIBRARY_OPEN_TIME && currentTime <= this.LIBRARY_CLOSED_TIME);
     }
+
+    /**
+     * Getter for the amount of fines collected
+     *
+     * @return the amount of fines collected
+     */
     public double getFinesCollected() {
         return this.finesCollected;
     }
 
+    /**
+     * Pays the fine amount
+     *
+     * @param amount the amount to pay
+     */
     public void payFine(double amount) {
         this.finesCollected += amount;
     }
@@ -290,15 +310,16 @@ public class LBMS implements java.io.Serializable {
      * averageVisitDuration gets the integer value of the average visit duration for all visits in LBMS.
      *
      * @return - the int value of the average visit duration in LBMS.
-     * //TODO: what does the int represent? miliseconds? minutes?
      */
     public long averageVisitDuration() {
         long sum = 0;
+
         for (Visit v : visits) {
             if (v.isComplete()) {
                 sum += v.getVisitDuration();
             }
         }
+
         return sum;
     }
 
@@ -326,6 +347,7 @@ public class LBMS implements java.io.Serializable {
      */
     public Visitor getVisitor(String visitorId) {
         assert this.hasVisitor(visitorId);
+
         return this.visitors.get(visitorId);
     }
 
@@ -364,6 +386,7 @@ public class LBMS implements java.io.Serializable {
      */
     public Book getBook(String bookId) {
         assert this.hasBook(bookId);
+
         return this.books.get(bookId);
     }
 
@@ -376,6 +399,7 @@ public class LBMS implements java.io.Serializable {
     public boolean hasCopy(String bookId) {
         if (this.hasBook(bookId)) {
             Book book = this.getBook(bookId);
+
             return book.isAvailable();
         } else {
             return false;
@@ -391,23 +415,30 @@ public class LBMS implements java.io.Serializable {
         this.transactions.add(transaction);
     }
 
-    public int getNumMinWhenClosed(){
+    /**
+     * Calculates the number of minutes when the library is closed
+     *
+     * @return the number of minutes
+     */
+    public int getNumMinWhenClosed() {
         int numMinInHours = 60 * (this.LIBRARY_CLOSED_TIME / 100);
+
         return (this.LIBRARY_CLOSED_TIME % 100) + numMinInHours;
     }
 
     /**
      * hasAccount checks if the usernameToCheck is in the system accounts
+     *
      * @param usernameToCheck - String of usernameToCheck
      * @return - boolean. True if there is a duplicate. False if no duplicates.
      */
-    public boolean hasAccount(String usernameToCheck){
+    public boolean hasAccount(String usernameToCheck) {
         return this.accounts.keySet().contains(usernameToCheck);
     }
 
-
     /**
      * login attempts to login with a given username and password
+     *
      * @param username - the username attempting to log in
      * @param password - the password attempting to use to log in
      * @return - boolean. True if the login was successful, false otherwise.
@@ -415,113 +446,162 @@ public class LBMS implements java.io.Serializable {
     public boolean login(String username, String password) {
         if (this.hasAccount(username)) {
             Account accountLogging = this.accounts.get(username);
+
             //if the passwords match, login was successful
             boolean success = password.equals(accountLogging.getPassword());
+
             if (!success) {
                 return false;
             } else {
                 accountLogging.login();
+
                 return true;
             }
-        }else {
+        } else {
             return false;
         }
     }
 
     /**
      * logout logs the user out
+     *
      * @param username - the username requesting to log out
      * @return boolean. True if logout was successful. False if logout had an error.
      */
-    public boolean logout(String username){
-        if (this.hasAccount(username)){
+    public boolean logout(String username) {
+        if (this.hasAccount(username)) {
             Account accountLogging = this.accounts.get(username);
-            if(accountLogging.isLoggedIn()){
+
+            if (accountLogging.isLoggedIn()) {
                 accountLogging.logout();
+
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }else{
+        } else {
             return false;
         }
     }
 
-
     /**
      * connectClient increases the clients logged in, and returns the String for the client
+     *
      * @return - String of the clientId
      */
-    public String connectClient(){
+    public String connectClient() {
         Client client = new Client(this);
         String clientId = Integer.toString(this.clients.size() + 1);
+
         client.connect(clientId);
         this.clients.put(clientId, client);
+
         return clientId;
     }
 
     /**
      * disconnectClient decreases the clients logged in.
      */
-    public void disconnectClient(Client client){
+    public void disconnectClient(Client client) {
         this.clients.remove(client.getId());
     }
 
     /**
      * hasClientId checks if the clientId to check is numeric, if so, then checks if it is connected
+     *
      * @param idToCheck - the String to check
      * @return boolean. True if client is connected. False otherwise.
      */
-    public boolean hasClientId(String idToCheck){
-        if(idToCheck.matches("[-+]?\\d*\\.?\\d+")){
+    public boolean hasClientId(String idToCheck) {
+        if (idToCheck.matches("[-+]?\\d*\\.?\\d+")) {
             int clientId = Integer.parseInt(idToCheck);
             return clientId <= this.clients.size();
-        }else{
+        } else {
             return false;
         }
     }
 
     /**
-     *
      * @param clientId - the id to check
      * @return - client matching the id
      */
-    public Client getClient(String clientId){
+    public Client getClient(String clientId) {
         return this.clients.get(clientId);
     }
 
-    public boolean visitorHasAccount(String visitorId){
+    /**
+     * Returns whether the given visitor has an account
+     *
+     * @param visitorId the id of the visitor
+     * @return whether or not the visitor has an account
+     */
+    public boolean visitorHasAccount(String visitorId) {
         boolean hasAccount = false;
-        for(Account a: this.accounts.values()){
-            if(a.getVisitorId().equals(visitorId)){
+
+        for (Account a : this.accounts.values()) {
+            if (a.getVisitorId().equals(visitorId)) {
                 hasAccount = true;
             }
         }
+
         return hasAccount;
     }
 
-    public void addAccount(Account account){
+    /**
+     * Adds the given account to the system
+     *
+     * @param account the account to be added
+     */
+    public void addAccount(Account account) {
         this.accounts.put(account.getUsername(), account);
     }
 
-    public boolean authenticate(String username, String password){
-            return this.hasAccount(username) && this.accounts.get(username).getPassword().equals(password);
+    /**
+     * Authenticates the given account credentials
+     *
+     * @param username the username of the account
+     * @param password the password of the account
+     * @return whether the credentials were correct or not
+     */
+    public boolean authenticate(String username, String password) {
+        return this.hasAccount(username) && this.accounts.get(username).getPassword().equals(password);
 
     }
 
-    public Account getAccount(String username){
+    /**
+     * Gets the account with the specified username
+     *
+     * @param username the username of the account
+     * @return the account
+     */
+    public Account getAccount(String username) {
         return this.accounts.get(username);
     }
 
-    public void removeVisit(Visit visit){
+    /**
+     * Removes the given visit from visits collection
+     *
+     * @param visit the visit to be removed
+     */
+    public void removeVisit(Visit visit) {
         this.visits.remove(visit);
     }
 
-    public void removeTransaction(Transaction transaction){
+    /**
+     * Removes the given transaction from transactions collection
+     *
+     * @param transaction the transaction to be removed
+     */
+    public void removeTransaction(Transaction transaction) {
         this.transactions.remove(transaction);
     }
 
-    public void removeBook(Book book){
+    /**
+     * Removes the given book from books collection
+     *
+     * @param book the book to be removed
+     */
+    public void removeBook(Book book) {
         this.books.remove(book.getIsbn());
     }
 }

@@ -62,6 +62,7 @@ public class GoogleBooksAPI {
      */
     public void readBooksFromAPI() throws IOException {
         String url = "https://www.googleapis.com/books/v1/volumes?q=";
+
         url += this.isbn.equals("*") ? "" : this.isbn;
         url += this.title.equals("*") ? "" : this.title;
         url += this.publisher.equals("*") ? "" : this.publisher;
@@ -148,17 +149,5 @@ public class GoogleBooksAPI {
                 books.add(book);
             }
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        String testTitle = "*";
-        String testIsbn = "*";
-        String testPublisher = "*";
-
-        HashSet<String> testAuthors = new HashSet<>();
-        testAuthors.add("*");
-
-        GoogleBooksAPI api = new GoogleBooksAPI(testTitle, testAuthors, testIsbn, testPublisher);
-        api.readBooksFromAPI();
     }
 }
