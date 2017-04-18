@@ -429,16 +429,21 @@ public class SystemInvoker {
         }
         String clientId = request[0];
         if(this.self.hasClientId(clientId)){
+            Client client = self.getClient(clientId);
             switch (firstWord){
                 case "disconnect":
-                    if(this.getLBMS().hasClientId(clientId)){
-                        Request disconnetClientRequest = new DisconnectClientRequest(self, clientId);
-                        disconnetClientRequest.execute();
-                        return disconnetClientRequest.response();
-                    }
+                    Request disconnetClientRequest = new DisconnectClientRequest(self, clientId);
+                    disconnetClientRequest.execute();
+                    return disconnetClientRequest.response();
                 case "create":
-                    //TODO: create command, possible missing params
-                    return null;
+                    //client ID,create,username,password,role,visitor ID;
+                    String username = request[2];
+                    String password = request[3];
+                    String role = request[4];
+                    String visitorId = request[5];
+                    Request createAccountRequest = new CreateAccountRequest(client, self, username, password, role, visitorId);
+                    createAccountRequest.execute();
+                    return createAccountRequest.response();
                 case "login":
                     //TODO: create login command, possible missing params
                     return null;
