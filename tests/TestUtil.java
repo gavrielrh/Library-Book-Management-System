@@ -77,7 +77,7 @@ public class TestUtil {
 
     public void purchaseBooksFromSearch(){
         this.searchBooksFromStore();
-        String request = "buy,10,1,2,3,4,5;";
+        String request = "buy,10,2,3,4,5,6;";
         this.invoker.handleCommand(request);
     }
 
@@ -85,19 +85,19 @@ public class TestUtil {
         String visitorId = this.registerVisitor();
         this.arriveVisitor(visitorId);
         this.searchBooksFromStore();
-        this.invoker.handleCommand("buy,1,6;");
+        this.invoker.handleCommand("buy,1,7;");
         this.invoker.handleCommand("info,*,*;");
         this.invoker.handleCommand("borrow," + visitorId + "9780979616310;");
     }
 
     public void searchAndBuyOneBook() {
         this.invoker.handleCommand("search,*,{Wallace Fowlie};");
-        this.invoker.handleCommand("buy,1,0;");
+        this.invoker.handleCommand("buy,1,1;");
     }
 
     public void searchAndBuySecondBook(){
         this.invoker.handleCommand("search,*,{Sharon Stewart};");
-        this.invoker.handleCommand("buy,1,0;");
+        this.invoker.handleCommand("buy,1,1;");
     }
 
     public void checkOutBook() {
