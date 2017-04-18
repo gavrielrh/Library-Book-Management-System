@@ -1,6 +1,8 @@
 /**
  * Filename: Transaction.java
  * @author - Brendan Jones, bpj1651@rit.edu
+ * @author - Gavriel Rachael-Homann, gxr2329@rit.edu
+ * @author - Lucas Campbell, lxc7058@rit.edu
  * Transaction takes in information about the visitor, book and date.
  * Records this information for later use when the book is returned
  * When prompted, calculates any potential fines.

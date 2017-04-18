@@ -4,6 +4,7 @@
  *
  * ConcreteCommand for searching for purchasable books matching given parameters.
  */
+
 import java.io.IOException;
 import java.util.*;
 
@@ -28,11 +29,13 @@ public class BookStoreSearchRequest implements Request {
     /* The books matching the request */
     private Set<Book> searchResults;
 
+    /* Represents the current book querying service */
     public enum BOOKSERVICE {
         local,
         google
     }
 
+    /* the service currently being used */
     private BOOKSERVICE bookService;
 
     /**
@@ -54,10 +57,12 @@ public class BookStoreSearchRequest implements Request {
         this.isbn = isbn;
         this.publisher = publisher;
         this.sortOrder = sortOrder;
+
         this.authors = new HashSet<>();
         if (!authors.equals("*")) {
             Collections.addAll(this.authors, authors.split(","));
         }
+
         this.searchResults = new HashSet<>();
         this.bookService = bookService;
     }
@@ -67,8 +72,9 @@ public class BookStoreSearchRequest implements Request {
      */
     @Override
     public void execute() {
-        if(this.bookService == BOOKSERVICE.local) {
+        if (this.bookService == BOOKSERVICE.local) {
             this.searchResults.addAll(this.lbms.getBookStore().values());
+
             this.searchResults.removeIf(book -> {
                 if (!this.isbn.equals("*") && !this.isbn.equals(book.getIsbn())) {
                     return true;
@@ -82,6 +88,7 @@ public class BookStoreSearchRequest implements Request {
                 if (!this.authors.isEmpty() && Collections.disjoint(new ArrayList<>(Arrays.asList(book.getAuthors())), this.authors)) {
                     return true;
                 }
+
                 return false;
             });
         } else {
@@ -89,6 +96,7 @@ public class BookStoreSearchRequest implements Request {
 
             try {
                 api.readBooksFromAPI();
+
                 this.searchResults.addAll(api.getBooks());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -135,8 +143,11 @@ public class BookStoreSearchRequest implements Request {
         int id = 1;
         for (Book book : sortedBooks) {
             message += id + ",";
+
             message += book.toString() + ",\n";
+
             booksForPurchaseById.put(id, book);
+
             id++;
         }
 

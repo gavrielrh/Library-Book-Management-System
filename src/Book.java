@@ -6,13 +6,14 @@
  */
 
 /* imports */
+
 import java.util.Date;
 
 /**
  * Books are unique and keep track of their copy and checked out count.
  * All books initially start out with 0 copies and 0 checked out.
  */
-public class Book implements java.io.Serializable{
+public class Book implements java.io.Serializable {
 
     /* info specific to book */
     private String isbn;
@@ -51,7 +52,7 @@ public class Book implements java.io.Serializable{
 
 
     /* copy constructor used for purchasing books */
-    public Book(Book book){
+    public Book(Book book) {
         this.isbn = book.isbn;
         this.title = book.title;
         this.authors = book.authors;
@@ -82,6 +83,7 @@ public class Book implements java.io.Serializable{
 
     /**
      * Gets the Book's authors
+     *
      * @return authors
      */
     public String[] getAuthors() {
@@ -90,6 +92,7 @@ public class Book implements java.io.Serializable{
 
     /**
      * Gets the Book's publisher
+     *
      * @return publisher
      */
     public String getPublisher() {
@@ -98,6 +101,7 @@ public class Book implements java.io.Serializable{
 
     /**
      * Gets the Book's published date
+     *
      * @return published date
      */
     public Date getPublishedDate() {
@@ -106,6 +110,7 @@ public class Book implements java.io.Serializable{
 
     /**
      * Gets the Book's page count
+     *
      * @return page count
      */
     public int getPageCount() {
@@ -114,6 +119,7 @@ public class Book implements java.io.Serializable{
 
     /**
      * Gets the Book's number of total copies
+     *
      * @return total copies
      */
     public int getTotalCopies() {
@@ -131,6 +137,7 @@ public class Book implements java.io.Serializable{
 
     /**
      * Sets the Book's number of total copies
+     *
      * @param totalCopies number of copies to set
      */
     public void setTotalCopies(int totalCopies) {
@@ -140,29 +147,36 @@ public class Book implements java.io.Serializable{
 
     /**
      * Gets whether the Book has any copies available
+     *
      * @return availability
      */
     public boolean isAvailable() {
         return totalCopies > numCheckedOut;
     }
 
-    /** the toString of Book is:
+    /**
+     * the toString of Book is:
      * isbn,title, {authors},pusher,publish-date
+     *
      * @return - String of the Book in above format
      */
     @Override
-    public String toString(){
+    public String toString() {
         String output = "";
 
         output += this.getIsbn() + ",";
+
         output += "\"" + this.getTitle() + "\",";
+
         output += "{";
         for (String author : this.getAuthors()) {
             output += author + ",";
         }
         output = output.substring(0, output.length() - 1);
         output += "},";
+
         output += this.getPublisher() + ",";
+
         output += LBMS.bookDateFormatter.format(this.getPublishedDate());
 
         return output;
@@ -171,14 +185,14 @@ public class Book implements java.io.Serializable{
     /**
      * checkOutBook updates the amount available in the library
      */
-    public void checkOutBook(){
+    public void checkOutBook() {
         this.numCheckedOut += 1;
     }
 
     /**
      * returnBook is called to update the amount available in the library
      */
-    public void returnBook(){
+    public void returnBook() {
         this.numCheckedOut -= 1;
     }
 }
