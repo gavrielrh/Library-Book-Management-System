@@ -401,7 +401,7 @@ public class SystemInvoker {
                     return LibraryStatisticsReport.response();
                 //<14> Connect Client - connect;
                 case "connect":
-                    Request connectClientRequest = new connectClientRequest(self);
+                    Request connectClientRequest = new ConnectClientRequest(self);
                     connectClientRequest.execute();
 
                     return connectClientRequest.response();

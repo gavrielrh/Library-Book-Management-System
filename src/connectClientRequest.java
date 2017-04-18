@@ -1,10 +1,10 @@
 /**
- * Filename: connectClientRequest.java
+ * Filename: ConnectClientRequest.java
  * @author - Brendan Jones (bpj1651@rit.edu)
  *
- * connectClientRequest represents a concreteCommand to connect a client.
+ * ConnectClientRequest represents a concreteCommand to connect a client.
  */
-public class connectClientRequest implements Request{
+public class ConnectClientRequest implements Request{
 
     /* have the LBMS be inside the request for getting Id */
     private LBMS lbms;
@@ -13,10 +13,10 @@ public class connectClientRequest implements Request{
     private String clientId;
 
     /**
-     * Constructor for connectClientRequest
+     * Constructor for ConnectClientRequest
      * @param lbms - the LBMS itself.
      */
-    public connectClientRequest(LBMS lbms){
+    public ConnectClientRequest(LBMS lbms){
         this.lbms = lbms;
     }
 

@@ -1,8 +1,8 @@
 /**
- * Filename: connectClientRequest.java
+ * Filename: ConnectClientRequest.java
  * @author - Brendan Jones (bpj1651@rit.edu)
  *
- * connectClientRequest represents a concreteCommand to connect a client.
+ * ConnectClientRequest represents a concreteCommand to connect a client.
  */
 public class DisconnectClientRequest implements Request{
 
@@ -13,7 +13,7 @@ public class DisconnectClientRequest implements Request{
     private String clientId;
 
     /**
-     * Constructor for connectClientRequest
+     * Constructor for ConnectClientRequest
      * @param lbms - the LBMS itself.
      */
     public DisconnectClientRequest(LBMS lbms, String clientId){
