@@ -41,7 +41,11 @@ public class ClientInvoker {
                 }
                 break;
             case "depart":
-                requestExecuted = new EndVisitRequest(this.lbms, this.visitorId);
+                if(tokens.length == 1) {
+                    requestExecuted = new EndVisitRequest(this.lbms, this.visitorId);
+                }else{
+                    requestExecuted = new EndVisitRequest(this.lbms, tokens[1]);
+                }
                 break;
             case "undo":
                 boolean success = false;
@@ -108,11 +112,21 @@ public class ClientInvoker {
                     break;
                 }
             case "borrow":
+                boolean differentVisitor = tokens.length == 3;
+
+                //borrow,{bookids},visitorId
+                //all ids will be token[1]
+                //token1
+                String[] bookIdsArray = tokens[1].substring(1, tokens[1].length()-1).split(",");
                 ArrayList<String> bookIds = new ArrayList<>();
-                for(int i = 1; i < tokens.length; i++) {
-                    bookIds.add(tokens[i]);
+                for(int i = 0; i < bookIdsArray.length; i++) {
+                    bookIds.add(bookIdsArray[i]);
                 }
-                requestExecuted = new BorrowBookRequest(lbms, this.visitorId, bookIds);
+                if(differentVisitor){
+                    requestExecuted = new BorrowBookRequest(lbms, tokens[2], bookIds);
+                }else {
+                    requestExecuted = new BorrowBookRequest(lbms, this.visitorId, bookIds);
+                }
                 break;
         }
         if(requestExecuted != null){

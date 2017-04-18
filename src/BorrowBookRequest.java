@@ -104,10 +104,11 @@ public class BorrowBookRequest implements Request, UndoableCommand{
     private boolean validBookIds(){
         boolean valid = true;
         for(String bookId : this.bookIds){
-            Book book = this.lbms.getBook(bookId);
-            if(!(this.lbms.hasBook(book.getIsbn()))){
+
+            if(!(this.lbms.hasBook(bookId))){
                 valid = false;
             }else{
+                Book book = this.lbms.getBook(bookId);
                 valid = book.isAvailable();
             }
         }
