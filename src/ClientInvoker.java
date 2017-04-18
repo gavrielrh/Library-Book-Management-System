@@ -31,8 +31,10 @@ public class ClientInvoker {
         }
 
         Request requestExecuted = null;
+        boolean differentVisitor;
 
         switch (firstWord){
+
             case "arrive":
                 if(tokens.length == 1) {
                     requestExecuted = new BeginVisitRequest(this.lbms, this.visitorId);
@@ -112,7 +114,7 @@ public class ClientInvoker {
                     break;
                 }
             case "borrow":
-                boolean differentVisitor = tokens.length == 3;
+                differentVisitor = tokens.length == 3;
 
                 //borrow,{bookids},visitorId
                 //all ids will be token[1]
@@ -128,6 +130,38 @@ public class ClientInvoker {
                     requestExecuted = new BorrowBookRequest(lbms, this.visitorId, bookIds);
                 }
                 break;
+            case "borrowed":
+                differentVisitor = tokens.length == 2;
+                if(differentVisitor){
+                    requestExecuted = new FindBorrowedBooksRequest(lbms, tokens[1]);
+                }else{
+                    requestExecuted = new FindBorrowedBooksRequest(lbms, this.visitorId);
+                }
+                break;
+            case "return":
+                differentVisitor = tokens.length == 3;
+                //return[visitorId],{bookids};
+                if(differentVisitor){
+                    String differentVisitorId = tokens[1];
+                    String[] bookArray = tokens[2].substring(1, tokens[2].length()-1).split(",");
+                    ArrayList<Integer> booksToReturn = new ArrayList<>();
+                    for(String b : bookArray){
+                        booksToReturn.add(Integer.parseInt(b));
+                    }
+                    requestExecuted = new ReturnBookRequest(lbms, differentVisitorId, booksToReturn);
+                }else{
+                    String[] bookArray = tokens[1].substring(1, tokens[1].length()-1).split(",");
+                    ArrayList<Integer> booksToReturn = new ArrayList<>();
+                    for(String b : bookArray){
+                        booksToReturn.add(Integer.parseInt(b));
+                    }
+                    requestExecuted = new ReturnBookRequest(lbms, this.visitorId, booksToReturn);
+                }
+                break;
+
+
+
+
         }
         if(requestExecuted != null){
             requestExecuted.execute();
