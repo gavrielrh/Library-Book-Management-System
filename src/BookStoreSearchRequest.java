@@ -272,14 +272,4 @@ public class BookStoreSearchRequest implements Request {
         return message + ";"; // 	info,title,{authors},[isbn, [publisher,[sort order]]];
     }
 
-    /**
-     * getPublishedDate is a helper method to get the string of the visit Date
-     *
-     * @return - String representaton of the visit Date
-     * @throws AssertionError if the visit wasn't valid, meaning it didn't have a date
-     */
-    private String getPublishedDate(Book book) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return formatter.format(book.getPublishedDate());
-    }
 }

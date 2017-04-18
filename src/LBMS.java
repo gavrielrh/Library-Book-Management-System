@@ -13,6 +13,7 @@
  */
 
 /* imports */
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -55,16 +56,23 @@ public class LBMS implements java.io.Serializable {
     private HashMap<String, Book> books;
     private HashMap<Integer, Book> booksForPurchaseById;
     private HashMap<Integer, Book> booksForBorrowById;
+    private HashMap<String, Account> accounts;
 
     private HashMap<String, Book> bookStore;
     private ArrayList<Visit> visits;
     private HashMap<String, Visitor> visitors;
     private ArrayList<Transaction> transactions;
 
+
+    /* know the amount of clients connected */
+    private HashMap<String, Client> clients;
+
     /**
      * LBMS Constructor
      */
     public LBMS() {
+
+        this.clients = new HashMap<>();
 
         this.finesCollected = 0.0;
         // LBMS stores its' books in a HashMap<String bookId (isbn), Book bookObjectItself>
@@ -87,6 +95,8 @@ public class LBMS implements java.io.Serializable {
         this.time = new Date();
 
         this.transactions = new ArrayList<Transaction>();
+
+        this.accounts = new HashMap<>();
     }
 
     /**
@@ -366,7 +376,97 @@ public class LBMS implements java.io.Serializable {
         return (this.LIBRARY_CLOSED_TIME % 100) + numMinInHours;
     }
 
+    /**
+     * hasAccount checks if the usernameToCheck is in the system accounts
+     * @param usernameToCheck - String of usernameToCheck
+     * @return - boolean. True if there is a duplicate. False if no duplicates.
+     */
+    public boolean hasAccount(String usernameToCheck){
+        return this.accounts.keySet().contains(usernameToCheck);
+    }
 
 
+    /**
+     * login attempts to login with a given username and password
+     * @param username - the username attempting to log in
+     * @param password - the password attempting to use to log in
+     * @return - boolean. True if the login was successful, false otherwise.
+     */
+    public boolean login(String username, String password) {
+        if (this.hasAccount(username)) {
+            Account accountLogging = this.accounts.get(username);
+            //if the passwords match, login was successful
+            boolean success = password.equals(accountLogging.getPassword());
+            if (!success) {
+                return false;
+            } else {
+                accountLogging.login();
+                return true;
+            }
+        }else {
+            return false;
+        }
+    }
 
+    /**
+     * logout logs the user out
+     * @param username - the username requesting to log out
+     * @return boolean. True if logout was successful. False if logout had an error.
+     */
+    public boolean logout(String username){
+        if (this.hasAccount(username)){
+            Account accountLogging = this.accounts.get(username);
+            if(accountLogging.isLoggedIn()){
+                accountLogging.logout();
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+
+    /**
+     * connectClient increases the clients logged in, and returns the String for the client
+     * @return - String of the clientId
+     */
+    public String connectClient(){
+        Client client = new Client(this);
+        String clientId = Integer.toString(this.clients.size() + 1);
+        client.connect(clientId);
+        this.clients.put(clientId, client);
+        return clientId;
+    }
+
+    /**
+     * disconnectClient decreases the clients logged in.
+     */
+    public void disconnectClient(Client client){
+        this.clients.remove(client.getId());
+    }
+
+    /**
+     * hasClientId checks if the clientId to check is numeric, if so, then checks if it is connected
+     * @param idToCheck - the String to check
+     * @return boolean. True if client is connected. False otherwise.
+     */
+    public boolean hasClientId(String idToCheck){
+        if(idToCheck.matches("[-+]?\\d*\\.?\\d+")){
+            int clientId = Integer.parseInt(idToCheck);
+            return clientId <= this.clients.size();
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param clientId - the id to check
+     * @return - client matching the id
+     */
+    public Client getClient(String clientId){
+        return this.clients.get(clientId);
+    }
 }

@@ -5,19 +5,12 @@
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import java.io.InputStream;
-
-import java.util.Date;
 
 public class TestFine {
 
     /* invoker is part of the test to test the handleCommand method */
     private SystemInvoker invoker;
 
-    /* systemDate required for repsonse */
-    private Date systemDate;
-
-    private Visitor visitor;
 
     private TestUtil testUtil;
 

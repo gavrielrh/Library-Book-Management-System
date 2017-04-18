@@ -30,6 +30,7 @@ public class SystemInvoker {
         }else{
             this.partialRequest = "";
         }
+
         //Prepend any partialRequestStrings
         String[] request = requestLine.split(",");
 
@@ -41,6 +42,10 @@ public class SystemInvoker {
             return (partialRequest.response());
         } else {
             this.partialRequest = "";
+            if(Character.isDigit(requestLine.charAt(0))){
+                return this.handleClientCommand(requestLine);
+            }
+
 
             /*
             * requests can be:
@@ -72,6 +77,8 @@ public class SystemInvoker {
             if (lastWord.endsWith(";")) {
                 request[request.length - 1] = lastWord.substring(0, lastWord.length() - 1);
             }
+
+
 
             switch (firstWord) {
 
@@ -391,6 +398,12 @@ public class SystemInvoker {
                     LibraryStatisticsReport.execute();
                     return (LibraryStatisticsReport.response());
                 //TODO: Replace this with the actual prompt for shutting down the system.
+
+                //<14> Connect Client - connect;
+                case "connect":
+                    Request connectClientRequest = new connectClientRequest(self);
+                    connectClientRequest.execute();
+                    return (connectClientRequest.response());
                 case "quit":
                     shutdown(self);
                     return ("Shutting down");
@@ -398,6 +411,52 @@ public class SystemInvoker {
         }
         return null;
     }
+
+    public String handleClientCommand(String inputLine){
+
+        //inputline is given as:
+        //clientID,<any request>;
+        String[] request = inputLine.split(",");
+        String firstWord = request[1];
+        if (firstWord.endsWith(";")) {
+            firstWord = firstWord.substring(0, firstWord.length() - 1);
+        }
+        String lastWord = request[request.length - 1];
+        if (lastWord.endsWith(";")) {
+            request[request.length - 1] = lastWord.substring(0, lastWord.length() - 1);
+        }
+        String clientId = request[0];
+        if(this.self.hasClientId(clientId)){
+            switch (firstWord){
+                case "disconnect":
+                    if(this.getLBMS().hasClientId(clientId)){
+                        Request disconnetClientRequest = new DisconnectClientRequest(self, clientId);
+                        disconnetClientRequest.execute();
+                        return disconnetClientRequest.response();
+                    }
+                case "create":
+                    //TODO: create command, possible missing params
+                    return null;
+                case "login":
+                    //TODO: create login command, possible missing params
+                    return null;
+                case "logout":
+                    //TODO: create logout command
+                    return null;
+                case "undo":
+                    //TODO: undo logic
+                    return null;
+                case "redo":
+                    //TODO: redo logic
+                    return null;
+                default:
+                    return null;
+            }
+        }else{
+            return "invalid-client-id;";
+        }
+    }
+
 
 
     /**
