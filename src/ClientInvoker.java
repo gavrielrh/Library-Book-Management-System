@@ -159,15 +159,21 @@ public class ClientInvoker {
                 }
                 break;
 
-
-
-
             case "service":
                 // TODO missing parameters not handled
                 String service = tokens[1];
 
                 requestExecuted = new SetBookInfoServiceRequest(lbms, this.visitorId, service);
                 break;
+
+            case "pay":
+                differentVisitor = tokens.length == 3;
+                double amount = Double.parseDouble(tokens[1]);
+                if(differentVisitor){
+                    requestExecuted = new PayFineRequest(lbms, tokens[2], amount);
+                }else{
+                    requestExecuted = new PayFineRequest(lbms, this.visitorId, amount);
+                }
         }
         if(requestExecuted != null){
             requestExecuted.execute();
