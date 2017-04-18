@@ -445,8 +445,12 @@ public class SystemInvoker {
                     createAccountRequest.execute();
                     return createAccountRequest.response();
                 case "login":
-                    //TODO: create login command, possible missing params
-                    return null;
+                    //client ID,login,username,password;
+                    String userName = request[2];
+                    String pass = request[3];
+                    Request loginRequest = new LoginRequest(client, self, userName, pass);
+                    loginRequest.execute();
+                    return loginRequest.response();
                 case "logout":
                     //TODO: create logout command
                     return null;

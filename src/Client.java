@@ -40,6 +40,20 @@ public class Client {
         return this.systemInvoker.handleCommand(clientCommand);
     }
 
+    public void logIn(Account account){
+        this.account = account;
+        this.account.login();
+        String role = account.getRole();
+        if(role.equals("visitor")){
+            this.proxy = new VisitorProxy(this.systemInvoker);
+        }else if(role.equals("employee")){
+            this.proxy = new EmployeeProxy(this.systemInvoker);
+        }
+    }
+
+    public boolean clientLoggedIn(){
+        return this.account != null;
+    }
 
 
 

@@ -67,4 +67,8 @@ public class VisitorAccount implements Account {
     public String getUsername(){
         return this.username;
     }
+
+    public String getRole(){
+        return "visitor";
+    }
 }

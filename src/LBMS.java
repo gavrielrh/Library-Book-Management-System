@@ -483,4 +483,13 @@ public class LBMS implements java.io.Serializable {
     public void addAccount(Account account){
         this.accounts.put(account.getUsername(), account);
     }
+
+    public boolean authenticate(String username, String password){
+            return this.hasAccount(username) && this.accounts.get(username).getPassword().equals(password);
+
+    }
+
+    public Account getAccount(String username){
+        return this.accounts.get(username);
+    }
 }

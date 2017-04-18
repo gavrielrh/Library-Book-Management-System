@@ -7,11 +7,12 @@
  * Each account must have a log in, and a role type.
  */
 public interface Account {
+
     void login();
     void logout();
     String getUsername();
     String getPassword();
     boolean isLoggedIn();
     String getVisitorId();
-
+    String getRole();
 }
