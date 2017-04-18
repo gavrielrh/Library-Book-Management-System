@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 
-public class EndVisitRequest implements Request {
+public class EndVisitRequest implements Request, UndoableCommand {
 
     /* Have the LBMS part of the request, in order to execute commands */
     private LBMS lbms;
@@ -96,4 +96,24 @@ public class EndVisitRequest implements Request {
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
     }
 
+    public boolean undo(){
+        if(this.isInvalidId){
+            return false;
+        }else{
+            this.visitor.setCurrentVisit(visit);
+            this.visit = this.visitor.getCurrentVisit();
+            this.visit.endVisit(null);
+            return true;
+        }
+    }
+
+    public boolean redo(){
+        if(this.isInvalidId){
+            return false;
+        }else{
+            this.visit.endVisit(visitDate);
+            this.visitor.endVisit();
+            return true;
+        }
+    }
 }

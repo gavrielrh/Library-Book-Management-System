@@ -32,6 +32,9 @@ public class ClientInvoker {
             case "arrive":
                 requestExecuted = new BeginVisitRequest(this.lbms, this.visitorId);
                 break;
+            case "depart":
+                requestExecuted = new EndVisitRequest(this.lbms, this.visitorId);
+                break;
             case "undo":
                 boolean success = false;
                 if(this.undoStack.size() > 0){
@@ -62,7 +65,6 @@ public class ClientInvoker {
             this.undoStack.push(requestExecuted);
             return requestExecuted.response();
         }else if(requestLine.equals("undo;")){
-
         }else{
             return "unrecognized command;";
         }
