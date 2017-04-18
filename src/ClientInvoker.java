@@ -128,6 +128,12 @@ public class ClientInvoker {
                     requestExecuted = new BorrowBookRequest(lbms, this.visitorId, bookIds);
                 }
                 break;
+            case "service":
+                // TODO missing parameters not handled
+                String service = tokens[1];
+
+                requestExecuted = new SetBookInfoServiceRequest(lbms, this.visitorId, service);
+                break;
         }
         if(requestExecuted != null){
             requestExecuted.execute();
