@@ -221,4 +221,8 @@ public class Visitor implements java.io.Serializable{
         this.booksLoaned = transactions;
     }
 
+    public void removeTransaction(Transaction t){
+        this.booksLoaned.remove(t);
+    }
+
 }

@@ -461,6 +461,9 @@ public class SystemInvoker {
                         StringBuilder builder = new StringBuilder();
                         for(int i = 1; i < request.length; i++){
                             builder.append(request[i]);
+                            if(i + 1 < request.length){
+                                builder.append(",");
+                            }
                         }
                         return client.handleClientCommand(builder.toString() + ";");
                     }else{

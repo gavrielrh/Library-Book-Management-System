@@ -496,4 +496,8 @@ public class LBMS implements java.io.Serializable {
     public void removeVisit(Visit visit){
         this.visits.remove(visit);
     }
+
+    public void removeTransaction(Transaction transaction){
+        this.transactions.remove(transaction);
+    }
 }

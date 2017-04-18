@@ -11,9 +11,10 @@
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 
-public class BorrowBookRequest implements Request {
+public class BorrowBookRequest implements Request, UndoableCommand{
 
     /* Have the LBMS part of the request, in order to execute commands */
     private LBMS lbms;
@@ -23,6 +24,8 @@ public class BorrowBookRequest implements Request {
     private ArrayList<String> bookIds;
     private Visitor visitor;
     private int numBooksRequested;
+
+    private HashMap<String, Transaction> transactions;
 
     /* Dates for the borrowed books */
     private Date dateBorrowed;
@@ -42,6 +45,7 @@ public class BorrowBookRequest implements Request {
      * @param bookIds - a List of bookIds that are being checked out.
      */
     public BorrowBookRequest(LBMS lbms, String visitorId, ArrayList<String> bookIds){
+        this.transactions = new HashMap<>();
         this.visitorId = visitorId;
         this.bookIds = bookIds;
         this.lbms = lbms;
@@ -119,6 +123,7 @@ public class BorrowBookRequest implements Request {
             Book book = lbms.getBook(bookId);
             book.checkOutBook();
             Transaction transaction = new Transaction(this.lbms, book, this.dateBorrowed, this.dueDate);
+            this.transactions.put(bookId, transaction);
             this.visitor.checkOutBook(transaction);
             this.lbms.addTransaction(transaction);
         }
@@ -131,7 +136,7 @@ public class BorrowBookRequest implements Request {
     @Override
     public String response(){
         String response = "borrow,";
-        boolean success = (!this.invalidVisitorId && !this.invalidBookId && !this.exceedBookLimit && !this.visitorHasFines);
+        boolean success = this.success();
         if(success){
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
             response += formatter.format(this.dueDate);
@@ -155,4 +160,25 @@ public class BorrowBookRequest implements Request {
         return response;
     }
 
+    private boolean success(){
+        return (!this.invalidVisitorId && !this.invalidBookId && !this.exceedBookLimit && !this.visitorHasFines);
+    }
+    public boolean undo(){
+        if(this.success()){
+            for(String bookId: this.transactions.keySet()){
+                Book book = lbms.getBook(bookId);
+                book.returnBook();
+                Transaction transaction = this.transactions.get(bookId);
+                this.visitor.removeTransaction(transaction);
+                this.lbms.removeTransaction(transaction);
+            }
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean redo(){
+        return false;
+    }
 }
