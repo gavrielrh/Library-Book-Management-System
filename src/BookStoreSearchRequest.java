@@ -28,7 +28,6 @@ public class BookStoreSearchRequest implements Request {
     /* The books matching the request */
     private Set<Book> searchResults;
 
-    //TODO REMOVE THIS TEMP VAR
     public enum BOOKSERVICE {
         local,
         google
