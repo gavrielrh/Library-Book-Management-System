@@ -7,6 +7,7 @@
 
 
 /* imports */
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,22 +19,22 @@ public class SystemInvoker {
     private String partialRequest;
     private BookStoreSearchRequest.BOOKSERVICE BOOKSERVICE;
 
-    public SystemInvoker(LBMS self){
+    public SystemInvoker(LBMS self) {
         this.self = self;
         this.partialRequest = "";
         this.BOOKSERVICE = BookStoreSearchRequest.BOOKSERVICE.local;
     }
 
-    public LBMS getLBMS(){
+    public LBMS getLBMS() {
         return this.self;
     }
 
-    public String handleCommand(String requestLine){
+    public String handleCommand(String requestLine) {
         requestLine = this.partialRequest + requestLine;
 
-        if(requestLine.endsWith(";")){
+        if (requestLine.endsWith(";")) {
             this.partialRequest += requestLine;
-        } else{
+        } else {
             this.partialRequest = "";
         }
 
@@ -48,13 +49,13 @@ public class SystemInvoker {
         } else {
             this.partialRequest = "";
 
-            if(Character.isDigit(requestLine.charAt(0))){
+            if (Character.isDigit(requestLine.charAt(0))) {
                 return this.handleClientCommand(requestLine);
             }
 
             requestLine = requestLine.substring(0, requestLine.length() - 1);
 
-            String[] tokens = getTokens(requestLine);
+            String[] tokens = RequestParser.getTokens(requestLine);
 
             /*
             * requests can be:
@@ -168,13 +169,13 @@ public class SystemInvoker {
                         String publisher = "*";
                         String sortOrder = "*";
 
-                        if(tokens.length >= 4) {
+                        if (tokens.length >= 4) {
                             isbn = tokens[3];
 
-                            if(tokens.length >= 5) {
+                            if (tokens.length >= 5) {
                                 publisher = tokens[4];
 
-                                if(tokens.length >= 6) {
+                                if (tokens.length >= 6) {
                                     sortOrder = tokens[5];
                                 }
                             }
@@ -251,7 +252,7 @@ public class SystemInvoker {
                         String visitorId = tokens[1];
                         ArrayList<Integer> bookIds = new ArrayList<>();
 
-                        for (int i = 2; i < tokens.length; i++){
+                        for (int i = 2; i < tokens.length; i++) {
                             bookIds.add(Integer.parseInt(tokens[i]));
                         }
 
@@ -303,16 +304,16 @@ public class SystemInvoker {
                         String publisher = "*";
                         String sortOrder = "*";
 
-                        if(tokens.length >= 3) {
+                        if (tokens.length >= 3) {
                             authors = tokens[2].equals("*") ? "*" : tokens[2].substring(1, tokens[2].length() - 1);
 
-                            if(tokens.length >= 4) {
+                            if (tokens.length >= 4) {
                                 isbn = tokens[3];
 
-                                if(tokens.length >= 5) {
+                                if (tokens.length >= 5) {
                                     publisher = tokens[4];
 
-                                    if(tokens.length >= 6) {
+                                    if (tokens.length >= 6) {
                                         sortOrder = tokens[5];
                                     }
                                 }
@@ -349,7 +350,7 @@ public class SystemInvoker {
                         for (int i = 2; i < tokens.length; i++) {
                             int id = Integer.parseInt(tokens[i]);
 
-                            if(self.getBookFromQueryId(id) != null) {
+                            if (self.getBookFromQueryId(id) != null) {
                                 ids.add(id);
                             }
                         }
@@ -415,11 +416,11 @@ public class SystemInvoker {
         return null;
     }
 
-    public String handleClientCommand(String inputLine){
+    public String handleClientCommand(String inputLine) {
 
         //inputline is given as:
         //clientID,<any request>;
-        String[] tokens = getTokens(inputLine);
+        String[] tokens = RequestParser.getTokens(inputLine);
         String firstWord = tokens[1];
 
         if (firstWord.endsWith(";")) {
@@ -433,9 +434,9 @@ public class SystemInvoker {
         }
         String clientId = tokens[0];
 
-        if(this.self.hasClientId(clientId)){
+        if (this.self.hasClientId(clientId)) {
             Client client = self.getClient(clientId);
-            switch (firstWord){
+            switch (firstWord) {
                 case "disconnect":
                     Request disconnetClientRequest = new DisconnectClientRequest(self, clientId);
                     disconnetClientRequest.execute();
@@ -467,44 +468,26 @@ public class SystemInvoker {
 
                     return logOutRequest.response();
                 default:
-                    if(client.clientLoggedIn()){
+                    if (client.clientLoggedIn()) {
                         StringBuilder builder = new StringBuilder();
 
-                        for(int i = 1; i < tokens.length; i++){
+                        for (int i = 1; i < tokens.length; i++) {
                             builder.append(tokens[i]);
-                            if(i + 1 < tokens.length){
+                            if (i + 1 < tokens.length) {
                                 builder.append(",");
                             }
                         }
 
                         return client.handleClientCommand(builder.toString() + ";");
-                    }else{
+                    } else {
                         //TODO: client not authenticated.
                         return "invalid-client-id";
                     }
             }
-        }else{
+        } else {
             return "invalid-client-id;";
         }
     }
-
-
-
-    /**
-     * Returns tokens found in request
-     * @param request the request string
-     * @return the tokens array
-     */
-    private String[] getTokens(String request) {
-        String[] tokens = request.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-
-        for(int i = 0; i < tokens.length; i++) {
-            tokens[i] = tokens[i].trim();
-        }
-
-        return tokens;
-    }
-
 
 
     /**
@@ -512,14 +495,15 @@ public class SystemInvoker {
      * and prompt for requests.
      * Requests are then invoked using the Command pattern and LBMS - request subsystem
      * When the invoker is done running, all data is saved using a "Shutdown-thread"
+     *
      * @param args - not used.
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         LBMS system = startUp();
         SystemInvoker invoker = new SystemInvoker(system);
         Scanner inputRequest = new Scanner(System.in);
-        while (true){
+        while (true) {
             String requestLine = inputRequest.nextLine();
             String response = invoker.handleCommand(requestLine);
             System.out.println(response);
@@ -534,11 +518,11 @@ public class SystemInvoker {
     }
 
 
-
     /**
      * startUp gets the LBMS used for the invoker. There are two possibilities:
      * (1) - LBMS is loaded from the data/LBMS-DATA.ser
      * (2) - If no data is there, LBMS is "booted" for the first time.
+     *
      * @return - the LBMS the invoker will use.
      */
     public static LBMS startUp() {
@@ -548,7 +532,7 @@ public class SystemInvoker {
             LBMS system = new LBMS();
             try {
                 system.seedInitialLibrary("data/books.txt");
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return system;
@@ -578,7 +562,7 @@ public class SystemInvoker {
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(system);
             fileOut.close();
-        }catch (IOException i){
+        } catch (IOException i) {
             i.printStackTrace();
         }
     }

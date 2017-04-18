@@ -5,9 +5,7 @@
  * ConcreteCommand for searching for books matching given parameters.
  */
 
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * LibraryBookSearchRequest represents a ConcreteCommand within the Command Design pattern.

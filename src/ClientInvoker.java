@@ -1,15 +1,13 @@
 import java.util.ArrayList;
 import java.util.Stack;
 
-/**
- * Created by brendanjones44 on 4/18/17.
- */
 public class ClientInvoker {
     private LBMS lbms;
     private Account account;
     private String visitorId;
     private Stack<Request> undoStack;
     private Stack<UndoableCommand> redoStack;
+
     public ClientInvoker(LBMS lbms, Account account){
         this.lbms = lbms;
         this.account = account;
@@ -17,18 +15,23 @@ public class ClientInvoker {
         this.undoStack = new Stack<>();
         this.redoStack = new Stack<>();
     }
+
     public String handleCommand(String requestLine){
-        String [] request = requestLine.split(",");
+        String[] tokens = RequestParser.getTokens(requestLine);
+
         //Slice off the ; in the first word for easier cases in switch statement.
-        String firstWord = request[0];
+        String firstWord = tokens[0];
         if (firstWord.endsWith(";")) {
             firstWord = firstWord.substring(0, firstWord.length() - 1);
         }
-        String lastWord = request[request.length - 1];
+
+        String lastWord = tokens[tokens.length - 1];
         if (lastWord.endsWith(";")) {
-            request[request.length - 1] = lastWord.substring(0, lastWord.length() - 1);
+            tokens[tokens.length - 1] = lastWord.substring(0, lastWord.length() - 1);
         }
+
         Request requestExecuted = null;
+
         switch (firstWord){
             case "arrive":
                 requestExecuted = new BeginVisitRequest(this.lbms, this.visitorId);
@@ -63,51 +66,37 @@ public class ClientInvoker {
                 }
                 break;
             case "info":
-                if (request.length < 3) {
+                if (tokens.length < 3) {
                     ArrayList<String> missingParameters = new ArrayList<String>();
-                    for (int i = request.length; i < 3; i++) {
+
+                    for (int i = tokens.length; i < 3; i++) {
                         if (i == 1) {
                             missingParameters.add(missingParameters.size(), "title");
                         } else if (i == 2) {
                             missingParameters.add(missingParameters.size(), "{authors}");
                         }
                     }
+
                     Request missingParam = new MissingParamsRequest("Library Book Search", missingParameters);
                     missingParam.execute();
+
                     return (missingParam.response());
                 } else {
-                    String isbn = null;
-                    String sortOrder = null;
-                    String publisher = null;
-                    String authors = null;
-                    String title = null;
+                    String title = tokens[1].equals("*") ? "*" : tokens[1].substring(1, tokens[1].length() - 1);
+                    String authors = tokens[2].equals("*") ? "*" : tokens[2].substring(1, tokens[2].length() - 1);
+                    String isbn = "*";
+                    String publisher = "*";
+                    String sortOrder = "*";
 
-                    requestLine = requestLine.substring("info,".length(), requestLine.length() - 1);
+                    if (tokens.length >= 4) {
+                        isbn = tokens[3];
 
-                    if (requestLine.startsWith("*")) {
-                        requestLine = requestLine.substring(1);
-                    } else {
-                        requestLine = requestLine.substring(1);
-                        title = requestLine.substring(0, requestLine.indexOf("\""));
-                    }
-                    requestLine = requestLine.substring(title != null ? title.length() + 2 : 1, requestLine.length());
+                        if (tokens.length >= 5) {
+                            publisher = tokens[4];
 
-
-                    if (requestLine.startsWith("{")) {
-                        authors = requestLine.substring(1, requestLine.indexOf("}"));
-                        requestLine = requestLine.substring(authors.length() + 2);
-                    } else {
-                        requestLine = requestLine.substring(1);
-                    }
-
-                    if (!requestLine.isEmpty()) {
-                        String[] optionalParts = requestLine.split(",");
-                        isbn = optionalParts[1].equals("*") ? null : optionalParts[1];
-                        if (optionalParts.length > 2) {
-                            publisher = optionalParts[2].equals("*") ? null : optionalParts[2];
-                        }
-                        if (optionalParts.length > 3) {
-                            sortOrder = optionalParts[3].equals("*") ? null : optionalParts[3];
+                            if (tokens.length >= 6) {
+                                sortOrder = tokens[5];
+                            }
                         }
                     }
 
@@ -116,8 +105,8 @@ public class ClientInvoker {
                 }
             case "borrow":
                 ArrayList<String> bookIds = new ArrayList<>();
-                for(int i = 1; i < request.length; i++) {
-                    bookIds.add(request[i]);
+                for(int i = 1; i < tokens.length; i++) {
+                    bookIds.add(tokens[i]);
                 }
                 requestExecuted = new BorrowBookRequest(lbms, this.visitorId, bookIds);
                 break;
