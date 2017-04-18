@@ -25,6 +25,8 @@ public class BeginVisitRequest implements Request, UndoableCommand {
     private boolean isInvalidId;
     private boolean libraryOpen;
 
+    private boolean undoSuccess;
+
 
     /**
      * Constructor for the BeginVisitRequest
@@ -107,15 +109,23 @@ public class BeginVisitRequest implements Request, UndoableCommand {
 
     public boolean undo(){
         if(!this.libraryOpen || this.isInvalidId || this.isDuplicate){
+            this.undoSuccess = false;
             return false;
         }else{
             this.visitor.setCurrentVisit(null);
             this.lbms.removeVisit(this.visit);
+            this.undoSuccess = true;
             return true;
         }
     }
 
     public boolean redo(){
-        return false;
+        if(this.undoSuccess){
+            this.visitor.setCurrentVisit(visit);
+            this.lbms.addVisit(this.visit);
+            return true;
+        }else{
+            return false;
+        }
     }
 }

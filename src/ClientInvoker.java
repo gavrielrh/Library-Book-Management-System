@@ -38,6 +38,7 @@ public class ClientInvoker {
                     Request requestUndo = undoStack.pop();
                     if(isUndoable(requestUndo)){
                         UndoableCommand undoableCommand = (UndoableCommand) requestUndo;
+                        this.redoStack.push(undoableCommand);
                         success = undoableCommand.undo();
                     }
                     if(success) {
@@ -45,6 +46,15 @@ public class ClientInvoker {
                     }
                 }else{
                     return "undo,cannot-undo;";
+                }
+            case "redo":
+                if(this.redoStack.size() > 0){
+                    UndoableCommand commandToRedo = redoStack.pop();
+                    if(commandToRedo.redo()){
+                        return "redo,success;";
+                    }
+                }else{
+                    return "redo,cannot-redo;";
                 }
         }
         if(requestExecuted != null){

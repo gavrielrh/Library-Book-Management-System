@@ -31,6 +31,7 @@ public class VisitorProxy implements PermissionProxy{
         acceptableCommands.add("borrow");
         acceptableCommands.add("depart");
         acceptableCommands.add("undo");
+        acceptableCommands.add("redo");
         return acceptableCommands.contains(commandName);
     }
 }
