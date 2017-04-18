@@ -1,5 +1,5 @@
-//import com.google.gson.*;
-//import com.google.gson.stream.JsonReader;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.*;
 
 public class GoogleBooksAPI {
-    /*
     private Set<Book> books;
     private String title;
     private String authors;
@@ -98,7 +97,7 @@ public class GoogleBooksAPI {
                     && volumeInfo.get("industryIdentifiers").getAsJsonArray().size() >= 2) {
                 JsonArray authorsArray = volumeInfo.get("authors").getAsJsonArray();
                 for(int i = 0; i < authorsArray.size(); i++) {
-                   authors.add(authorsArray.get(i).toString());
+                    authors.add(authorsArray.get(i).toString());
                 }
                 publisher = volumeInfo.get("publisher").getAsString();
                 industryIdentifiers = volumeInfo.get("industryIdentifiers").getAsJsonArray();
@@ -125,5 +124,4 @@ public class GoogleBooksAPI {
         GoogleBooksAPI api = new GoogleBooksAPI(testTitle, testAuthors, testIsbn, testPublisher);
         api.readBooksFromAPI();
     }
-    */
 }
