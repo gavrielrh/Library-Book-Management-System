@@ -19,7 +19,7 @@ public class SystemInvoker {
     public SystemInvoker(LBMS self){
         this.self = self;
         this.partialRequest = "";
-        this.BOOKSERVICE = BookStoreSearchRequest.BOOKSERVICE.local;
+        this.BOOKSERVICE = BookStoreSearchRequest.BOOKSERVICE.google;
     }
 
     public LBMS getLBMS(){
