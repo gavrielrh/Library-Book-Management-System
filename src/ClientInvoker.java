@@ -1,22 +1,45 @@
+/*
+ * Filename: Client.java
+ * @author - Brendan Jones (bpj1651@rit.edu)
+ * @author - Gavriel Rachael-Homann (gxr2329@rit.edu)
+ *
+ * Client represents a client being connected to LBMS.
+ */
+
 import java.util.ArrayList;
 import java.util.Stack;
 
 public class ClientInvoker {
     private LBMS lbms;
+
     private Account account;
     private String visitorId;
+
     private Stack<Request> undoStack;
     private Stack<UndoableCommand> redoStack;
 
-    public ClientInvoker(LBMS lbms, Account account){
+    /**
+     * Constructor for ClientInvoker.
+     *
+     * @param lbms    the lbms being acted on
+     * @param account the currently logged in account
+     */
+    public ClientInvoker(LBMS lbms, Account account) {
         this.lbms = lbms;
         this.account = account;
         this.visitorId = account.getVisitorId();
+
         this.undoStack = new Stack<>();
         this.redoStack = new Stack<>();
     }
 
-    public String handleCommand(String requestLine){
+    /**
+     * Handles command requests.
+     *
+     * @param requestLine the request
+     * @return the response based on the request
+     */
+    public String handleCommand(String requestLine) {
         String[] tokens = RequestParser.getTokens(requestLine);
 
         //Slice off the ; in the first word for easier cases in switch statement.
@@ -56,6 +79,7 @@ public class ClientInvoker {
                     if (isUndoable(requestUndo)) {
                         UndoableCommand undoableCommand = (UndoableCommand) requestUndo;
                         this.redoStack.push(undoableCommand);
+
                         success = undoableCommand.undo();
                     }
                     if (success) {
@@ -68,6 +92,7 @@ public class ClientInvoker {
             case "redo":
                 if (this.redoStack.size() > 0) {
                     UndoableCommand commandToRedo = redoStack.pop();
+
                     if (commandToRedo.redo()) {
                         return "redo,success;";
                     }
@@ -111,6 +136,7 @@ public class ClientInvoker {
                     }
 
                     requestExecuted = new LibraryBookSearchRequest(lbms, title, authors, isbn, publisher, sortOrder);
+
                     break;
                 }
             case "borrow":
@@ -121,44 +147,54 @@ public class ClientInvoker {
                 //token1
                 String[] bookIdsArray = tokens[1].substring(1, tokens[1].length() - 1).split(",");
                 ArrayList<String> bookIds = new ArrayList<>();
+
                 for (int i = 0; i < bookIdsArray.length; i++) {
                     bookIds.add(bookIdsArray[i]);
                 }
+
                 if (differentVisitor) {
                     requestExecuted = new BorrowBookRequest(lbms, tokens[2], bookIds);
                 } else {
                     requestExecuted = new BorrowBookRequest(lbms, this.visitorId, bookIds);
                 }
+
                 break;
             case "borrowed":
                 differentVisitor = tokens.length == 2;
+
                 if (differentVisitor) {
                     requestExecuted = new FindBorrowedBooksRequest(lbms, tokens[1]);
                 } else {
                     requestExecuted = new FindBorrowedBooksRequest(lbms, this.visitorId);
                 }
+
                 break;
             case "return":
                 differentVisitor = tokens.length == 3;
+
                 //return[visitorId],{bookids};
                 if (differentVisitor) {
                     String differentVisitorId = tokens[1];
                     String[] bookArray = tokens[2].substring(1, tokens[2].length() - 1).split(",");
                     ArrayList<Integer> booksToReturn = new ArrayList<>();
+
                     for (String b : bookArray) {
                         booksToReturn.add(Integer.parseInt(b));
                     }
+
                     requestExecuted = new ReturnBookRequest(lbms, differentVisitorId, booksToReturn);
                 } else {
                     String[] bookArray = tokens[1].substring(1, tokens[1].length() - 1).split(",");
                     ArrayList<Integer> booksToReturn = new ArrayList<>();
+
                     for (String b : bookArray) {
                         booksToReturn.add(Integer.parseInt(b));
                     }
+
                     requestExecuted = new ReturnBookRequest(lbms, this.visitorId, booksToReturn);
                 }
-                break;
 
+                break;
             case "service":
                 // TODO missing parameters not handled
                 String service = tokens[1];
@@ -169,6 +205,7 @@ public class ClientInvoker {
             case "pay":
                 differentVisitor = tokens.length == 3;
                 double amount = Double.parseDouble(tokens[1]);
+
                 if (differentVisitor) {
                     requestExecuted = new PayFineRequest(lbms, tokens[2], amount);
                 } else {
@@ -189,19 +226,24 @@ public class ClientInvoker {
                 requestExecuted = new BookPurchaseRequest(lbms, quantity, idsFromQuery);
                 break;
         }
-        if(requestExecuted != null){
+
+        if (requestExecuted != null) {
             requestExecuted.execute();
             this.undoStack.push(requestExecuted);
+
             return requestExecuted.response();
-        }else{
+        } else {
             return "unrecognized command;";
         }
     }
 
-    private boolean isUndoable(Request request){
-        if(request instanceof UndoableCommand){
-            return true;
-        }
-        return false;
+    /**
+     * Returns whether not the given request is undoable
+     *
+     * @param request the given request
+     * @return if the request is undoable or not
+     */
+    private boolean isUndoable(Request request) {
+        return request instanceof UndoableCommand;
     }
 }

@@ -1,19 +1,30 @@
-/**
- * Created by brendanjones44 on 4/18/17.
+/*
+ * Filename: EmployeeProxy.java
+ * @author - Brendan Jones (bpj1651@rit.edu)
+ *
+ * EmployeeProxy handles the inbetween for Employee commands
  */
-public class EmployeeProxy implements PermissionProxy{
+
+public class EmployeeProxy implements PermissionProxy {
 
     private ClientInvoker clientInvoker;
 
-    public EmployeeProxy(ClientInvoker clientInvoker){
+    /**
+     * Constructor for EmployeeProxy.
+     *
+     * @param clientInvoker the invoker for the employee
+     */
+    public EmployeeProxy(ClientInvoker clientInvoker) {
         this.clientInvoker = clientInvoker;
     }
 
-    public String handleCommand(String input){
+    @Override
+    public String handleCommand(String input) {
         return this.clientInvoker.handleCommand(input);
     }
 
-    public boolean hasPermission(String commandName){
+    @Override
+    public boolean hasPermission(String commandName) {
         //all employees have "god status
         return true;
     }
