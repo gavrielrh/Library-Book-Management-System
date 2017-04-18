@@ -9,7 +9,7 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class BeginVisitRequest implements Request {
+public class BeginVisitRequest implements Request, UndoableCommand {
 
     /* Have the LBMS part of the request, in order to execute commands */
     private LBMS lbms;
@@ -18,6 +18,7 @@ public class BeginVisitRequest implements Request {
     private Visitor visitor;
     private String visitorId;
     private Date visitDate;
+    private Visit visit;
 
     /* boolean information associated with the ConcreteCommand to help response */
     private boolean isDuplicate;
@@ -58,6 +59,7 @@ public class BeginVisitRequest implements Request {
                     Visit startingVisit = new Visit(this.visitor, this.visitDate);
                     this.visitor.setCurrentVisit(startingVisit);
                     this.lbms.addVisit(startingVisit);
+                    this.visit = startingVisit;
                 }
             } else {
                 //If lbms doesn't have the visitor, it is an inValidId error
@@ -101,5 +103,19 @@ public class BeginVisitRequest implements Request {
     public String getVisitDate(){
         assert this.visitDate != null;
         return LBMS.dateFormatter.format(this.visitDate);
+    }
+
+    public boolean undo(){
+        if(!this.libraryOpen || this.isInvalidId || this.isDuplicate){
+            return false;
+        }else{
+            this.visitor.setCurrentVisit(null);
+            this.lbms.removeVisit(this.visit);
+            return true;
+        }
+    }
+
+    public boolean redo(){
+        return false;
     }
 }

@@ -12,7 +12,7 @@ public class Client {
 
     private Account account;
 
-    private ClientProxy proxy;
+    private PermissionProxy proxy;
 
     private SystemInvoker systemInvoker;
     /**
@@ -36,8 +36,8 @@ public class Client {
         return this.clientId;
     }
 
-    public String handleCommand(String clientCommand){
-        return this.systemInvoker.handleCommand(clientCommand);
+    public String handleClientCommand(String clientCommand){
+        return this.proxy.handleCommand(clientCommand);
     }
 
     public void logIn(Account account){
@@ -45,9 +45,9 @@ public class Client {
         this.account.login();
         String role = account.getRole();
         if(role.equals("visitor")){
-            this.proxy = new VisitorProxy(this.systemInvoker);
+            this.proxy = new VisitorProxy(new ClientInvoker(this.systemInvoker.getLBMS(), account));
         }else if(role.equals("employee")){
-            this.proxy = new EmployeeProxy(this.systemInvoker);
+            this.proxy = new EmployeeProxy(new ClientInvoker(this.systemInvoker.getLBMS(), account));
         }
     }
 

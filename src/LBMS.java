@@ -492,4 +492,8 @@ public class LBMS implements java.io.Serializable {
     public Account getAccount(String username){
         return this.accounts.get(username);
     }
+
+    public void removeVisit(Visit visit){
+        this.visits.remove(visit);
+    }
 }

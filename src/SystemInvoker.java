@@ -428,6 +428,7 @@ public class SystemInvoker {
             request[request.length - 1] = lastWord.substring(0, lastWord.length() - 1);
         }
         String clientId = request[0];
+
         if(this.self.hasClientId(clientId)){
             Client client = self.getClient(clientId);
             switch (firstWord){
@@ -455,14 +456,17 @@ public class SystemInvoker {
                     Request logOutRequest = new LogoutRequest(client, self);
                     logOutRequest.execute();
                     return logOutRequest.response();
-                case "undo":
-                    //TODO: undo logic
-                    return null;
-                case "redo":
-                    //TODO: redo logic
-                    return null;
                 default:
-                    return null;
+                    if(client.clientLoggedIn()){
+                        StringBuilder builder = new StringBuilder();
+                        for(int i = 1; i < request.length; i++){
+                            builder.append(request[i]);
+                        }
+                        return client.handleClientCommand(builder.toString() + ";");
+                    }else{
+                        //TODO: client not authenticated.
+                        return "invalid-client-id";
+                    }
             }
         }else{
             return "invalid-client-id;";
