@@ -520,4 +520,8 @@ public class LBMS implements java.io.Serializable {
     public void removeTransaction(Transaction transaction){
         this.transactions.remove(transaction);
     }
+
+    public void removeBook(Book book){
+        this.books.remove(book.getIsbn());
+    }
 }

@@ -33,45 +33,45 @@ public class ClientInvoker {
         Request requestExecuted = null;
         boolean differentVisitor;
 
-        switch (firstWord){
+        switch (firstWord) {
 
             case "arrive":
-                if(tokens.length == 1) {
+                if (tokens.length == 1) {
                     requestExecuted = new BeginVisitRequest(this.lbms, this.visitorId);
-                }else{
+                } else {
                     requestExecuted = new BeginVisitRequest(this.lbms, tokens[1]);
                 }
                 break;
             case "depart":
-                if(tokens.length == 1) {
+                if (tokens.length == 1) {
                     requestExecuted = new EndVisitRequest(this.lbms, this.visitorId);
-                }else{
+                } else {
                     requestExecuted = new EndVisitRequest(this.lbms, tokens[1]);
                 }
                 break;
             case "undo":
                 boolean success = false;
-                if(this.undoStack.size() > 0){
+                if (this.undoStack.size() > 0) {
                     Request requestUndo = undoStack.pop();
-                    if(isUndoable(requestUndo)){
+                    if (isUndoable(requestUndo)) {
                         UndoableCommand undoableCommand = (UndoableCommand) requestUndo;
                         this.redoStack.push(undoableCommand);
                         success = undoableCommand.undo();
                     }
-                    if(success) {
+                    if (success) {
                         return "undo,success;";
                     }
-                }else{
+                } else {
                     return "undo,cannot-undo;";
                 }
                 break;
             case "redo":
-                if(this.redoStack.size() > 0){
+                if (this.redoStack.size() > 0) {
                     UndoableCommand commandToRedo = redoStack.pop();
-                    if(commandToRedo.redo()){
+                    if (commandToRedo.redo()) {
                         return "redo,success;";
                     }
-                }else{
+                } else {
                     return "redo,cannot-redo;";
                 }
                 break;
@@ -119,40 +119,40 @@ public class ClientInvoker {
                 //borrow,{bookids},visitorId
                 //all ids will be token[1]
                 //token1
-                String[] bookIdsArray = tokens[1].substring(1, tokens[1].length()-1).split(",");
+                String[] bookIdsArray = tokens[1].substring(1, tokens[1].length() - 1).split(",");
                 ArrayList<String> bookIds = new ArrayList<>();
-                for(int i = 0; i < bookIdsArray.length; i++) {
+                for (int i = 0; i < bookIdsArray.length; i++) {
                     bookIds.add(bookIdsArray[i]);
                 }
-                if(differentVisitor){
+                if (differentVisitor) {
                     requestExecuted = new BorrowBookRequest(lbms, tokens[2], bookIds);
-                }else {
+                } else {
                     requestExecuted = new BorrowBookRequest(lbms, this.visitorId, bookIds);
                 }
                 break;
             case "borrowed":
                 differentVisitor = tokens.length == 2;
-                if(differentVisitor){
+                if (differentVisitor) {
                     requestExecuted = new FindBorrowedBooksRequest(lbms, tokens[1]);
-                }else{
+                } else {
                     requestExecuted = new FindBorrowedBooksRequest(lbms, this.visitorId);
                 }
                 break;
             case "return":
                 differentVisitor = tokens.length == 3;
                 //return[visitorId],{bookids};
-                if(differentVisitor){
+                if (differentVisitor) {
                     String differentVisitorId = tokens[1];
-                    String[] bookArray = tokens[2].substring(1, tokens[2].length()-1).split(",");
+                    String[] bookArray = tokens[2].substring(1, tokens[2].length() - 1).split(",");
                     ArrayList<Integer> booksToReturn = new ArrayList<>();
-                    for(String b : bookArray){
+                    for (String b : bookArray) {
                         booksToReturn.add(Integer.parseInt(b));
                     }
                     requestExecuted = new ReturnBookRequest(lbms, differentVisitorId, booksToReturn);
-                }else{
-                    String[] bookArray = tokens[1].substring(1, tokens[1].length()-1).split(",");
+                } else {
+                    String[] bookArray = tokens[1].substring(1, tokens[1].length() - 1).split(",");
                     ArrayList<Integer> booksToReturn = new ArrayList<>();
-                    for(String b : bookArray){
+                    for (String b : bookArray) {
                         booksToReturn.add(Integer.parseInt(b));
                     }
                     requestExecuted = new ReturnBookRequest(lbms, this.visitorId, booksToReturn);
@@ -169,11 +169,25 @@ public class ClientInvoker {
             case "pay":
                 differentVisitor = tokens.length == 3;
                 double amount = Double.parseDouble(tokens[1]);
-                if(differentVisitor){
+                if (differentVisitor) {
                     requestExecuted = new PayFineRequest(lbms, tokens[2], amount);
-                }else{
+                } else {
                     requestExecuted = new PayFineRequest(lbms, this.visitorId, amount);
                 }
+                break;
+
+            case "buy":
+                int quantity = Integer.parseInt(tokens[1]);
+                ArrayList<Integer> idsFromQuery = new ArrayList<>();
+                for (int i = 2; i < tokens.length; i++) {
+                    int id = Integer.parseInt(tokens[i]);
+
+                    if (lbms.getBookFromQueryId(id) != null) {
+                        idsFromQuery.add(id);
+                    }
+                }
+                requestExecuted = new BookPurchaseRequest(lbms, quantity, idsFromQuery);
+                break;
         }
         if(requestExecuted != null){
             requestExecuted.execute();

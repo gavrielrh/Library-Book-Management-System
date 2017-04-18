@@ -1,4 +1,4 @@
-/*
+/**
  * Filename: BookPurchaseRequest.java
  * @author - Brendan Jones, bpj1651@rit.edu
  * BookPurchaseRequest is a concreteCommand for the LBMS.
@@ -9,7 +9,8 @@
 
 import java.util.ArrayList;
 
-public class BookPurchaseRequest implements Request {
+
+public class BookPurchaseRequest implements Request, UndoableCommand{
 
     /* Have the LBMS part of the request, in order to execute commands */
     private LBMS lbms;
@@ -71,4 +72,33 @@ public class BookPurchaseRequest implements Request {
         }
         return response;
     }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public boolean undo(){
+        for (Integer id : this.ids) {
+            Book book = lbms.getBookFromQueryId(id);
+            book.setTotalCopies(0);
+            this.lbms.removeBook(book);
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public boolean redo() {
+        for (Integer id : this.ids) {
+            Book book = lbms.getBookFromQueryId(id);
+            book.setTotalCopies(this.quantity);
+            this.lbms.addBook(book);
+        }
+        return true;
+    }
+
 }
