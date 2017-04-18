@@ -469,4 +469,18 @@ public class LBMS implements java.io.Serializable {
     public Client getClient(String clientId){
         return this.clients.get(clientId);
     }
+
+    public boolean visitorHasAccount(String visitorId){
+        boolean hasAccount = false;
+        for(Account a: this.accounts.values()){
+            if(a.getVisitorId().equals(visitorId)){
+                hasAccount = true;
+            }
+        }
+        return hasAccount;
+    }
+
+    public void addAccount(Account account){
+        this.accounts.put(account.getUsername(), account);
+    }
 }

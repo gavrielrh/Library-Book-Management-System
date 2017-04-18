@@ -59,4 +59,12 @@ public class VisitorAccount implements Account {
     public boolean isLoggedIn(){
         return this.loggedIn;
     }
+
+    public String getVisitorId(){
+        return  this.visitor.getUniqueId();
+    }
+
+    public String getUsername(){
+        return this.username;
+    }
 }

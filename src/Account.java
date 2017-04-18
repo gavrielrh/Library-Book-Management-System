@@ -9,7 +9,9 @@
 public interface Account {
     void login();
     void logout();
+    String getUsername();
     String getPassword();
     boolean isLoggedIn();
+    String getVisitorId();
 
 }
