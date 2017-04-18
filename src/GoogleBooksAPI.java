@@ -45,12 +45,14 @@ public class GoogleBooksAPI {
             url += "*";
         }
 
+        url += "&filter=paid-ebooks";
+        url += "&maxResults=40";
+
         url = url.replaceAll("\\s", "%20");
 
         // Create a URL and open a connection
         URL googleBooksUrl = new URL(url);
 
-//        System.out.println(url);
         HttpURLConnection con = (HttpURLConnection) googleBooksUrl.openConnection();
 
         // Set the HTTP Request type method to GET (Default: GET)
@@ -88,13 +90,14 @@ public class GoogleBooksAPI {
             JsonObject saleInfoObject = itemObject.get("saleInfo").getAsJsonObject();
 
             if(!saleInfoObject.get("country").getAsString().equals("US")
-                    || !saleInfoObject.get("saleability").getAsString().equals("FOR_SALE")) {
+                    || !saleInfoObject.get("saleability").getAsString().startsWith("FOR_SALE")) {
                 continue;
             }
 
             if(volumeInfo.get("authors") != null && volumeInfo.get("publisher") != null
                     && volumeInfo.get("pageCount") != null && volumeInfo.get("industryIdentifiers") != null
-                    && volumeInfo.get("industryIdentifiers").getAsJsonArray().size() >= 2) {
+                    && volumeInfo.get("industryIdentifiers").getAsJsonArray().size() >= 2
+                    && volumeInfo.get("publishedDate") != null) {
                 JsonArray authorsArray = volumeInfo.get("authors").getAsJsonArray();
                 for(int i = 0; i < authorsArray.size(); i++) {
                     authors.add(authorsArray.get(i).toString());
