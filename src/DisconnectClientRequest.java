@@ -18,6 +18,7 @@ public class DisconnectClientRequest implements Request{
      */
     public DisconnectClientRequest(LBMS lbms, String clientId){
         this.lbms = lbms;
+        this.clientId = clientId;
     }
 
     /**
