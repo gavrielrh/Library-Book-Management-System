@@ -14,10 +14,12 @@ import java.util.Scanner;
 public class SystemInvoker {
     private LBMS self;
     private String partialRequest;
+    private BookStoreSearchRequest.BOOKSERVICE BOOKSERVICE;
 
     public SystemInvoker(LBMS self){
         this.self = self;
         this.partialRequest = "";
+        this.BOOKSERVICE = BookStoreSearchRequest.BOOKSERVICE.local;
     }
 
     public LBMS getLBMS(){
@@ -328,7 +330,7 @@ public class SystemInvoker {
                             }
                         }
 
-                        Request bookStoreSearchRequest = new BookStoreSearchRequest(self, title, authors, isbn, publisher, sortOrder);
+                        Request bookStoreSearchRequest = new BookStoreSearchRequest(self, title, authors, isbn, publisher, sortOrder, this.BOOKSERVICE);
                         bookStoreSearchRequest.execute();
                         return (bookStoreSearchRequest.response());
                     }
