@@ -452,8 +452,9 @@ public class SystemInvoker {
                     loginRequest.execute();
                     return loginRequest.response();
                 case "logout":
-                    //TODO: create logout command
-                    return null;
+                    Request logOutRequest = new LogoutRequest(client, self);
+                    logOutRequest.execute();
+                    return logOutRequest.response();
                 case "undo":
                     //TODO: undo logic
                     return null;

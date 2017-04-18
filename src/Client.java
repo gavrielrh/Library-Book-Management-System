@@ -55,6 +55,14 @@ public class Client {
         return this.account != null;
     }
 
+    public void logout(){
+        if(this.account != null) {
+            this.account.logout();
+        }
+        this.account = null;
+        this.proxy = null;
+    }
+
 
 
 }
