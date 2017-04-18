@@ -179,6 +179,17 @@ public class BorrowBookRequest implements Request, UndoableCommand{
     }
 
     public boolean redo(){
-        return false;
+        if(this.success()){
+            for(String bookId : this.transactions.keySet()){
+                Book book = lbms.getBook(bookId);
+                book.checkOutBook();
+                Transaction transaction = this.transactions.get(bookId);
+                this.visitor.checkOutBook(transaction);
+                this.lbms.addTransaction(transaction);
+            }
+            return true;
+        }else{
+            return false;
+        }
     }
 }
