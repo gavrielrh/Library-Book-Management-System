@@ -67,6 +67,8 @@ public class LBMS implements java.io.Serializable {
     /* know the amount of clients connected */
     private HashMap<String, Client> clients;
 
+    private BookStoreSearchRequest.BOOKSERVICE BOOKSERVICE;
+
     /**
      * LBMS Constructor
      */
@@ -97,6 +99,8 @@ public class LBMS implements java.io.Serializable {
         this.transactions = new ArrayList<Transaction>();
 
         this.accounts = new HashMap<>();
+
+        this.BOOKSERVICE = BookStoreSearchRequest.BOOKSERVICE.local;
     }
 
     /**
@@ -164,6 +168,22 @@ public class LBMS implements java.io.Serializable {
      */
     public HashMap<String, Visitor> getVisitors() {
         return visitors;
+    }
+
+    /**
+     * Gets the current book service for search requests
+     * @return the book service
+     */
+    public BookStoreSearchRequest.BOOKSERVICE getBookService() {
+        return this.BOOKSERVICE;
+    }
+
+    /**
+     * Sets the current book service for search requests
+     * @param service the service to be set to
+     */
+    public void setBookService(BookStoreSearchRequest.BOOKSERVICE service) {
+        this.BOOKSERVICE = service;
     }
 
     /**
