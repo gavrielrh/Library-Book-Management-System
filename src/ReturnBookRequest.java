@@ -8,9 +8,10 @@
 
 /* imports */
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ReturnBookRequest implements Request {
+public class ReturnBookRequest implements Request, UndoableCommand{
 
     /* have the lbms be in the request for data/actions */
     private LBMS lbms;
@@ -26,6 +27,12 @@ public class ReturnBookRequest implements Request {
     boolean isOverdue;
     boolean invalidVisitorId;
     boolean invalidBookId;
+
+    /* store information for potential undo-redo */
+    private ArrayList<Transaction> transactionsBeforeReturn;
+
+    ArrayList<Transaction> newBooksLoaned;
+
 
     /* visitor used for managing their loaned books */
     private Visitor visitor;
@@ -44,6 +51,8 @@ public class ReturnBookRequest implements Request {
         this.visitor = this.lbms.getVisitor(this.visitorId);
         this.invalidIds = "";
         this.overDueTransactions = new ArrayList<>();
+        this.transactionsBeforeReturn = new ArrayList<>();
+        this.newBooksLoaned = new ArrayList<>();
     }
 
     /**
@@ -52,13 +61,13 @@ public class ReturnBookRequest implements Request {
      */
     @Override
     public void execute() {
+        this.visitor.getBooksLoaned();
         if (validBookIds()) {
             if (this.lbms.hasVisitor(this.visitorId)) {
                 this.visitor = this.lbms.getVisitor(this.visitorId);
 
                 if (visitor.hasFines()) {
                     this.isOverdue = true;
-
                     this.returnBooks();
                 } else {
                     this.returnBooks();
@@ -105,6 +114,7 @@ public class ReturnBookRequest implements Request {
 
         //Check all Books loaned out and get their fines if they have them.
         for (Transaction transaction : this.visitor.getBooksLoaned()) {
+            this.transactionsBeforeReturn.add(transaction);
             if (this.isOverdue) {
                 if (transaction.calculateFine() > 0.0) {
                     //keep track of overdue transactions for response
@@ -114,11 +124,11 @@ public class ReturnBookRequest implements Request {
                 }
             }
             //"Remove" the transaction by cloning the ArrayList minus the transaction to remove.
-            ArrayList<Transaction> newBooksLoaned = new ArrayList<>();
 
             for (Transaction t : this.visitor.getBooksLoaned()) {
                 if (t != transaction) {
-                    newBooksLoaned.add(t);
+
+                    this.newBooksLoaned.add(t);
                 }
             }
 
@@ -139,6 +149,7 @@ public class ReturnBookRequest implements Request {
             return "return,invalid-visitor-id;";
         } else if (this.isOverdue) {
             String response = "return,overdue,$" + Double.toString(this.overDueFine);
+            response += ",";
 
             for (Transaction overDueTransaction : this.overDueTransactions) {
                 response += "," + overDueTransaction.getBookType().getIsbn();
@@ -149,6 +160,40 @@ public class ReturnBookRequest implements Request {
             return response;
         } else {
             return "return,success;";
+        }
+    }
+
+    @Override
+    public boolean undo(){
+        if(!this.invalidVisitorId && !this.invalidBookId){
+            //Update the Book itself (num copies)
+            for (int bookId : this.bookIds) {
+                Book bookToReCheckOut = this.visitor.getTransactionFromQuery(bookId).getBookType();
+
+                bookToReCheckOut.checkOutBook();
+            }
+
+            //Add all transactions back to Visitor
+            this.visitor.setBooksLoaned(this.transactionsBeforeReturn);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public boolean redo(){
+        if(!this.invalidVisitorId && !this.invalidBookId) {
+            //set the transactions back to what it was after returning those books
+            this.visitor.setBooksLoaned(this.newBooksLoaned);
+            //Update the Book itself (num copies)
+            for (int bookId : this.bookIds) {
+                Book bookToReCheckOut = this.visitor.getTransactionFromQuery(bookId).getBookType();
+                bookToReCheckOut.returnBook();
+            }
+            return true;
+        }else{
+            return false;
         }
     }
 }

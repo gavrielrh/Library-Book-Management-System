@@ -184,7 +184,7 @@ public class ClientInvoker {
 
                     requestExecuted = new ReturnBookRequest(lbms, differentVisitorId, booksToReturn);
                 } else {
-                    String[] bookArray = tokens[1].substring(1, tokens[1].length() - 1).split(",");
+                    String[] bookArray = tokens[1].split(",");
                     ArrayList<Integer> booksToReturn = new ArrayList<>();
 
                     for (String b : bookArray) {
