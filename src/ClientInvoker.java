@@ -57,8 +57,7 @@ public class ClientInvoker {
         boolean differentVisitor;
 
         switch (firstWord) {
-            case "register": {
-
+            case "register":
                 //Find all missing parameters.
                 if (tokens.length < 5) {
                     ArrayList<String> missingParameters = new ArrayList<String>();
@@ -74,11 +73,7 @@ public class ClientInvoker {
                             missingParameters.add(missingParameters.size(), "phone-number");
                         }
                     }
-
-                    Request missingParam = new MissingParamsRequest("register", missingParameters);
-                    missingParam.execute();
-
-                    return missingParam.response();
+                    requestExecuted = new MissingParamsRequest("register", missingParameters);
                     // Begin visit is valid, get all necessary data.
                 } else {
                     String firstName = tokens[1];
@@ -86,12 +81,9 @@ public class ClientInvoker {
                     String address = tokens[3];
                     String phoneNum = tokens[4];
 
-                    Request register = new RegisterVisitorRequest(lbms, firstName, lastName, address, phoneNum);
-                    register.execute();
-
-                    return register.response();
+                    requestExecuted = new RegisterVisitorRequest(lbms, firstName, lastName, address, phoneNum);
                 }
-            }
+                break;
 
             case "arrive":
                 if (tokens.length == 1) {
@@ -248,6 +240,39 @@ public class ClientInvoker {
                 }
                 break;
 
+            case "search":
+                if (tokens.length < 2) {
+                    ArrayList<String> missingParameters = new ArrayList<String>();
+                    missingParameters.add(0, "title");
+
+                    requestExecuted = new MissingParamsRequest("Book Store Search", missingParameters);
+                } else {
+                    String title = tokens[1].equals("*") ? "*" : tokens[1].substring(1, tokens[1].length() - 1);
+                    String authors = "*";
+                    String isbn = "*";
+                    String publisher = "*";
+                    String sortOrder = "*";
+
+                    if (tokens.length >= 3) {
+                        authors = tokens[2].equals("*") ? "*" : tokens[2].substring(1, tokens[2].length() - 1);
+
+                        if (tokens.length >= 4) {
+                            isbn = tokens[3];
+
+                            if (tokens.length >= 5) {
+                                publisher = tokens[4];
+
+                                if (tokens.length >= 6) {
+                                    sortOrder = tokens[5];
+                                }
+                            }
+                        }
+                    }
+
+                    requestExecuted = new BookStoreSearchRequest(lbms, title, authors, isbn, publisher, sortOrder, lbms.getBookService());
+                }
+                break;
+
             case "buy":
                 int quantity = Integer.parseInt(tokens[1]);
                 ArrayList<Integer> idsFromQuery = new ArrayList<>();
@@ -259,6 +284,36 @@ public class ClientInvoker {
                     }
                 }
                 requestExecuted = new BookPurchaseRequest(lbms, quantity, idsFromQuery);
+                break;
+
+            case "advance":
+                if (tokens.length < 2) {
+                    ArrayList<String> missingParameters = new ArrayList<String>();
+                    missingParameters.add(0, "number-of-days");
+
+                    requestExecuted = new MissingParamsRequest("Advance Time", missingParameters);
+                } else {
+                    if (tokens.length == 2) {
+                        //just days
+                        int days = Integer.parseInt(tokens[1]);
+
+                        requestExecuted = new AdvanceTimeRequest(lbms, days);
+
+                    } else if (tokens.length == 3) {
+                        int days = Integer.parseInt((tokens[1]));
+                        int hours = Integer.parseInt((tokens[2]));
+
+                        requestExecuted = new AdvanceTimeRequest(lbms, days, hours);
+                    }
+                }
+                break;
+
+            case "datetime":
+                requestExecuted = new CurrentTimeRequest(lbms);
+                break;
+
+            case "report":
+                requestExecuted = new LibraryStatisticsReportRequest(lbms);
                 break;
         }
 
