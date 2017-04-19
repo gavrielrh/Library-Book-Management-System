@@ -71,13 +71,15 @@ public class Register_GUI{
         grid.add(hbBtn, 1, 4);
 
         final Text actiontarget = new Text();
-        grid.add(actiontarget, 1, 4);
+        grid.add(actiontarget, 1, 4,2,1);
 
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
-
+                String visitorID = userTextField.getText();
+                String resp = sys.handleCommand(ClientId + ",create,user,password,visitor,"+visitorID+";");
+                actiontarget.setText(resp);
             }
         });
 

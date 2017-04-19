@@ -5,12 +5,8 @@
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-import java.util.Optional;
 
 public class LBMS_GUI extends Application {
     public static void main(String[] args) {
@@ -25,7 +21,8 @@ public class LBMS_GUI extends Application {
         SystemInvoker sys = new SystemInvoker(SystemInvoker.startUp());
 
         String ClientId = sys.handleCommand("connect;");
-        primaryStage.setScene(StartMenu_GUI.createGUI(primaryStage, sys, ClientId));
+        //primaryStage.setScene(StartMenu_GUI.createGUI(primaryStage, sys, ClientId));
+        primaryStage.setScene(CommandLine_GUI.CommandLine(sys, ClientId));
         primaryStage.show();
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {

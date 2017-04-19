@@ -17,7 +17,7 @@ import javafx.stage.Stage;
  * Created by Eric on 4/18/2017.
  */
 public class VisitorAccount_GUI {
-    public static Scene VisitorAccount(Stage stage){
+    public static Scene visitorAccount(Stage stage, SystemInvoker sys, String ClientId){
         BorderPane pane = new BorderPane();
 
         HBox borrowBooks = new HBox();
@@ -56,12 +56,18 @@ public class VisitorAccount_GUI {
         fines.setPadding(new Insets(0,20,20,20));
         Text fine = new Text("Fines: S" + 5.00);
         Button pay = new Button("Pay Fine");
-        fines.getChildren().addAll(fine, pay);
+        HBox client = new HBox();
+        client.setPadding(new Insets(20,20,20,20));
+        client.setAlignment(Pos.BASELINE_RIGHT);
+        Text clientId = new Text("ClientID: " + ClientId);
+        client.getChildren().addAll(clientId);
+
+        fines.getChildren().addAll(fine, pay, client);
 
         pane.setTop(borrowBooks);
         pane.setCenter(borrow);
         pane.setBottom(fines);
-        Scene scene = new Scene(pane, 500,500);
+        Scene scene = new Scene(pane, 400,400);
         return scene;
     }
 }

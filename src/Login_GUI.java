@@ -77,8 +77,9 @@ public class Login_GUI {
                 if (errorMsg.length() == 0){
                     String[] param = {user, pass};
                     String commandParam = String.join(",", param);
-                    String resp = sys.handleCommand(ClientId + "," + commandParam + ";");
+                    String resp = sys.handleCommand(ClientId + ",login," + commandParam + ";");
                     msg.setText(resp);
+                    stage.setScene(VisitorAccount_GUI.visitorAccount(stage,sys,ClientId));
 
                 } else {
                     msg.setFill(Color.RED);
