@@ -1,8 +1,4 @@
-/**
- * Created by Lucas on 4/17/2017.
- */
 
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -12,27 +8,24 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import sun.net.www.ApplicationLaunchException;
 
 /**
- * Graphical use interface for registering a user, also can bring the user to the login GUI
+ * Created by Eric on 4/18/2017.
  */
-public class Register_GUI{
-
+public class Login_GUI {
     /**
-     * creates the scene for registering a user
-     * @return
+     * Creates Login GUI and authenicate user login.
+     * @return Login GUI Scene
      */
-    public static Scene register(Stage stage, SystemInvoker sys, String ClientId){
+    public static Scene login(Stage stage, SystemInvoker sys, String ClientId){
+        stage.setTitle("LBMS | Login");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -48,7 +41,7 @@ public class Register_GUI{
             }
         });
 
-        Text sceneTitle = new Text("LBMS");
+        Text sceneTitle = new Text("Login");
         sceneTitle.setFont(Font.font("Tohama", FontWeight.NORMAL, 20));
         grid.add(sceneTitle, 0, 1 , 2 , 1);
 
@@ -62,36 +55,45 @@ public class Register_GUI{
         PasswordField passField = new PasswordField();
         grid.add(passField, 1, 3);
 
-        //Button that allows the user to register after running the register command and all
-        //information is acceptable. Creates an account.
-        Button btn = new Button("Register");
+        Button btn = new Button("Sign in");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
         grid.add(hbBtn, 1, 4);
 
-        final Text actiontarget = new Text();
-        grid.add(actiontarget, 1, 4);
+        Text msg = new Text();
+        grid.add(msg, 0, 5, 2, 1);
 
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
+                String errorMsg = "";
+                String user = userTextField.getText();
+                errorMsg = (user.length() == 0) ? errorMsg + "User Name " : errorMsg;
+                String pass = passField.getText();
+                errorMsg = (pass.length() == 0) ? errorMsg + "Password " : errorMsg;
 
+                if (errorMsg.length() == 0){
+                    String[] param = {user, pass};
+                    String commandParam = String.join(",", param);
+                    String resp = sys.handleCommand(ClientId + "," + commandParam + ";");
+                    msg.setText(resp);
+
+                } else {
+                    msg.setFill(Color.RED);
+                    msg.setText("Missing:  " + errorMsg);
+                }
             }
         });
 
-        //Client Id
         Text client = new Text("Client ID: " + ClientId);
         HBox clientBox = new HBox();
         clientBox.setAlignment(Pos.BASELINE_RIGHT);
         clientBox.getChildren().add(client);
         grid.add(clientBox, 1,6);
 
-        Scene scene = new Scene(grid, 400,400, Color.DARKCYAN);
+        Scene scene = new Scene(grid, 400,400);
         return scene;
     }
-
 }
-
-

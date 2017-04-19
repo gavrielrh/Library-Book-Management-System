@@ -434,6 +434,11 @@ public class SystemInvoker {
 
                     return connectClientRequest.response();
                 //TODO: Replace this with the actual prompt for shutting down the system.
+                case "currentclient":
+                    Request currentClientRequest = new CurrentClientRequest(self);
+                    currentClientRequest.execute();
+
+                    return currentClientRequest.response();
                 case "quit":
                     shutdown(self);
                     return "Shutting down";

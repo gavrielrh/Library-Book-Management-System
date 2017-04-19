@@ -1,24 +1,19 @@
-/*
- * Filename: ConnectClientRequest.java
- * @author - Brendan Jones (bpj1651@rit.edu)
+/**
+ * Created by Eric on 4/19/2017.
  *
- * ConnectClientRequest represents a concreteCommand to connect a client.
+ * Gets the number of clients running in the system
  */
-
-public class ConnectClientRequest implements Request {
-
+public class CurrentClientRequest implements Request{
     /* have the LBMS be inside the request for getting Id */
     private LBMS lbms;
-
-    /* clientId is the id for the client */
-    private String clientId;
+    int currentClients;
 
     /**
      * Constructor for ConnectClientRequest
      *
      * @param lbms - the LBMS itself.
      */
-    public ConnectClientRequest(LBMS lbms) {
+    public CurrentClientRequest(LBMS lbms) {
         this.lbms = lbms;
     }
 
@@ -27,7 +22,7 @@ public class ConnectClientRequest implements Request {
      */
     @Override
     public void execute() {
-        this.clientId = this.lbms.connectClient();
+        this.currentClients = this.lbms.getNumClient();
     }
 
     /**
@@ -37,6 +32,7 @@ public class ConnectClientRequest implements Request {
      */
     @Override
     public String response() {
-        return this.clientId;
+        return Integer.toString(this.currentClients);
     }
+
 }

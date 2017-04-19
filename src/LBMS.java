@@ -602,4 +602,12 @@ public class LBMS implements java.io.Serializable {
     public void removeBook(Book book) {
         this.books.remove(book.getIsbn());
     }
+
+    /**
+     * Get the number of clients opened in the LBMS
+     * @return number of clients opened
+     */
+    public int getNumClient(){
+        return this.clients.size();
+    }
 }

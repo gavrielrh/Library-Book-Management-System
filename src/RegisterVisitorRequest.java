@@ -83,11 +83,12 @@ public class RegisterVisitorRequest implements Request {
         if (this.duplicateRegistration) {
             return "register,duplicate;";
         } else if (this.registeredSuccessfully) {
-            String response = "register," + this.uniqueId + ",";
+            //String response = "register," + this.uniqueId + ",";
 
-            response += LBMS.dateFormatter.format(this.lbms.getTime());
+            //response += LBMS.dateFormatter.format(this.lbms.getTime());
 
-            return response + ";";
+            //return response + ";";
+            return this.uniqueId;
         } else {
             return "Should never happen";
         }
