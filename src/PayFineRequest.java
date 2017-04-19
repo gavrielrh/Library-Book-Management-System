@@ -6,7 +6,9 @@
  * PayFine will pay any possible fees the Visitor has in the LBMS.
  */
 
-public class PayFineRequest implements Request {
+import java.util.ArrayList;
+
+public class PayFineRequest implements Request, UndoableCommand {
 
     /* have the LBMS be in the request so commands can be executed */
     private LBMS lbms;
@@ -22,6 +24,10 @@ public class PayFineRequest implements Request {
     /* Visitor to check and pay fines */
     private Visitor visitor;
 
+    private ArrayList<Transaction> transactionsBeforePaying;
+
+    private ArrayList<Transaction> transactionsAfterPaying;
+
     /**
      * Constructor for PayFineRequest.
      *
@@ -35,6 +41,8 @@ public class PayFineRequest implements Request {
         this.visitor = this.lbms.getVisitor(this.visitorId);
         this.amount = amount;
         this.invalidAmount = false;
+        this.transactionsBeforePaying = new ArrayList<>();
+        this.transactionsAfterPaying = new ArrayList<>();
     }
 
     /**
@@ -46,8 +54,12 @@ public class PayFineRequest implements Request {
             this.invalidAmount = (this.visitor.getBalance() < this.amount);
 
             if (!invalidAmount) {
+                for(Transaction t : this.visitor.getBooksLoaned()){
+                    this.transactionsBeforePaying.add(new Transaction(t));
+                }
                 this.visitor.payFine(this.amount);
                 this.lbms.payFine(this.amount);
+                this.transactionsAfterPaying = this.visitor.getBooksLoaned();
             }
         } else {
             this.invalidVisitorId = true;
@@ -69,6 +81,27 @@ public class PayFineRequest implements Request {
             return "pay,invalid-amount," + Double.toString(this.amount) + "," + Double.toString(balance) + ";";
         } else {
             return "pay,success," + Double.toString(balance) + ";";
+        }
+    }
+
+    @Override
+    public boolean undo() {
+        if(this.invalidAmount || this.invalidVisitorId){
+            return false;
+        }else{
+            this.visitor.setBooksLoaned(this.transactionsBeforePaying);
+            this.lbms.payFine(-1 * this.amount);
+            return true;
+        }
+    }
+
+    @Override
+    public boolean redo() {
+        if(this.invalidAmount || this.invalidVisitorId) {
+            return false;
+        }else {
+            this.visitor.setBooksLoaned(this.transactionsAfterPaying);
+            return true;
         }
     }
 }

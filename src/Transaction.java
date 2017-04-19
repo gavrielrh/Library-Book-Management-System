@@ -48,6 +48,18 @@ public class Transaction implements java.io.Serializable {
         this.amountPaid = 0.0;
     }
 
+    /**
+     * Copy Constructor for Transaction. Used for undoing/redoing payments.
+     * @param other - The Tranasaction to copy.
+     */
+    public Transaction(Transaction other){
+        this.lbms = other.lbms;
+        this.bookType = other.bookType;
+        this.dateBorrowed = other.dateBorrowed;
+        this.dueDate = other.dueDate;
+        this.amountPaid = other.amountPaid;
+    }
+
     /***
      * getBookType gets the Book object associated with the loan
      * @return - the Book object that the transaction was for.
