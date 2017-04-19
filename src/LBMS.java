@@ -104,7 +104,7 @@ public class LBMS implements java.io.Serializable {
     /**
      * getTime returns the LBMS time. Used throughout other classes to help create Visits, loans, etc.
      *
-     * @return - the Date object of the simiulated LBMS time.
+     * @return - the Date object of the simulated LBMS time.
      */
     public Date getTime() {
         return time;
@@ -605,9 +605,10 @@ public class LBMS implements java.io.Serializable {
 
     /**
      * Get the number of clients opened in the LBMS
+     *
      * @return number of clients opened
      */
-    public int getNumClient(){
+    public int getNumClient() {
         return this.clients.size();
     }
 }

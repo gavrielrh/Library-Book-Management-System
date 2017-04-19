@@ -25,6 +25,7 @@ public class GoogleBooksAPI {
 
     /**
      * Getter for books set
+     *
      * @return set of Books
      */
     public Set<Book> getBooks() {
@@ -33,16 +34,19 @@ public class GoogleBooksAPI {
 
     /**
      * Constructor for the API. All fields are assumed to be present ("*" for unused fields)
-     * @param title the title of the book
-     * @param authors the authors of the book
-     * @param isbn the isbn of the book
+     *
+     * @param title     the title of the book
+     * @param authors   the authors of the book
+     * @param isbn      the isbn of the book
      * @param publisher the publisher of the book
      */
-    public GoogleBooksAPI(String title, Set<String> authors, String isbn, String publisher){
+    public GoogleBooksAPI(String title, Set<String> authors, String isbn, String publisher) {
         this.title = title.equals("*") ? "*" : "intitle:" + title;
 
-        if(authors.size() > 1) {
-            for(String author : authors) {
+        this.authors = "";
+
+        if (authors.size() > 0) {
+            for (String author : authors) {
                 this.authors += "+inauthor:" + author;
             }
         } else {
@@ -58,6 +62,7 @@ public class GoogleBooksAPI {
 
     /**
      * Initializes set of Books based on GET request.
+     *
      * @throws IOException if request failed
      */
     public void readBooksFromAPI() throws IOException {
@@ -68,7 +73,7 @@ public class GoogleBooksAPI {
         url += this.publisher.equals("*") ? "" : this.publisher;
         url += this.authors.equals("*") ? "" : this.authors;
 
-        if(this.isbn.equals("*") && this.title.equals("*") && this.publisher.equals("*") && this.authors.equals("*")) {
+        if (this.isbn.equals("*") && this.title.equals("*") && this.publisher.equals("*") && this.authors.equals("*")) {
             url += "*";
         }
 
@@ -76,6 +81,8 @@ public class GoogleBooksAPI {
         url += "&maxResults=40";
 
         url = url.replaceAll("\\s", "%20");
+
+        System.out.println(url);
 
         // Create a URL and open a connection
         URL googleBooksUrl = new URL(url);
@@ -103,7 +110,7 @@ public class GoogleBooksAPI {
         // MAKE SURE TO CLOSE YOUR CONNECTION!
         in.close();
 
-        for(JsonElement item : items) {
+        for (JsonElement item : items) {
             JsonObject itemObject = item.getAsJsonObject();
             JsonObject volumeInfo = itemObject.get("volumeInfo").getAsJsonObject();
 
@@ -116,19 +123,19 @@ public class GoogleBooksAPI {
             JsonArray industryIdentifiers;
             JsonObject saleInfoObject = itemObject.get("saleInfo").getAsJsonObject();
 
-            if(!saleInfoObject.get("country").getAsString().equals("US")
+            if (!saleInfoObject.get("country").getAsString().equals("US")
                     || !saleInfoObject.get("saleability").getAsString().startsWith("FOR_SALE")) {
                 continue;
             }
 
-            if(volumeInfo.get("authors") != null && volumeInfo.get("publisher") != null
+            if (volumeInfo.get("authors") != null && volumeInfo.get("publisher") != null
                     && volumeInfo.get("pageCount") != null && volumeInfo.get("industryIdentifiers") != null
                     && volumeInfo.get("industryIdentifiers").getAsJsonArray().size() >= 2
                     && volumeInfo.get("publishedDate") != null) {
 
                 JsonArray authorsArray = volumeInfo.get("authors").getAsJsonArray();
 
-                for(int i = 0; i < authorsArray.size(); i++) {
+                for (int i = 0; i < authorsArray.size(); i++) {
                     authors.add(authorsArray.get(i).toString());
                 }
 
