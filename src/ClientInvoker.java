@@ -57,6 +57,41 @@ public class ClientInvoker {
         boolean differentVisitor;
 
         switch (firstWord) {
+            case "register": {
+
+                //Find all missing parameters.
+                if (tokens.length < 5) {
+                    ArrayList<String> missingParameters = new ArrayList<String>();
+
+                    for (int i = tokens.length; i < 5; i++) {
+                        if (i == 1) {
+                            missingParameters.add(missingParameters.size(), "first name");
+                        } else if (i == 2) {
+                            missingParameters.add(missingParameters.size(), "last name");
+                        } else if (i == 3) {
+                            missingParameters.add(missingParameters.size(), "address");
+                        } else if (i == 4) {
+                            missingParameters.add(missingParameters.size(), "phone-number");
+                        }
+                    }
+
+                    Request missingParam = new MissingParamsRequest("register", missingParameters);
+                    missingParam.execute();
+
+                    return missingParam.response();
+                    // Begin visit is valid, get all necessary data.
+                } else {
+                    String firstName = tokens[1];
+                    String lastName = tokens[2];
+                    String address = tokens[3];
+                    String phoneNum = tokens[4];
+
+                    Request register = new RegisterVisitorRequest(lbms, firstName, lastName, address, phoneNum);
+                    register.execute();
+
+                    return register.response();
+                }
+            }
 
             case "arrive":
                 if (tokens.length == 1) {
