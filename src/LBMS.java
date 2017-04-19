@@ -20,8 +20,6 @@ import java.util.*;
 
 /**
  * LBMS is the system itself. Only one system is meant to be made, following the "Singleton" Design Pattern
- * The main method creates thosb
- * at Singleton LBMS and calls it "self"
  */
 public class LBMS implements java.io.Serializable {
 

@@ -57,9 +57,10 @@ public enum QueryStrategy {
         public int compare(Book book1, Book book2) {
             if (book1.isAvailable() && !book2.isAvailable()) {
                 return 1;
-            } else if(!book1.isAvailable() && book2.isAvailable()) {
+            } else if (!book1.isAvailable() && book2.isAvailable()) {
                 return -1;
             }
+
             return 0;
         }
     };

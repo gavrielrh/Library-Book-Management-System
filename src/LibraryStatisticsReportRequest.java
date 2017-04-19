@@ -2,7 +2,7 @@
  * Filename: LibraryStatisticsReportRequest.java
  * @author - Brendan Jones, bpj1651@rit.edu
  *
- * LibraryStatisticsReportRequest reprsents a ConcreteCommand for the Request subystem
+ * LibraryStatisticsReportRequest represents a ConcreteCommand for the Request subsystem
  * Executing does nothing, but the response has the library info.
  */
 

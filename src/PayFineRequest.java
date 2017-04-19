@@ -1,10 +1,11 @@
-/**
+/*
  * Filename: PayFineRequest.java
  * @author - Brendan Jones, bpj1651@rit.edu
  *
  * PayFineRequest represents a ConcreteCommand in the Command Design Pattern used for Request subsystem.
  * PayFine will pay any possible fees the Visitor has in the LBMS.
  */
+
 public class PayFineRequest implements Request {
 
     /* have the LBMS be in the request so commands can be executed */
@@ -23,11 +24,12 @@ public class PayFineRequest implements Request {
 
     /**
      * Constructor for PayFineRequest.
-     * @param lbms - the LBMS itself so commands can be executed.
+     *
+     * @param lbms      - the LBMS itself so commands can be executed.
      * @param visitorId - the visitorId attempting to pay
-     * @param amount - the amount the visitor would like to pay
+     * @param amount    - the amount the visitor would like to pay
      */
-    public PayFineRequest(LBMS lbms, String visitorId, double amount){
+    public PayFineRequest(LBMS lbms, String visitorId, double amount) {
         this.lbms = lbms;
         this.visitorId = visitorId;
         this.visitor = this.lbms.getVisitor(this.visitorId);
@@ -39,30 +41,33 @@ public class PayFineRequest implements Request {
      * execute checks if the LBMS has the visitor, and if it does, it will pay the amount off
      */
     @Override
-    public void execute(){
-        if(this.lbms.hasVisitor(visitorId)) {
+    public void execute() {
+        if (this.lbms.hasVisitor(visitorId)) {
             this.invalidAmount = (this.visitor.getBalance() < this.amount);
-            if(!invalidAmount){
+
+            if (!invalidAmount) {
                 this.visitor.payFine(this.amount);
                 this.lbms.payFine(this.amount);
             }
-        }else{
+        } else {
             this.invalidVisitorId = true;
         }
     }
 
     /**
      * response is based on what execute performed.
+     *
      * @return - String response on what execute perfomed.
      */
     @Override
-    public String response(){
+    public String response() {
         double balance = this.visitor.getBalance();
-        if(this.invalidVisitorId){
+
+        if (this.invalidVisitorId) {
             return "pay,invalid-visitor-id;";
-        }else if(this.invalidAmount){
+        } else if (this.invalidAmount) {
             return "pay,invalid-amount," + Double.toString(this.amount) + "," + Double.toString(balance) + ";";
-        }else{
+        } else {
             return "pay,success," + Double.toString(balance) + ";";
         }
     }

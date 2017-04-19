@@ -1,4 +1,4 @@
-/**
+/*
  * Filename: RegisterVisitorRequest.java
  * @author - Brendan Jones, bpj1651@rit.edu
  *
@@ -7,7 +7,7 @@
  */
 
 /* imports */
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -32,13 +32,14 @@ public class RegisterVisitorRequest implements Request {
 
     /**
      * Constructor for the RegisterVisitorRequest
-     * @param lbms - the system itself. This is so execute can call lbms commands
+     *
+     * @param lbms      - the system itself. This is so execute can call lbms commands
      * @param firstName - The firstName of visitor
-     * @param lastName - The lastName of visitor
-     * @param address - the address of visitor
-     * @param phoneNum - the phoneNum of visitor
+     * @param lastName  - The lastName of visitor
+     * @param address   - the address of visitor
+     * @param phoneNum  - the phoneNum of visitor
      */
-    public RegisterVisitorRequest(LBMS lbms, String firstName, String lastName, String address, String phoneNum){
+    public RegisterVisitorRequest(LBMS lbms, String firstName, String lastName, String address, String phoneNum) {
         this.lbms = lbms;
         this.visitorFirstName = firstName;
         this.visitorLastName = lastName;
@@ -64,10 +65,9 @@ public class RegisterVisitorRequest implements Request {
                 this.visitorPhoneNum, this.uniqueId);
 
         //Set registration status so response() can accurately respond to what was executed.
-        if(this.lbms.getVisitors().values().contains(visitorToRegister)){
+        if (this.lbms.getVisitors().values().contains(visitorToRegister)) {
             this.duplicateRegistration = true;
-        }
-        else{
+        } else {
             this.lbms.addVisitor(visitorToRegister);
             this.registeredSuccessfully = true;
         }
@@ -75,17 +75,20 @@ public class RegisterVisitorRequest implements Request {
 
     /**
      * response is based on any errors caught in execute.
+     *
      * @return - String response for the command.
      */
     @Override
-    public String response(){
-        if (this.duplicateRegistration){
+    public String response() {
+        if (this.duplicateRegistration) {
             return "register,duplicate;";
-        }else if(this.registeredSuccessfully){
+        } else if (this.registeredSuccessfully) {
             String response = "register," + this.uniqueId + ",";
+
             response += LBMS.dateFormatter.format(this.lbms.getTime());
+
             return response + ";";
-        }else{
+        } else {
             return "Should never happen";
         }
     }
@@ -95,8 +98,9 @@ public class RegisterVisitorRequest implements Request {
      *
      * @return String representation of the 10 digit Id.
      */
-     private String generateId(){
+    private String generateId() {
         ArrayList<String> visitorIds = this.lbms.getVisitorIds();
+
         Random rnd = new Random();
         int n = 100000000 + rnd.nextInt(900000000);
 
@@ -109,8 +113,9 @@ public class RegisterVisitorRequest implements Request {
             stringId = Integer.toString(n);
         }
 
-         String lastDigit = Integer.toString(((int) Math.floor(Math.random() * (10))));
-         stringId += lastDigit;
-         return stringId;
+        String lastDigit = Integer.toString(((int) Math.floor(Math.random() * (10))));
+        stringId += lastDigit;
+
+        return stringId;
     }
 }

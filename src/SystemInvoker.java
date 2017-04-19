@@ -1,10 +1,10 @@
 /*
  * Filename: SystemInvoker.java
  * SystemInvoker is used to simulate the LBMS running.
+ *
  * @author - Brendan Jones (bpj1651@rit.edu)
  * @author - Gavriel Rachael-Homann (gxr2329@rit.edu)
  */
-
 
 /* imports */
 
@@ -13,20 +13,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-
 public class SystemInvoker {
     private LBMS self;
     private String partialRequest;
 
+    /**
+     * Constructor for SystemInvoker.
+     *
+     * @param self the system's LBMS.
+     */
     public SystemInvoker(LBMS self) {
         this.self = self;
         this.partialRequest = "";
     }
 
+    /**
+     * Gets the LBMS associated with the invoker.
+     *
+     * @return the LBMS
+     */
     public LBMS getLBMS() {
         return this.self;
     }
 
+    /**
+     * Handles the given request
+     *
+     * @param requestLine the given request
+     * @return the response after handling the request
+     */
     public String handleCommand(String requestLine) {
         requestLine = this.partialRequest + requestLine;
 
@@ -74,7 +89,7 @@ public class SystemInvoker {
             * <13> Library Statistics Report - report[,days];
             *
             *
-             */
+            */
 
             switch (tokens[0]) {
 
@@ -99,18 +114,18 @@ public class SystemInvoker {
 
                         Request missingParam = new MissingParamsRequest("register", missingParameters);
                         missingParam.execute();
-                        return missingParam.response();
 
+                        return missingParam.response();
                         // Begin visit is valid, get all necessary data.
                     } else {
                         String firstName = tokens[1];
                         String lastName = tokens[2];
                         String address = tokens[3];
                         String phoneNum = tokens[4];
-                        //slice off the ; ending the request.
 
                         Request register = new RegisterVisitorRequest(self, firstName, lastName, address, phoneNum);
                         register.execute();
+
                         return register.response();
                     }
                 }
@@ -120,34 +135,45 @@ public class SystemInvoker {
                 case "arrive":
                     if (tokens.length < 2) {
                         ArrayList<String> missingParameters = new ArrayList<String>();
+
                         missingParameters.add(0, "visitor ID");
+
                         Request missingParam = new MissingParamsRequest("arrive", missingParameters);
                         missingParam.execute();
-                        return (missingParam.response());
+
+                        return missingParam.response();
                     } else {
                         String visitorId = tokens[1];
+
                         Request beginVisitRequest = new BeginVisitRequest(self, visitorId);
                         beginVisitRequest.execute();
+
                         return beginVisitRequest.response();
                     }
                     //<3> End Visit - depart,visitor ID;
                 case "depart":
                     if (tokens.length < 2) {
                         ArrayList<String> missingParameters = new ArrayList<String>();
+
                         missingParameters.add(0, "visitor ID");
+
                         Request missingParam = new MissingParamsRequest("End Visit", missingParameters);
                         missingParam.execute();
-                        return (missingParam.response());
+
+                        return missingParam.response();
                     } else {
                         String visitorId = tokens[1];
+
                         Request endVisitRequest = new EndVisitRequest(self, visitorId);
                         endVisitRequest.execute();
+
                         return endVisitRequest.response();
                     }
                     //<4> Library Book Search - info,title,{authors},[isbn, [publisher,[sort order]]];
                 case "info":
                     if (tokens.length < 3) {
                         ArrayList<String> missingParameters = new ArrayList<String>();
+
                         for (int i = tokens.length; i < 3; i++) {
                             if (i == 1) {
                                 missingParameters.add(missingParameters.size(), "title");
@@ -181,6 +207,7 @@ public class SystemInvoker {
 
                         Request libraryBookSearchRequest = new LibraryBookSearchRequest(self, title, authors, isbn, publisher, sortOrder);
                         libraryBookSearchRequest.execute();
+
                         return libraryBookSearchRequest.response();
                     }
                     //<5> Borrow Book - borrow,visitor ID,{id};
@@ -234,6 +261,7 @@ public class SystemInvoker {
                 case "return":
                     if (tokens.length < 3) {
                         ArrayList<String> missingParameters = new ArrayList<String>();
+
                         for (int i = tokens.length; i < 3; i++) {
                             if (i == 1) {
                                 missingParameters.add(missingParameters.size(), "visitor ID");
@@ -414,6 +442,12 @@ public class SystemInvoker {
         return null;
     }
 
+    /**
+     * Handles the given command
+     *
+     * @param inputLine the given command
+     * @return the response after handling the command
+     */
     public String handleClientCommand(String inputLine) {
 
         //inputline is given as:
@@ -487,7 +521,6 @@ public class SystemInvoker {
         }
     }
 
-
     /**
      * Running SystemInvoker's main method will start up the LBMS
      * and prompt for requests.
@@ -515,7 +548,6 @@ public class SystemInvoker {
         */
     }
 
-
     /**
      * startUp gets the LBMS used for the invoker. There are two possibilities:
      * (1) - LBMS is loaded from the data/LBMS-DATA.ser
@@ -525,25 +557,32 @@ public class SystemInvoker {
      */
     public static LBMS startUp() {
         File SystemData = new File("data/LBMS-SYSTEM.ser");
-        boolean firstStartUp = (!SystemData.exists());
+
+        boolean firstStartUp = !SystemData.exists();
+
         if (firstStartUp) {
             LBMS system = new LBMS();
+
             try {
                 system.seedInitialLibrary("data/books.txt");
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             return system;
         } else {
             try {
                 FileInputStream fileIn = new FileInputStream("data/LBMS-SYSTEM.ser");
                 ObjectInputStream in = new ObjectInputStream(fileIn);
+
                 Object o = in.readObject();
+
                 return (LBMS) o;
             } catch (IOException i) {
                 i.printStackTrace();
             } catch (ClassNotFoundException c) {
                 System.out.println("Data not found");
+
                 c.printStackTrace();
             }
         }
@@ -558,7 +597,9 @@ public class SystemInvoker {
         try {
             FileOutputStream fileOut = new FileOutputStream("data/LBMS-SYSTEM.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
+
             out.writeObject(system);
+
             fileOut.close();
         } catch (IOException i) {
             i.printStackTrace();

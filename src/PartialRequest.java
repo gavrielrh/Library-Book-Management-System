@@ -1,14 +1,17 @@
-/**
+/*
+ * Filename: PartialRequest.java
+ * @author - Brendan Jones, bpj1651@rit.edu
+ *
  * PartialRequest represents a ConcreteCommand within the Command Design Pattern.
  * No action is handled in the execute method, just a simple response back
  */
+
 public class PartialRequest implements Request {
 
     /**
      * Constructor for a PartialRequest Command
-     *
      */
-    public PartialRequest(){
+    public PartialRequest() {
         //no fields in PartialRequest
     }
 
@@ -18,7 +21,7 @@ public class PartialRequest implements Request {
     }
 
     @Override
-    public String response(){
+    public String response() {
         return "partial-request;";
     }
 }
